@@ -1,0 +1,1130 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MUN Buddy | Delegate Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+    --un-blue:#009EDB;
+    --un-navy:#00528C;
+    --accent-red:#D0021B;
+    --gold:#C9A84C;
+    --dark:#0A0E1A;
+    --light:#F8FAFC;
+    --muted:#64748B;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--light);
+    color:#1e293b;
+}
+
+/* NAVBAR */
+
+.navbar{
+    background:#0A0E1A !important;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    padding:14px 0;
+}
+
+.navbar-brand{
+    font-family:'Playfair Display',serif;
+    font-size:1.8rem;
+    font-weight:900;
+    color:white !important;
+}
+
+.navbar-brand span{
+    color:var(--un-blue);
+}
+
+.nav-link{
+    color:rgba(255,255,255,.78)!important;
+    font-weight:500;
+    margin-left:8px;
+}
+
+.nav-link:hover{
+    color:white!important;
+}
+
+/* HERO */
+
+.dashboard-hero{
+
+    min-height:70vh;
+
+    background:
+    linear-gradient(
+    rgba(4,15,40,.75),
+    rgba(4,15,40,.88)
+    ),
+
+    url('https://images.unsplash.com/photo-1575320181282-9afab399332c?w=1800&q=80');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    align-items:center;
+
+    color:white;
+}
+
+.hero-tag{
+    display:inline-block;
+
+    background:
+    rgba(255,255,255,.12);
+
+    border:
+    1px solid rgba(255,255,255,.12);
+
+    padding:8px 18px;
+
+    border-radius:999px;
+
+    margin-bottom:20px;
+
+    font-size:.85rem;
+}
+
+.hero-title{
+    font-family:'Playfair Display',serif;
+    font-size:4rem;
+    font-weight:900;
+    line-height:1.1;
+    margin-bottom:18px;
+}
+
+.hero-title span{
+    color:var(--un-blue);
+}
+
+.hero-subtitle{
+    max-width:800px;
+    font-size:1.1rem;
+    opacity:.92;
+}
+
+/* ASSIGNMENT */
+
+.assignment-panel{
+    margin-top:-80px;
+    position:relative;
+    z-index:100;
+}
+
+.assignment-card{
+
+    background:white;
+
+    border-radius:28px;
+
+    padding:40px;
+
+    box-shadow:
+    0 25px 60px rgba(0,0,0,.10);
+}
+
+.assignment-card h2{
+    font-family:'Playfair Display',serif;
+    margin-bottom:30px;
+}
+
+.assignment-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.assignment-item{
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:18px;
+
+    padding:20px;
+}
+
+.assignment-label{
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--muted);
+}
+
+.assignment-value{
+    margin-top:8px;
+    font-size:1.05rem;
+    font-weight:700;
+}
+
+/* GENERAL */
+
+.section-title{
+    font-family:'Playfair Display',serif;
+    font-size:2.4rem;
+    margin-bottom:35px;
+}
+
+.card-premium{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:30px;
+
+    height:100%;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.06);
+
+    transition:.3s;
+}
+
+.card-premium:hover{
+    transform:translateY(-6px);
+}
+
+.card-icon{
+
+    width:70px;
+    height:70px;
+
+    border-radius:18px;
+
+    background:
+    rgba(0,158,219,.1);
+
+    color:var(--un-blue);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:1.6rem;
+
+    margin-bottom:20px;
+}
+
+.card-premium h4{
+    font-weight:700;
+}
+
+.card-premium p{
+    color:var(--muted);
+    margin-top:12px;
+    min-height:70px;
+}
+
+/* BUTTONS */
+
+.action-btn{
+
+    display:inline-block;
+
+    margin-top:15px;
+
+    background:var(--un-blue);
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    transition:.3s;
+}
+
+.action-btn:hover{
+    background:var(--un-navy);
+    color:white;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .hero-title{
+        font-size:2.5rem;
+    }
+
+    .assignment-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg">
+
+<div class="container">
+
+<a class="navbar-brand" href="../index.html">
+MUN<span>Buddy</span>
+</a>
+
+<button
+class="navbar-toggler"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navMenu">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse" id="navMenu">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item">
+<a class="nav-link" href="dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="country.html">Country</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="committee.html">Committee</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="agenda.html">Agenda</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="resolutions.html">Resolutions</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="notes.html">Notes</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="../login.html">Logout</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="dashboard-hero">
+
+<div class="container">
+
+<div class="hero-tag">
+Delegate Command Center
+</div>
+
+<h1 class="hero-title">
+
+Representing
+<span>India</span>
+
+</h1>
+
+<p class="hero-subtitle">
+
+You are currently serving as the
+Permanent Representative of India
+in the United Nations Security Council.
+
+Prepare for debate, research your agenda,
+draft resolutions and track your progress
+through one centralized platform.
+
+</p>
+
+</div>
+
+</section>
+
+<!-- ASSIGNMENT PANEL -->
+
+<div class="container assignment-panel">
+
+<div class="assignment-card">
+
+<h2>Your Current Assignment</h2>
+
+<div class="assignment-grid">
+
+<div class="assignment-item">
+<div class="assignment-label">Country</div>
+<div class="assignment-value">India 🇮🇳</div>
+</div>
+
+<div class="assignment-item">
+<div class="assignment-label">Committee</div>
+<div class="assignment-value">United Nations Security Council</div>
+</div>
+
+<div class="assignment-item">
+<div class="assignment-label">Portfolio</div>
+<div class="assignment-value">Permanent Representative of India</div>
+</div>
+
+<div class="assignment-item">
+<div class="assignment-label">Agenda</div>
+<div class="assignment-value">
+Addressing the Impact of Emerging Technologies on International Security
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+```html
+<!-- ASSIGNMENT OVERVIEW -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Assignment Overview
+</h2>
+
+<div class="row g-4">
+
+<!-- COUNTRY -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-flag"></i>
+</div>
+
+<h4>Country</h4>
+
+<p>
+
+Review foreign policy, alliances,
+economic priorities, diplomatic positions,
+and historical UN voting behaviour.
+
+</p>
+
+<a href="country.html" class="action-btn">
+View Country Profile
+</a>
+
+</div>
+
+</div>
+
+<!-- COMMITTEE -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-landmark"></i>
+</div>
+
+<h4>Committee</h4>
+
+<p>
+
+Understand committee powers,
+rules of procedure, debate flow,
+motions, points and voting process.
+
+</p>
+
+<a href="committee.html" class="action-btn">
+Open Committee Guide
+</a>
+
+</div>
+
+</div>
+
+<!-- PORTFOLIO -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-user-tie"></i>
+</div>
+
+<h4>Portfolio</h4>
+
+<p>
+
+Learn your responsibilities,
+authority, diplomatic position,
+and role within committee.
+
+</p>
+
+<a href="portfolio.html" class="action-btn">
+Portfolio Details
+</a>
+
+</div>
+
+</div>
+
+<!-- AGENDA -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-book-open"></i>
+</div>
+
+<h4>Agenda</h4>
+
+<p>
+
+Research the issue, stakeholders,
+previous UN actions, and possible
+policy solutions.
+
+</p>
+
+<a href="agenda.html" class="action-btn">
+Research Agenda
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RESEARCH COMMAND CENTER -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Research Command Center
+</h2>
+
+<div class="row g-4">
+
+<!-- COUNTRY RESEARCH -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-earth-asia"></i>
+</div>
+
+<h4>Country Research</h4>
+
+<p>
+
+Explore national interests,
+foreign policy, economic priorities,
+and international relations.
+
+</p>
+
+<a href="country.html" class="action-btn">
+Open Research
+</a>
+
+</div>
+
+</div>
+
+<!-- COMMITTEE RESEARCH -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-building-columns"></i>
+</div>
+
+<h4>Committee Research</h4>
+
+<p>
+
+Review committee structure,
+membership, powers and
+procedural rules.
+
+</p>
+
+<a href="committee.html" class="action-btn">
+Open Research
+</a>
+
+</div>
+
+</div>
+
+<!-- AGENDA RESEARCH -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-lightbulb"></i>
+</div>
+
+<h4>Agenda Research</h4>
+
+<p>
+
+Analyse the topic,
+key challenges,
+stakeholders and solutions.
+
+</p>
+
+<a href="agenda.html" class="action-btn">
+Open Research
+</a>
+
+</div>
+
+</div>
+
+<!-- VOTING HISTORY -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-chart-line"></i>
+</div>
+
+<h4>Voting History</h4>
+
+<p>
+
+Study historical UN votes,
+resolution outcomes and
+country voting patterns.
+
+</p>
+
+<a href="voting-history.html" class="action-btn">
+View Voting Records
+</a>
+
+</div>
+
+</div>
+
+<!-- ALLIES -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-handshake"></i>
+</div>
+
+<h4>Allies & Blocs</h4>
+
+<p>
+
+Identify strategic partners,
+regional groups and potential
+voting coalitions.
+
+</p>
+
+<a href="allies.html" class="action-btn">
+Explore Alliances
+</a>
+
+</div>
+
+</div>
+
+<!-- CURRENT AFFAIRS -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-newspaper"></i>
+</div>
+
+<h4>Current Affairs</h4>
+
+<p>
+
+Track global developments
+relevant to your country,
+committee and agenda.
+
+</p>
+
+<a href="current-affairs.html" class="action-btn">
+View Updates
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+```html
+<!-- PREPARATION CENTER -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Preparation Center
+</h2>
+
+<div class="row g-4">
+
+<!-- POSITION PAPER -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-file-lines"></i>
+</div>
+
+<h4>Position Paper</h4>
+
+<p>
+
+Draft and manage your official
+country position paper.
+
+</p>
+
+<a href="position-paper.html" class="action-btn">
+Open Workspace
+</a>
+
+</div>
+
+</div>
+
+<!-- SPEECH -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-microphone"></i>
+</div>
+
+<h4>Opening Speech</h4>
+
+<p>
+
+Prepare speeches,
+talking points and
+formal statements.
+
+</p>
+
+<a href="speech.html" class="action-btn">
+Prepare Speech
+</a>
+
+</div>
+
+</div>
+
+<!-- RESOLUTION -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-scroll"></i>
+</div>
+
+<h4>Resolution Drafting</h4>
+
+<p>
+
+Draft clauses,
+working papers and
+committee resolutions.
+
+</p>
+
+<a href="resolutions.html" class="action-btn">
+Start Drafting
+</a>
+
+</div>
+
+</div>
+
+<!-- NOTES -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-note-sticky"></i>
+</div>
+
+<h4>Notes</h4>
+
+<p>
+
+Store research,
+sources, statistics
+and debate notes.
+
+</p>
+
+<a href="notes.html" class="action-btn">
+Open Notes
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PREPARATION CHECKLIST -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Preparation Checklist
+</h2>
+
+<div class="card-premium">
+
+<div class="row">
+
+<div class="col-lg-6">
+
+<h5 class="mb-4">
+Research Progress
+</h5>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox" checked>
+<label class="form-check-label">
+Country Profile Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox" checked>
+<label class="form-check-label">
+Allies & Blocs Researched
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Voting History Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Current Affairs Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Committee Rules Learned
+</label>
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<h5 class="mb-4">
+Debate Preparation
+</h5>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Agenda Research Completed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Position Paper Drafted
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Opening Speech Prepared
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Resolution Draft Started
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Research Notes Organized
+</label>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- QUICK RESOURCES -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Quick Resources
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-earth-americas"></i>
+</div>
+
+<h4>United Nations</h4>
+
+<p>
+Official UN website and documentation.
+</p>
+
+<a
+href="https://www.un.org"
+target="_blank"
+class="action-btn">
+Visit Resource
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-book"></i>
+</div>
+
+<h4>UN Digital Library</h4>
+
+<p>
+Resolutions, reports and voting records.
+</p>
+
+<a
+href="https://digitallibrary.un.org"
+target="_blank"
+class="action-btn">
+Visit Resource
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-scale-balanced"></i>
+</div>
+
+<h4>UN Charter</h4>
+
+<p>
+Reference document for UN powers and procedures.
+</p>
+
+<a
+href="https://www.un.org/en/about-us/un-charter"
+target="_blank"
+class="action-btn">
+Visit Resource
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer
+style="
+background:#0A0E1A;
+padding:60px 0;
+margin-top:60px;
+color:white;
+">
+
+<div class="container text-center">
+
+<h3
+style="
+font-family:'Playfair Display',serif;
+margin-bottom:15px;
+">
+MUN Buddy
+</h3>
+
+<p style="opacity:.8;max-width:700px;margin:auto;">
+
+Research smarter.
+Debate better.
+Represent stronger.
+
+</p>
+
+<div class="mt-4">
+
+<a
+href="../index.html"
+style="
+color:white;
+text-decoration:none;
+margin-right:20px;
+">
+Home
+</a>
+
+<a
+href="../login.html"
+style="
+color:white;
+text-decoration:none;
+">
+Logout
+</a>
+
+</div>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+```
+
+

@@ -300,25 +300,11 @@
     #features .container{
       max-width:1300px;
     }
-    .feature-card {
-      border: none;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.09);
-      transition: transform .3s, box-shadow .3s;
-      height: 100%;
-      background: #fff;
-    }
-
     .feature-list li {
       font-size: 1rem;
       color: #475569;
     }
     
-        .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 50px rgba(0,82,140,0.18);
-    }
     .feature-img-wrap {
       position: relative;
       overflow: hidden;
@@ -329,7 +315,6 @@
       object-fit: cover;
       transition: transform .5s;
     }
-    .feature-card:hover .feature-img-wrap img { transform: scale(1.07); }
     .feature-overlay {
       position: absolute;
       inset: 0;
@@ -346,15 +331,6 @@
       font-size: 1.1rem;
       box-shadow: 0 4px 14px rgba(0,0,0,0.3);
     }
-    .feature-card .card-body { padding: 1.5rem; }
-    .feature-card .card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: .5rem;
-    }
-    .feature-card .card-text { font-size: .875rem; color: #64748b; line-height: 1.65; margin-bottom: 1.2rem; }
     .btn-feature {
       background: transparent;
       border: 2px solid var(--un-blue);
@@ -1124,37 +1100,6 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // Smooth scroll for all anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => {
-      const target = document.querySelector(a.getAttribute('href'));
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
-
-  // Navbar shrinks on scroll
-  window.addEventListener('scroll', () => {
-    const nb = document.querySelector('.navbar');
-    nb.style.padding = window.scrollY > 60 ? '.4rem 0' : '.75rem 0';
-  });
-
-  // Newsletter subscribe feedback
-  document.querySelector('.btn-subscribe').addEventListener('click', function () {
-    const input = this.previousElementSibling;
-    if (input.value && input.value.includes('@')) {
-      this.textContent = '✓ Subscribed!';
-      this.style.background = '#27ae60';
-      input.value = '';
-      setTimeout(() => { this.textContent = 'Subscribe'; this.style.background = ''; }, 3000);
-    } else {
-      input.style.borderColor = 'var(--accent-red)';
-      setTimeout(() => { input.style.borderColor = ''; }, 1500);
-    }
-  });
-</script>
+<script src="assets/js/site.js"></script>
 </body>
 </html>

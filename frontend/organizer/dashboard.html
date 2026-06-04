@@ -1,13 +1,629 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Organizer Dashboard | MUN Buddy</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Organizer Dashboard | MUN Buddy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/css/organizer.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 </head>
+
 <body>
-  <h1>Organizer Dashboard</h1>
-  <script src="../assets/js/organizer/dashboard.js"></script>
+
+<div class="organizer-layout">
+
+<!-- SIDEBAR -->
+
+<aside class="organizer-sidebar">
+
+<div class="organizer-logo">
+MUN<span>Buddy</span>
+</div>
+
+<nav>
+
+<a href="dashboard.html" class="active">
+<i class="fas fa-chart-line"></i>
+Dashboard
+</a>
+
+<a href="conferences.html">
+<i class="fas fa-building-columns"></i>
+Conferences
+</a>
+
+<a href="committees.html">
+<i class="fas fa-users"></i>
+Committees
+</a>
+
+<a href="agendas.html">
+<i class="fas fa-file-lines"></i>
+Agendas
+</a>
+
+<a href="countries.html">
+<i class="fas fa-globe"></i>
+Countries
+</a>
+
+<a href="portfolios.html">
+<i class="fas fa-user-tie"></i>
+Portfolios
+</a>
+
+<a href="delegates.html">
+<i class="fas fa-user-group"></i>
+Delegates
+</a>
+
+<a href="assignments.html">
+<i class="fas fa-link"></i>
+Assignments
+</a>
+
+<a href="resources.html">
+<i class="fas fa-folder-open"></i>
+Resources
+</a>
+
+<a href="announcements.html">
+<i class="fas fa-bullhorn"></i>
+Announcements
+</a>
+
+<a href="analytics.html">
+<i class="fas fa-chart-pie"></i>
+Analytics
+</a>
+
+<a href="settings.html">
+<i class="fas fa-gear"></i>
+Settings
+</a>
+
+</nav>
+
+</aside>
+
+<!-- MAIN -->
+
+<main class="organizer-content">
+
+<div class="organizer-topbar">
+
+<div>
+
+<h1 class="page-title">
+Organizer Dashboard
+</h1>
+
+<p class="page-subtitle">
+Manage conferences, delegates, committees and resources from one central workspace.
+</p>
+
+</div>
+
+<button class="btn-primary">
+<i class="fas fa-plus"></i>
+Create Conference
+</button>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<div class="stat-label">
+Active Conferences
+</div>
+
+<div class="stat-number">
+03
+</div>
+
+</div>
+
+<div class="stat-card">
+
+<div class="stat-label">
+Committees
+</div>
+
+<div class="stat-number">
+18
+</div>
+
+</div>
+
+<div class="stat-card">
+
+<div class="stat-label">
+Delegates
+</div>
+
+<div class="stat-number">
+482
+</div>
+
+</div>
+
+<div class="stat-card">
+
+<div class="stat-label">
+Resources
+</div>
+
+<div class="stat-number">
+54
+</div>
+
+</div>
+
+</div>
+
+<!-- DASHBOARD GRID -->
+
+<div class="dashboard-grid">
+
+  <!-- QUICK ACTIONS -->
+
+  <section class="management-card">
+
+    <h3>
+      Quick Actions
+    </h3>
+
+    <p class="page-subtitle mb-4">
+      Frequently used organizer workflows.
+    </p>
+
+    <div style="display:grid;gap:12px;">
+
+      <button class="btn-primary">
+        Create Committee
+      </button>
+
+      <button class="btn-primary">
+        Add Agenda
+      </button>
+
+      <button class="btn-primary">
+        Add Country
+      </button>
+
+      <button class="btn-primary">
+        Assign Delegates
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- RECENT ACTIVITY -->
+
+  <section class="management-card">
+
+    <h3>
+      Recent Activity
+    </h3>
+
+    <p class="page-subtitle mb-4">
+      Latest actions across the platform.
+    </p>
+
+    <div style="display:grid;gap:18px;">
+
+      <div>
+        <strong>New Delegate Registered</strong>
+        <p class="page-subtitle">
+          Delhi Public School • 5 minutes ago
+        </p>
+      </div>
+
+      <div>
+        <strong>Agenda Updated</strong>
+        <p class="page-subtitle">
+          UNSC • Emerging Technologies
+        </p>
+      </div>
+
+      <div>
+        <strong>Country Assigned</strong>
+        <p class="page-subtitle">
+          India assigned to Delegate #142
+        </p>
+      </div>
+
+      <div>
+        <strong>Resource Uploaded</strong>
+        <p class="page-subtitle">
+          Background Guide.pdf
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+<!-- CONFERENCE OVERVIEW -->
+
+<section
+class="management-card"
+style="margin-top:24px;">
+
+  <h3>
+    Conference Overview
+  </h3>
+
+  <p class="page-subtitle mb-4">
+    Current conference status and operational metrics.
+  </p>
+
+  <table class="data-table">
+
+    <thead>
+
+      <tr>
+
+        <th>Conference</th>
+
+        <th>Status</th>
+
+        <th>Delegates</th>
+
+        <th>Committees</th>
+
+        <th>Registration Deadline</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr>
+
+        <td>
+          MUN Buddy International 2026
+        </td>
+
+        <td>
+          Active
+        </td>
+
+        <td>
+          482
+        </td>
+
+        <td>
+          18
+        </td>
+
+        <td>
+          15 Aug 2026
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+          Youth Diplomacy Summit
+        </td>
+
+        <td>
+          Draft
+        </td>
+
+        <td>
+          0
+        </td>
+
+        <td>
+          6
+        </td>
+
+        <td>
+          Not Published
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</section>
+
+<!-- SECOND ROW -->
+
+<div
+class="dashboard-grid"
+style="margin-top:24px;">
+
+  <!-- COMMITTEE SNAPSHOT -->
+
+  <section class="management-card">
+
+    <h3>
+      Committee Snapshot
+    </h3>
+
+    <p class="page-subtitle mb-4">
+      Distribution of committees across active conferences.
+    </p>
+
+    <div style="display:grid;gap:18px;">
+
+      <div>
+
+        <strong>UN Security Council</strong>
+
+        <p class="page-subtitle">
+          15 Delegates Assigned
+        </p>
+
+      </div>
+
+      <div>
+
+        <strong>UNHRC</strong>
+
+        <p class="page-subtitle">
+          28 Delegates Assigned
+        </p>
+
+      </div>
+
+      <div>
+
+        <strong>WHO</strong>
+
+        <p class="page-subtitle">
+          22 Delegates Assigned
+        </p>
+
+      </div>
+
+      <div>
+
+        <strong>UNGA</strong>
+
+        <p class="page-subtitle">
+          193 Country Allocations
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- REGISTRATION PIPELINE -->
+
+  <section class="management-card">
+
+    <h3>
+      Registration Pipeline
+    </h3>
+
+    <p class="page-subtitle mb-4">
+      Delegate application workflow.
+    </p>
+
+    <div style="display:grid;gap:20px;">
+
+      <div>
+
+        <div
+        style="
+        display:flex;
+        justify-content:space-between;
+        margin-bottom:8px;">
+
+          <span>Pending Review</span>
+
+          <strong>54</strong>
+
+        </div>
+
+      </div>
+
+      <div>
+
+        <div
+        style="
+        display:flex;
+        justify-content:space-between;
+        margin-bottom:8px;">
+
+          <span>Approved</span>
+
+          <strong>312</strong>
+
+        </div>
+
+      </div>
+
+      <div>
+
+        <div
+        style="
+        display:flex;
+        justify-content:space-between;
+        margin-bottom:8px;">
+
+          <span>Waitlisted</span>
+
+          <strong>18</strong>
+
+        </div>
+
+      </div>
+
+      <div>
+
+        <div
+        style="
+        display:flex;
+        justify-content:space-between;
+        margin-bottom:8px;">
+
+          <span>Rejected</span>
+
+          <strong>7</strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+<!-- ANNOUNCEMENTS -->
+
+<section
+class="management-card"
+style="margin-top:24px;">
+
+  <div
+  style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;">
+
+    <div>
+
+      <h3>
+        Recent Announcements
+      </h3>
+
+      <p class="page-subtitle">
+        Messages recently published to delegates.
+      </p>
+
+    </div>
+
+    <button class="btn-primary">
+
+      <i class="fas fa-bullhorn"></i>
+
+      New Announcement
+
+    </button>
+
+  </div>
+
+  <table class="data-table">
+
+    <thead>
+
+      <tr>
+
+        <th>Title</th>
+
+        <th>Audience</th>
+
+        <th>Date</th>
+
+        <th>Status</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr>
+
+        <td>
+          Updated Background Guide Released
+        </td>
+
+        <td>
+          All Delegates
+        </td>
+
+        <td>
+          12 Jul 2026
+        </td>
+
+        <td>
+          Published
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+          Committee Briefing Schedule
+        </td>
+
+        <td>
+          UNSC
+        </td>
+
+        <td>
+          10 Jul 2026
+        </td>
+
+        <td>
+          Published
+        </td>
+
+      </tr>
+
+      <tr>
+
+        <td>
+          Registration Extension Notice
+        </td>
+
+        <td>
+          All Schools
+        </td>
+
+        <td>
+          08 Jul 2026
+        </td>
+
+        <td>
+          Scheduled
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</section>
+
+</main>
+
+</div>
+
+<script src="../assets/js/organizer/admin.js"></script>
+<script src="../assets/js/organizer/dashboard.js"></script>
+
 </body>
 </html>

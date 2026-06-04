@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -293,9 +293,20 @@ body{
 
 <div class="container">
 
-<a class="navbar-brand" href="../index.html">
-MUN<span>Buddy</span>
+<div class="d-flex align-items-center">
+
+<a class="navbar-brand me-3" href="../index.html">
+    MUN<span>Buddy</span>
 </a>
+
+<a href="dashboard.html"
+   class="text-decoration-none text-white fw-semibold">
+
+    Delegate Portal
+
+</a>
+
+</div>
 
 <button
 class="navbar-toggler"
@@ -311,8 +322,9 @@ data-bs-target="#navMenu">
 
 <ul class="navbar-nav ms-auto">
 
+
 <li class="nav-item">
-<a class="nav-link" href="dashboard.html">Dashboard</a>
+<a class="nav-link" href="conference-guide.html">Conference</a>
 </li>
 
 <li class="nav-item">
@@ -328,20 +340,12 @@ data-bs-target="#navMenu">
 </li>
 
 <li class="nav-item">
-<a class="nav-link" href="resolutions.html">Resolutions</a>
-</li>
-
-<li class="nav-item">
 <a class="nav-link" href="notes.html">Notes</a>
 </li>
 
 <li class="nav-item">
 <a class="nav-link" href="../login.html">Logout</a>
 </li>
-
-</ul>
-
-</div>
 
 </div>
 
@@ -418,7 +422,6 @@ Addressing the Impact of Emerging Technologies on International Security
 
 </div>
 
-```html
 <!-- ASSIGNMENT OVERVIEW -->
 
 <section class="py-5">
@@ -429,16 +432,45 @@ Addressing the Impact of Emerging Technologies on International Security
 Assignment Overview
 </h2>
 
-<div class="row g-4">
+<!-- ROW 1 -->
 
-<!-- COUNTRY -->
+<div class="row g-4 mb-4">
 
-<div class="col-lg-3 col-md-6">
+<!-- CONFERENCE -->
+
+<div class="col-lg-4 col-md-6">
 
 <div class="card-premium">
 
 <div class="card-icon">
-<i class="fa-solid fa-flag"></i>
+<i class="fa-solid fa-building-columns"></i></div>
+
+<h4>Conference</h4>
+
+<p>
+
+Understand conference rules,
+committee procedures, award criteria,
+chair expectations, and preparation requirements.
+
+</p>
+
+<a href="conference-guide.html" class="action-btn">
+Open Conference Guide
+</a>
+
+</div>
+
+</div>
+
+<!-- COUNTRY -->
+
+<div class="col-lg-4 col-md-6">
+
+<div class="card-premium">
+
+<div class="card-icon">
+<i class="fa-solid fa-earth-asia"></i>
 </div>
 
 <h4>Country</h4>
@@ -461,12 +493,12 @@ View Country Profile
 
 <!-- COMMITTEE -->
 
-<div class="col-lg-3 col-md-6">
+<div class="col-lg-4 col-md-6">
 
 <div class="card-premium">
 
 <div class="card-icon">
-<i class="fa-solid fa-landmark"></i>
+<i class="fa-solid fa-scale-balanced"></i>
 </div>
 
 <h4>Committee</h4>
@@ -487,9 +519,15 @@ Open Committee Guide
 
 </div>
 
+</div>
+
+<!-- ROW 2 -->
+
+<div class="row g-4 justify-content-center">
+
 <!-- PORTFOLIO -->
 
-<div class="col-lg-3 col-md-6">
+<div class="col-lg-4 col-md-6">
 
 <div class="card-premium">
 
@@ -517,13 +555,12 @@ Portfolio Details
 
 <!-- AGENDA -->
 
-<div class="col-lg-3 col-md-6">
+<div class="col-lg-4 col-md-6">
 
 <div class="card-premium">
 
 <div class="card-icon">
-<i class="fa-solid fa-book-open"></i>
-</div>
+<i class="fa-solid fa-book-open"></i></div>
 
 <h4>Agenda</h4>
 
@@ -735,7 +772,7 @@ View Updates
 
 </section>
 
-```html
+
 <!-- PREPARATION CENTER -->
 
 <section class="py-5">
@@ -1125,6 +1162,6 @@ Logout
 
 </body>
 </html>
-```
+
 
 

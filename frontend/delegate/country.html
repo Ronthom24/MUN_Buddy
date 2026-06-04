@@ -1,13 +1,1982 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Delegate Country | MUN Buddy</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MUN Buddy | Country Intelligence</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+    --un-blue:#009EDB;
+    --un-navy:#00528C;
+    --gold:#C9A84C;
+    --dark:#0A0E1A;
+    --light:#F8FAFC;
+    --muted:#64748B;
+}
+
+body{
+    font-family:'DM Sans',sans-serif;
+    background:#f8fafc;
+    color:#1e293b;
+}
+
+h1,h2,h3,h4{
+    font-family:'Playfair Display',serif;
+}
+
+.navbar{
+    background:#0A0E1A!important;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.navbar-brand{
+    font-family:'Playfair Display',serif;
+    font-size:1.8rem;
+    font-weight:900;
+    color:white!important;
+}
+
+.navbar-brand span{
+    color:var(--un-blue);
+}
+
+.nav-link{
+    color:rgba(255,255,255,.8)!important;
+}
+
+.country-hero{
+
+    min-height:70vh;
+
+    background:
+    linear-gradient(
+    rgba(0,0,0,.55),
+    rgba(0,0,0,.75)
+    ),
+
+    url('https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=1800&q=80');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    align-items:center;
+
+    color:white;
+}
+
+.hero-tag{
+    display:inline-block;
+
+    padding:10px 18px;
+
+    background:
+    rgba(255,255,255,.12);
+
+    border-radius:999px;
+
+    margin-bottom:20px;
+}
+
+.hero-title{
+    font-size:4rem;
+    font-weight:900;
+}
+
+.hero-subtitle{
+    max-width:800px;
+    opacity:.92;
+    margin-top:20px;
+}
+
+.portfolio-panel{
+
+    margin-top:-70px;
+
+    position:relative;
+
+    z-index:100;
+}
+
+.portfolio-card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:35px;
+
+    box-shadow:
+    0 20px 50px rgba(0,0,0,.08);
+}
+
+.section-title{
+    font-size:2.4rem;
+    margin-bottom:30px;
+}
+
+.info-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    height:100%;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.05);
+}
+
+.info-label{
+
+    color:var(--muted);
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+    font-size:.75rem;
+}
+
+.info-value{
+
+    margin-top:8px;
+
+    font-size:1.1rem;
+
+    font-weight:700;
+}
+
+@media(max-width:768px){
+
+.hero-title{
+font-size:2.6rem;
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
-  <h1>Delegate Country</h1>
-  <script src="../assets/js/delegate/country.js"></script>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg">
+
+<div class="container">
+
+<a class="navbar-brand" href="../index.html">
+MUN<span>Buddy</span>
+</a>
+
+<button class="navbar-toggler"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navMenu">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse" id="navMenu">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item">
+<a class="nav-link" href="dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="conference-guide.html">Conference</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="committee.html">Committee</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="agenda.html">Agenda</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="notes.html">Notes</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="../login.html">Logout</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="country-hero">
+
+<div class="container">
+
+<div class="hero-tag">
+
+Country Intelligence Briefing
+
+</div>
+
+<h1 class="hero-title">
+
+India 🇮🇳
+
+</h1>
+
+<p class="hero-subtitle">
+
+Comprehensive diplomatic intelligence,
+foreign policy analysis, national interests,
+alliances, voting history and strategic
+positions of the Republic of India.
+
+</p>
+
+</div>
+
+</section>
+
+<!-- PORTFOLIO -->
+
+<div class="container portfolio-panel">
+
+<div class="portfolio-card">
+
+<div class="row">
+
+<div class="col-lg-4">
+
+<h5>Representing</h5>
+
+<h3>
+Permanent Representative of India
+</h3>
+
+</div>
+
+<div class="col-lg-4">
+
+<h5>Committee</h5>
+
+<h3>
+United Nations Security Council
+</h3>
+
+</div>
+
+<div class="col-lg-4">
+
+<h5>Current Agenda</h5>
+
+<h3>
+Emerging Technologies & International Security
+</h3>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- COUNTRY INTELLIGENCE -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Country Intelligence
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Capital</div>
+<div class="info-value">New Delhi</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Population</div>
+<div class="info-value">1.4+ Billion</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Government</div>
+<div class="info-value">Federal Parliamentary Republic</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Region</div>
+<div class="info-value">South Asia</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">President</div>
+<div class="info-value">Droupadi Murmu</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Prime Minister</div>
+<div class="info-value">Narendra Modi</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">External Affairs Minister</div>
+<div class="info-value">S. Jaishankar</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Currency</div>
+<div class="info-value">Indian Rupee (INR)</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">GDP</div>
+<div class="info-value">$3.9+ Trillion</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">HDI</div>
+<div class="info-value">0.644</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Military Rank</div>
+<div class="info-value">Top 5 Globally</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Political Blocs</div>
+<div class="info-value">BRICS • G20 • SCO • QUAD</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ECONOMIC INTELLIGENCE -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Economic Intelligence
+</h2>
+
+<div class="accordion" id="economyAccordion">
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button" type="button"
+data-bs-toggle="collapse"
+data-bs-target="#econ1">
+
+Economic Overview
+
+</button>
+</h2>
+
+<div id="econ1"
+class="accordion-collapse collapse show"
+data-bs-parent="#economyAccordion">
+
+<div class="accordion-body">
+
+<p>
+
+India is one of the world's fastest-growing major economies and is currently among the largest economies globally. Its economic model combines strong domestic consumption, expanding manufacturing capabilities, a rapidly growing digital economy, and an increasingly influential services sector.
+
+</p>
+
+<p>
+
+The government continues to prioritize infrastructure development, industrial expansion, technological innovation, and global investment attraction through initiatives such as Make in India and Digital India.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#econ2">
+
+Major Industries
+
+</button>
+</h2>
+
+<div id="econ2"
+class="accordion-collapse collapse"
+data-bs-parent="#economyAccordion">
+
+<div class="accordion-body">
+
+<ul>
+
+<li>Information Technology & Software Services</li>
+
+<li>Pharmaceuticals & Biotechnology</li>
+
+<li>Manufacturing & Heavy Industry</li>
+
+<li>Telecommunications</li>
+
+<li>Agriculture & Food Processing</li>
+
+<li>Financial Services</li>
+
+<li>Renewable Energy</li>
+
+<li>Automobile Production</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#econ3">
+
+Trade & Strategic Partners
+
+</button>
+</h2>
+
+<div id="econ3"
+class="accordion-collapse collapse"
+data-bs-parent="#economyAccordion">
+
+<div class="accordion-body">
+
+<p>
+
+India maintains extensive trade relationships with the United States, China, UAE, European Union, Saudi Arabia, Japan and Singapore.
+
+</p>
+
+<p>
+
+Trade priorities focus on technological cooperation, energy security, supply-chain resilience and export growth.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#econ4">
+
+Economic Challenges & Opportunities
+
+</button>
+</h2>
+
+<div id="econ4"
+class="accordion-collapse collapse"
+data-bs-parent="#economyAccordion">
+
+<div class="accordion-body">
+
+<p>
+
+Challenges include employment generation, infrastructure gaps, regional inequalities and energy dependence.
+
+</p>
+
+<p>
+
+Opportunities include digital transformation, AI adoption, semiconductor manufacturing, renewable energy leadership and expanding global influence.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- MILITARY INTELLIGENCE -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Military Intelligence
+</h2>
+
+<div class="accordion" id="militaryAccordion">
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#army">
+
+Indian Army
+
+</button>
+</h2>
+
+<div id="army"
+class="accordion-collapse collapse show">
+
+<div class="accordion-body">
+
+<p>
+
+India maintains one of the world's largest standing armies.
+
+</p>
+
+<p>
+
+Primary responsibilities include border security, territorial defence, counter-terrorism operations and rapid-response deployment.
+
+</p>
+
+<p>
+
+Major focus areas include the northern borders, modernization efforts and indigenous defence production.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navy">
+
+Indian Navy
+
+</button>
+</h2>
+
+<div id="navy"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+The Indian Navy safeguards maritime trade routes and projects power throughout the Indian Ocean Region.
+
+</p>
+
+<p>
+
+Strategic objectives include maritime security, anti-piracy operations and maintaining regional stability.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#airforce">
+
+Indian Air Force
+
+</button>
+</h2>
+
+<div id="airforce"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+The Air Force provides air superiority, strategic deterrence, surveillance and rapid deployment capabilities.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#nuclear">
+
+Nuclear Capability
+
+</button>
+</h2>
+
+<div id="nuclear"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+India is a recognized nuclear weapons state with a declared No First Use policy and maintains a credible minimum deterrence doctrine.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOREIGN POLICY -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Foreign Policy Doctrine
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Strategic Autonomy</h4>
+
+<p>
+
+India traditionally pursues strategic autonomy, seeking to maintain independent decision-making rather than formally aligning with major power blocs.
+
+</p>
+
+<p>
+
+This principle explains India's unique voting behaviour, diplomatic flexibility and balancing of relationships with competing global powers.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Regional Priorities</h4>
+
+<p>
+
+India prioritizes stability and cooperation in South Asia while maintaining influence throughout the Indian Ocean Region.
+
+</p>
+
+<p>
+
+Relations with neighbouring countries remain a central pillar of national strategy.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Global Priorities</h4>
+
+<p>
+
+India seeks a greater role in global governance, UN reform, sustainable development, technology cooperation and international security.
+
+</p>
+
+<p>
+
+A permanent seat on the Security Council remains a long-term objective.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Multilateral Engagement</h4>
+
+<p>
+
+India actively participates in BRICS, G20, QUAD, SCO, G77 and numerous UN bodies.
+
+</p>
+
+<p>
+
+Multilateral diplomacy is considered a major instrument of Indian foreign policy.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-12">
+
+<div class="info-card">
+
+<h4>Strategic Partnerships</h4>
+
+<p>
+
+India maintains strategic partnerships with the United States, France, Japan, Australia, Russia, UAE and several European and Asian powers.
+
+</p>
+
+<p>
+
+These relationships focus on defence cooperation, technology transfer, trade, energy security and regional stability.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- NATIONAL INTERESTS -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+National Interests
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>
+<i class="fa-solid fa-shield-halved me-2 text-primary"></i>
+National Security
+</h4>
+
+<p>
+
+India's primary security concerns include border disputes,
+cross-border terrorism, maritime security,
+cybersecurity threats and regional instability.
+
+</p>
+
+<p>
+
+The government prioritizes territorial integrity,
+counter-terrorism operations and strategic deterrence.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>
+<i class="fa-solid fa-chart-line me-2 text-success"></i>
+Economic Growth
+</h4>
+
+<p>
+
+Maintaining high economic growth remains one of India's
+most important national objectives.
+
+</p>
+
+<p>
+
+Infrastructure expansion, manufacturing growth,
+foreign investment and technological development
+are key priorities.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>
+<i class="fa-solid fa-globe me-2 text-info"></i>
+Trade & Connectivity
+</h4>
+
+<p>
+
+India seeks diversified trade partnerships,
+resilient supply chains and greater participation
+in global commerce.
+
+</p>
+
+<p>
+
+Energy imports, export competitiveness
+and economic resilience remain critical concerns.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>
+<i class="fa-solid fa-microchip me-2 text-warning"></i>
+Technology & Innovation
+</h4>
+
+<p>
+
+India views technology as a strategic asset.
+
+</p>
+
+<p>
+
+Artificial Intelligence, semiconductors,
+space technology, cybersecurity and digital governance
+have become major priorities.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-12">
+
+<div class="info-card">
+
+<h4>
+<i class="fa-solid fa-leaf me-2 text-success"></i>
+Climate & Sustainability
+</h4>
+
+<p>
+
+India balances climate commitments
+with developmental requirements.
+
+</p>
+
+<p>
+
+Renewable energy expansion,
+energy security and climate financing
+remain central priorities in international negotiations.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ALLIES & BLOCS -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Allies & Strategic Partnerships
+</h2>
+
+<div class="accordion" id="alliesAccordion">
+
+<!-- USA -->
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#usaRelation">
+
+United States 🇺🇸
+
+</button>
+
+</h2>
+
+<div id="usaRelation"
+class="accordion-collapse collapse show">
+
+<div class="accordion-body">
+
+<p>
+
+<strong>Relationship:</strong>
+Strategic Partnership
+
+</p>
+
+<p>
+
+India and the United States cooperate extensively
+in defence, technology, trade and regional security.
+
+</p>
+
+<p>
+
+Areas of disagreement occasionally emerge on trade,
+human rights discussions and geopolitical approaches.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RUSSIA -->
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#russiaRelation">
+
+Russia 🇷🇺
+
+</button>
+
+</h2>
+
+<div id="russiaRelation"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+Russia remains one of India's oldest strategic partners.
+
+</p>
+
+<p>
+
+Defence cooperation,
+energy security and historical ties
+continue to shape relations.
+
+</p>
+
+<p>
+
+India often balances its relationship with Russia
+while expanding ties with Western nations.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FRANCE -->
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#franceRelation">
+
+France 🇫🇷
+
+</button>
+
+</h2>
+
+<div id="franceRelation"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+France is one of India's most reliable strategic partners.
+
+</p>
+
+<p>
+
+Cooperation includes defence,
+space technology,
+nuclear energy
+and Indo-Pacific security.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- INTERNATIONAL BLOCS -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+International Blocs & Organizations
+</h2>
+
+<div class="accordion" id="blocAccordion">
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#g20">
+
+G20
+
+</button>
+
+</h2>
+
+<div id="g20"
+class="accordion-collapse collapse show">
+
+<div class="accordion-body">
+
+<p>
+
+<strong>What is it?</strong>
+
+The G20 is a forum of the world's largest economies.
+
+</p>
+
+<p>
+
+<strong>India's Role:</strong>
+
+India is a founding member and hosted
+the 2023 G20 Summit.
+
+</p>
+
+<p>
+
+<strong>Why It Matters:</strong>
+
+Provides influence over global economic governance,
+development priorities and climate discussions.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#brics">
+
+BRICS
+
+</button>
+
+</h2>
+
+<div id="brics"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+BRICS brings together major emerging economies.
+
+</p>
+
+<p>
+
+India promotes multipolarity,
+economic cooperation
+and Global South representation through BRICS.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#quad">
+
+QUAD
+
+</button>
+
+</h2>
+
+<div id="quad"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+Members:
+
+India,
+USA,
+Japan,
+Australia.
+
+</p>
+
+<p>
+
+Focus:
+
+Indo-Pacific security,
+technology cooperation,
+maritime stability
+and disaster response.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ISSUE-BASED VOTING HISTORY -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Issue-Based Voting History
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Russia–Ukraine Conflict</h4>
+
+<p>
+
+India has generally adopted a position of
+strategic neutrality and frequently abstained
+on resolutions directly condemning Russia.
+
+</p>
+
+<p>
+
+Reasoning includes historical ties,
+defence cooperation and strategic autonomy.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Israel–Palestine</h4>
+
+<p>
+
+India traditionally supports a two-state solution
+while maintaining strong bilateral relations with Israel.
+
+</p>
+
+<p>
+
+Voting behaviour often reflects this balancing approach.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Climate Change</h4>
+
+<p>
+
+India advocates climate justice
+and differentiated responsibilities.
+
+</p>
+
+<p>
+
+Developed nations are expected
+to take greater responsibility
+for historical emissions.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Counter-Terrorism</h4>
+
+<p>
+
+India consistently supports strong international action
+against terrorism and cross-border extremism.
+
+</p>
+
+<p>
+
+This remains one of India's most consistent
+foreign policy positions.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CURRENT AFFAIRS -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Current Affairs Briefing
+</h2>
+
+<p class="text-muted mb-4">
+
+Stay aware of developments that may arise during debates,
+press conferences, points of information and informal negotiations.
+
+</p>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>India–China Border Developments</h4>
+
+<p>
+
+Border management and military deployments along the Line of Actual Control continue to remain an important strategic concern for India.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>India–US Strategic Cooperation</h4>
+
+<p>
+
+Technology transfer, defence partnerships and Indo-Pacific cooperation continue to deepen.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Semiconductor & Technology Initiatives</h4>
+
+<p>
+
+India is actively investing in semiconductor manufacturing and emerging technologies to reduce strategic dependence.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Renewable Energy Expansion</h4>
+
+<p>
+
+India continues to pursue ambitious renewable energy goals while balancing developmental requirements.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Defence Modernization</h4>
+
+<p>
+
+Significant investment continues in indigenous defence production and modernization of military capabilities.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>Global South Leadership</h4>
+
+<p>
+
+India increasingly positions itself as a leading voice for developing nations in international forums.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- COUNTRY POSITION ON CURRENT AGENDA -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Country Position on Current Agenda
+</h2>
+
+<div class="info-card">
+
+<h3 class="mb-4">
+Agenda:
+Emerging Technologies & International Security
+</h3>
+
+<p>
+
+India supports the responsible development and deployment of emerging technologies while ensuring national sovereignty, security and equitable access.
+
+</p>
+
+<hr>
+
+<h5>Key Concerns</h5>
+
+<ul>
+
+<li>Cybersecurity threats</li>
+
+<li>AI-enabled warfare</li>
+
+<li>Autonomous weapon systems</li>
+
+<li>Technology monopolization</li>
+
+<li>Digital sovereignty</li>
+
+</ul>
+
+<hr>
+
+<h5>Likely Priorities</h5>
+
+<ul>
+
+<li>International cooperation</li>
+
+<li>Technology sharing</li>
+
+<li>Capacity building</li>
+
+<li>Cyber resilience</li>
+
+<li>Responsible AI governance</li>
+
+</ul>
+
+<hr>
+
+<h5>Potential Allies</h5>
+
+<p>
+
+Many developing countries, BRICS members, G77 members and nations advocating balanced technology governance.
+
+</p>
+
+<hr>
+
+<h5>Potential Areas of Disagreement</h5>
+
+<p>
+
+India may oppose frameworks perceived as limiting sovereign decision-making or creating unequal access to advanced technologies.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- DELEGATE BRIEFING -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Delegate Briefing
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>
+Questions You May Be Asked
+</h4>
+
+<ul>
+
+<li>Why does India maintain strategic autonomy?</li>
+
+<li>Why did India abstain on certain Russia-related votes?</li>
+
+<li>What is India's position on China?</li>
+
+<li>How does India balance relations with major powers?</li>
+
+<li>What are India's biggest security concerns?</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="info-card">
+
+<h4>
+How To Defend India's Position
+</h4>
+
+<ul>
+
+<li>Emphasize strategic autonomy</li>
+
+<li>Highlight democratic institutions</li>
+
+<li>Reference Global South leadership</li>
+
+<li>Stress peaceful cooperation</li>
+
+<li>Promote multilateral solutions</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-lg-12">
+
+<div class="info-card">
+
+<h4>
+Common Misconceptions
+</h4>
+
+<ul>
+
+<li>India is not formally aligned with any major military bloc.</li>
+
+<li>India's abstentions do not necessarily indicate support for a specific side.</li>
+
+<li>India often balances competing interests through strategic autonomy.</li>
+
+<li>Economic development remains a major priority alongside international leadership.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RESEARCH CHECKLIST -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Research Checklist
+</h2>
+
+<div class="info-card">
+
+<div class="row">
+
+<div class="col-lg-6">
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Country Intelligence Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Economy Researched
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Military Capabilities Understood
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Foreign Policy Studied
+</label>
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Allies & Blocs Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Voting History Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Current Affairs Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Agenda Position Understood
+</label>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RESOURCES -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Research Resources
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>UN Member Profile</h4>
+
+<p>
+
+Official information regarding India's participation in the United Nations.
+
+</p>
+
+<a href="https://www.un.org"
+target="_blank"
+class="action-btn">
+
+Visit Resource
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>Ministry of External Affairs</h4>
+
+<p>
+
+Official foreign policy statements and diplomatic positions.
+
+</p>
+
+<a href="https://www.mea.gov.in"
+target="_blank"
+class="action-btn">
+
+Visit Resource
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>CIA World Factbook</h4>
+
+<p>
+
+Country statistics, demographics and geopolitical information.
+
+</p>
+
+<a href="https://www.cia.gov/the-world-factbook/"
+target="_blank"
+class="action-btn">
+
+Visit Resource
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer
+style="
+background:#0A0E1A;
+color:white;
+padding:60px 0;
+margin-top:40px;
+">
+
+<div class="container text-center">
+
+<h3 style="font-family:'Playfair Display',serif;">
+MUN Buddy
+</h3>
+
+<p class="mt-3">
+
+Research Smarter.
+Debate Better.
+Represent Stronger.
+
+</p>
+
+<div class="mt-4">
+
+<a href="dashboard.html"
+class="text-white text-decoration-none me-4">
+
+Dashboard
+
+</a>
+
+<a href="../login.html"
+class="text-white text-decoration-none">
+
+Logout
+
+</a>
+
+</div>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

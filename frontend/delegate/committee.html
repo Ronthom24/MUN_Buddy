@@ -1,13 +1,1343 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Delegate Committee | MUN Buddy</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MUN Buddy | Committee Intelligence</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+--un-blue:#009EDB;
+--un-navy:#00528C;
+--gold:#C9A84C;
+--dark:#0A0E1A;
+--light:#F8FAFC;
+--muted:#64748B;
+}
+
+body{
+font-family:'DM Sans',sans-serif;
+background:#f8fafc;
+color:#1e293b;
+}
+
+h1,h2,h3,h4,h5{
+font-family:'Playfair Display',serif;
+}
+
+.navbar{
+background:#0A0E1A!important;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.navbar-brand{
+font-family:'Playfair Display',serif;
+font-size:1.8rem;
+font-weight:900;
+color:white!important;
+}
+
+.navbar-brand span{
+color:var(--un-blue);
+}
+
+.nav-link{
+color:rgba(255,255,255,.8)!important;
+}
+
+.committee-hero{
+
+min-height:70vh;
+
+background:
+linear-gradient(
+rgba(0,0,0,.60),
+rgba(0,0,0,.78)
+),
+
+url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1800&q=80');
+
+background-size:cover;
+background-position:center;
+
+display:flex;
+align-items:center;
+
+color:white;
+}
+
+.hero-tag{
+
+display:inline-block;
+
+padding:10px 18px;
+
+background:rgba(255,255,255,.12);
+
+border-radius:999px;
+
+margin-bottom:20px;
+
+}
+
+.hero-title{
+
+font-size:4rem;
+font-weight:900;
+
+}
+
+.hero-subtitle{
+
+max-width:850px;
+opacity:.92;
+
+}
+
+.committee-panel{
+
+margin-top:-70px;
+
+position:relative;
+z-index:100;
+
+}
+
+.committee-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:24px;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.08);
+
+}
+
+.section-title{
+
+font-size:2.5rem;
+
+margin-bottom:30px;
+
+}
+
+.info-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+height:100%;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.info-label{
+
+font-size:.75rem;
+
+text-transform:uppercase;
+
+letter-spacing:1px;
+
+color:var(--muted);
+
+}
+
+.info-value{
+
+margin-top:10px;
+
+font-weight:700;
+
+font-size:1.05rem;
+
+}
+
+.feature-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:24px;
+
+height:100%;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+@media(max-width:768px){
+
+.hero-title{
+font-size:2.6rem;
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
-  <h1>Delegate Committee</h1>
-  <script src="../assets/js/delegate/committee.js"></script>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg">
+
+<div class="container">
+
+<a class="navbar-brand" href="../index.html">
+
+MUN<span>Buddy</span>
+
+</a>
+
+<button class="navbar-toggler"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navMenu">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse"
+id="navMenu">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item">
+<a class="nav-link"
+href="dashboard.html">
+Dashboard
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" 
+href="conference-guide.html">Conference</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link"
+href="country.html">
+Country
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link"
+href="agenda.html">
+Agenda
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link"
+href="notes.html">
+Notes
+</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link"
+href="../login.html">
+Logout
+</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="committee-hero">
+
+<div class="container">
+
+<div class="hero-tag">
+
+Committee Intelligence Briefing
+
+</div>
+
+<h1 class="hero-title">
+
+United Nations Security Council
+
+</h1>
+
+<p class="hero-subtitle">
+
+The Security Council bears primary responsibility
+for maintaining international peace and security.
+Understanding its powers, limitations,
+voting procedures and diplomatic dynamics
+is essential for successful participation.
+
+</p>
+
+</div>
+
+</section>
+
+
+
+<!-- COMMITTEE BANNER -->
+
+<div class="container committee-panel">
+
+<div class="committee-card">
+
+<div class="row">
+
+<div class="col-lg-4">
+
+<h5>Committee</h5>
+
+<h3>UN Security Council</h3>
+
+</div>
+
+<div class="col-lg-4">
+
+<h5>Your Country</h5>
+
+<h3>India</h3>
+
+</div>
+
+<div class="col-lg-4">
+
+<h5>Current Agenda</h5>
+
+<h3>Emerging Technologies & International Security</h3>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- COMMITTEE INTELLIGENCE -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Committee Intelligence
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+Established
+</div>
+
+<div class="info-value">
+1945
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+Membership
+</div>
+
+<div class="info-value">
+15 Members
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+Permanent Members
+</div>
+
+<div class="info-value">
+5 Members
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+Headquarters
+</div>
+
+<div class="info-value">
+New York
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+Primary Mandate
+</div>
+
+<div class="info-value">
+Peace & Security
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+Authority
+</div>
+
+<div class="info-value">
+Binding Decisions
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+Veto Holders
+</div>
+
+<div class="info-value">
+P5 Nations
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<div class="info-label">
+UN Organ Status
+</div>
+
+<div class="info-value">
+Principal Organ
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- WHY THIS COMMITTEE MATTERS -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Why This Committee Matters
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="feature-card">
+
+<h4>
+Global Influence
+</h4>
+
+<p>
+
+The Security Council is the most influential
+body within the United Nations regarding
+international peace and security.
+
+</p>
+
+<p>
+
+Its decisions can directly affect
+governments, conflicts and international relations.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="feature-card">
+
+<h4>
+Binding Authority
+</h4>
+
+<p>
+
+Unlike most UN bodies,
+many Security Council resolutions
+are legally binding.
+
+</p>
+
+<p>
+
+This makes UNSC debates significantly
+more impactful than discussions
+in most other committees.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="feature-card">
+
+<h4>
+Diplomatic Significance
+</h4>
+
+<p>
+
+The UNSC serves as a platform where
+major powers negotiate,
+compete and cooperate
+on international crises.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- POWERS & LIMITATIONS -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Powers & Limitations
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h3 class="mb-4">
+
+What UNSC Can Do
+
+</h3>
+
+<ul>
+
+<li>Pass binding resolutions</li>
+
+<li>Impose sanctions</li>
+
+<li>Authorize peacekeeping missions</li>
+
+<li>Authorize military intervention</li>
+
+<li>Establish investigative bodies</li>
+
+<li>Respond to international crises</li>
+
+<li>Recommend admission of new UN members</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h3 class="mb-4">
+
+What UNSC Cannot Do
+
+</h3>
+
+<ul>
+
+<li>Ignore the UN Charter</li>
+
+<li>Act without required voting procedures</li>
+
+<li>Solve purely domestic issues without international implications</li>
+
+<li>Bypass veto realities</li>
+
+<li>Enforce unrealistic resolutions lacking implementation mechanisms</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- MEMBERSHIP STRUCTURE -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Membership Structure
+</h2>
+
+<div class="accordion" id="membershipAccordion">
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#p5Members">
+
+Permanent Members (P5)
+
+</button>
+
+</h2>
+
+<div id="p5Members"
+class="accordion-collapse collapse show">
+
+<div class="accordion-body">
+
+<p>
+
+The Permanent Five hold unique influence within the Security Council through their veto power.
+
+</p>
+
+<ul>
+
+<li>United States 🇺🇸</li>
+<li>United Kingdom 🇬🇧</li>
+<li>France 🇫🇷</li>
+<li>Russia 🇷🇺</li>
+<li>China 🇨🇳</li>
+
+</ul>
+
+<p>
+
+Any substantive resolution can be blocked by a veto from a permanent member.
+
+Understanding the priorities and red lines of P5 nations is critical for successful diplomacy.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#nonPermanent">
+
+Non-Permanent Members
+
+</button>
+
+</h2>
+
+<div id="nonPermanent"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+Non-permanent members serve two-year terms and possess full voting rights but do not have veto power.
+
+</p>
+
+<p>
+
+These states often play a decisive role in coalition-building and can significantly influence negotiations.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- VOTING SYSTEM -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Voting & Decision Making
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h3>
+Procedural Votes
+</h3>
+
+<p>
+
+Procedural matters concern how the committee conducts its work.
+
+</p>
+
+<ul>
+
+<li>Require 9 affirmative votes</li>
+
+<li>No veto applies</li>
+
+<li>Used for agenda setting and procedural motions</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h3>
+Substantive Votes
+</h3>
+
+<p>
+
+Substantive matters involve resolutions and decisions affecting international peace and security.
+
+</p>
+
+<ul>
+
+<li>Require 9 affirmative votes</li>
+
+<li>Cannot pass if vetoed by a P5 member</li>
+
+<li>Most important votes in committee</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RULES OF PROCEDURE -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Rules of Procedure
+</h2>
+
+<div class="accordion" id="ropAccordion">
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#motion">
+
+Motion
+
+</button>
+
+</h2>
+
+<div id="motion"
+class="accordion-collapse collapse show">
+
+<div class="accordion-body">
+
+<p>
+
+A motion proposes an action for the committee.
+
+Examples include opening speakers lists, entering caucuses and moving into voting procedures.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#point">
+
+Point
+
+</button>
+
+</h2>
+
+<div id="point"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+Points are used to address procedural concerns, seek clarification or raise issues affecting committee operations.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#resolution">
+
+Resolution
+
+</button>
+
+</h2>
+
+<div id="resolution"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+A resolution is the committee's proposed solution to an agenda item.
+
+It outlines actions, recommendations and implementation mechanisms.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RESOLUTION LIFECYCLE -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Resolution Lifecycle
+</h2>
+
+<div class="feature-card">
+
+<h4>1. Research & Negotiation</h4>
+
+<p>
+Delegates identify issues and build alliances.
+</p>
+
+<hr>
+
+<h4>2. Working Paper</h4>
+
+<p>
+Initial ideas are discussed and refined.
+</p>
+
+<hr>
+
+<h4>3. Draft Resolution</h4>
+
+<p>
+Ideas are formalized into official clauses.
+</p>
+
+<hr>
+
+<h4>4. Sponsors & Signatories</h4>
+
+<p>
+Support is gathered from delegates.
+</p>
+
+<hr>
+
+<h4>5. Debate & Amendments</h4>
+
+<p>
+Clauses are debated and revised.
+</p>
+
+<hr>
+
+<h4>6. Voting</h4>
+
+<p>
+Committee adopts or rejects the resolution.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- COMMITTEE STRATEGY GUIDE -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Committee Strategy Guide
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+How To Succeed In UNSC
+</h4>
+
+<ul>
+
+<li>Understand P5 dynamics</li>
+
+<li>Build alliances early</li>
+
+<li>Negotiate before formal debate</li>
+
+<li>Know your country's red lines</li>
+
+<li>Focus on realistic solutions</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+Common Delegate Mistakes
+</h4>
+
+<ul>
+
+<li>Ignoring veto considerations</li>
+
+<li>Speaking without policy knowledge</li>
+
+<li>Overusing procedural motions</li>
+
+<li>Drafting unrealistic clauses</li>
+
+<li>Failing to negotiate</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- REALITY CHECK -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Reality Check
+</h2>
+
+<div class="feature-card">
+
+<ul>
+
+<li>UNSC can impose sanctions.</li>
+
+<li>UNSC can authorize peacekeeping operations.</li>
+
+<li>UNSC can respond to armed conflicts.</li>
+
+<li>UNSC cannot magically solve every international issue.</li>
+
+<li>UNSC resolutions must remain realistic and implementable.</li>
+
+<li>Political realities often shape outcomes as much as legal authority.</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- AGENDA INTEGRATION -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Committee Approach To Current Agenda
+</h2>
+
+<div class="feature-card">
+
+<h3>
+Emerging Technologies & International Security
+</h3>
+
+<p>
+
+The Security Council approaches emerging technologies through the lens of international peace and security.
+
+</p>
+
+<p>
+
+Key concerns include:
+
+</p>
+
+<ul>
+
+<li>Cyber warfare</li>
+
+<li>Artificial intelligence in military systems</li>
+
+<li>Autonomous weapons</li>
+
+<li>Critical infrastructure protection</li>
+
+<li>International technology governance</li>
+
+</ul>
+
+<p>
+
+Delegates should focus on actionable and enforceable solutions that fall within the UNSC's mandate.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PREPARATION CHECKLIST -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+Committee Preparation Checklist
+</h2>
+
+<div class="feature-card">
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Committee Mandate Understood
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Voting Procedures Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Rules of Procedure Studied
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+P5 Dynamics Understood
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Resolution Process Understood
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Agenda Prepared
+</label>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RESOURCES -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+Resources
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="feature-card">
+
+<h4>UN Charter</h4>
+
+<p>
+Foundational document governing UN operations.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="feature-card">
+
+<h4>Rules of Procedure</h4>
+
+<p>
+Understand motions, points and voting.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="feature-card">
+
+<h4>Past UNSC Resolutions</h4>
+
+<p>
+Study previous responses to international crises.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer
+style="
+background:#0A0E1A;
+color:white;
+padding:60px 0;
+">
+
+<div class="container text-center">
+
+<h3 style="font-family:'Playfair Display',serif;">
+MUN Buddy
+</h3>
+
+<p class="mt-3">
+
+Understand the Committee.
+Master the Rules.
+Lead the Debate.
+
+</p>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

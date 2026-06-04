@@ -1,12 +1,1620 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Delegate Portfolio | MUN Buddy</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MUN Buddy | Portfolio Intelligence</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+--un-blue:#009EDB;
+--un-navy:#00528C;
+--gold:#C9A84C;
+--dark:#0A0E1A;
+--light:#F8FAFC;
+--muted:#64748B;
+}
+
+body{
+font-family:'DM Sans',sans-serif;
+background:#f8fafc;
+color:#1e293b;
+scroll-behavior:smooth;
+}
+
+h1,h2,h3,h4,h5{
+font-family:'Playfair Display',serif;
+}
+
+.navbar{
+background:#0A0E1A!important;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.navbar-brand{
+font-family:'Playfair Display',serif;
+font-size:1.8rem;
+font-weight:900;
+color:white!important;
+}
+
+.navbar-brand span{
+color:var(--un-blue);
+}
+
+.nav-link{
+color:rgba(255,255,255,.85)!important;
+}
+
+.portfolio-hero{
+
+min-height:75vh;
+
+background:
+linear-gradient(
+rgba(0,0,0,.65),
+rgba(0,0,0,.85)
+),
+
+url('https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1800&q=80');
+
+background-size:cover;
+background-position:center;
+
+display:flex;
+align-items:center;
+
+color:white;
+}
+
+.hero-tag{
+
+display:inline-block;
+
+padding:10px 18px;
+
+background:rgba(255,255,255,.12);
+
+border-radius:999px;
+
+margin-bottom:20px;
+
+}
+
+.hero-title{
+font-size:4rem;
+font-weight:900;
+}
+
+.hero-subtitle{
+max-width:850px;
+opacity:.92;
+}
+
+.profile-panel{
+
+margin-top:-70px;
+
+position:relative;
+z-index:100;
+
+}
+
+.profile-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:24px;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.08);
+
+}
+
+.section-title{
+font-size:2.5rem;
+margin-bottom:30px;
+}
+
+.info-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+height:100%;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.info-label{
+
+font-size:.75rem;
+text-transform:uppercase;
+letter-spacing:1px;
+color:var(--muted);
+
+}
+
+.info-value{
+
+margin-top:10px;
+font-size:1.05rem;
+font-weight:700;
+
+}
+
+.feature-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:24px;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.power-card{
+
+background:white;
+
+padding:30px;
+
+border-radius:24px;
+
+height:100%;
+
+text-align:center;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.power-icon{
+
+font-size:2rem;
+
+color:var(--un-blue);
+
+margin-bottom:15px;
+
+}
+
+.sidebar-nav{
+
+position:sticky;
+
+top:100px;
+
+background:white;
+
+padding:25px;
+
+border-radius:24px;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.sidebar-nav a{
+
+display:block;
+
+padding:10px 0;
+
+text-decoration:none;
+
+font-weight:600;
+
+color:#334155;
+
+}
+
+.sidebar-nav a:hover{
+
+color:var(--un-blue);
+
+}
+
+.content-section{
+margin-bottom:70px;
+}
+
+@media(max-width:991px){
+
+.sidebar-nav{
+position:relative;
+top:0;
+margin-bottom:30px;
+}
+
+}
+
+@media(max-width:768px){
+
+.hero-title{
+font-size:2.7rem;
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
-  <h1>Delegate Portfolio</h1>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg">
+
+<div class="container">
+
+<a class="navbar-brand" href="../index.html">
+MUN<span>Buddy</span>
+</a>
+
+<button class="navbar-toggler"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navMenu">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse"
+id="navMenu">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item">
+<a class="nav-link" href="dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="conference-guide.html">Conference</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="country.html">Country</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="committee.html">Committee</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="agenda.html">Agenda</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="notes.html">Notes</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="../login.html">Logout</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="portfolio-hero">
+
+<div class="container">
+
+<div class="hero-tag">
+
+Portfolio Intelligence Briefing
+
+</div>
+
+<h1 class="hero-title">
+
+Permanent Representative
+of India
+
+</h1>
+
+<p class="hero-subtitle">
+
+Understand your role, authority,
+responsibilities, communication style,
+strategic priorities and diplomatic objectives
+within committee.
+
+</p>
+
+</div>
+
+</section>
+
+<!-- PROFILE PANEL -->
+
+<div class="container profile-panel">
+
+<div class="profile-card">
+
+<div class="row">
+
+<div class="col-lg-3">
+
+<h5>Country</h5>
+<h3>India</h3>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>Committee</h5>
+<h3>UNSC</h3>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>Portfolio</h5>
+<h3>Representative</h3>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>Authority Level</h5>
+<h3>High</h3>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- MAIN CONTENT -->
+
+<section class="py-5">
+
+<div class="container">
+
+<div class="row">
+
+<!-- SIDEBAR -->
+
+<div class="col-lg-3">
+
+<div class="sidebar-nav">
+
+<h5>
+
+Quick Navigation
+
+</h5>
+
+<a href="#overview">Portfolio Overview</a>
+
+<a href="#powers">Powers & Responsibilities</a>
+
+<a href="#government">Government Structure</a>
+
+<a href="#objectives">Core Objectives</a>
+
+<a href="#style">Communication Style</a>
+
+<a href="#redlines">Red Lines</a>
+
+<a href="#questions">Likely Questions</a>
+
+<a href="#checklist">Readiness Checklist</a>
+
+</div>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="col-lg-9">
+
+<!-- OVERVIEW -->
+
+<div id="overview"
+class="content-section">
+
+<h2 class="section-title">
+
+Portfolio Overview
+
+</h2>
+
+<div class="feature-card">
+
+<p>
+
+The Permanent Representative serves as the official voice of the nation within the United Nations system. The role involves representing government policy, negotiating with other member states and advancing national interests within international forums.
+
+</p>
+
+<p>
+
+Delegates assigned this portfolio must think strategically, communicate diplomatically and maintain consistency with national objectives while engaging constructively with the international community.
+
+</p>
+
+<p>
+
+Unlike domestic political leaders, Permanent Representatives operate primarily through diplomacy, negotiation and coalition-building rather than direct executive authority.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- POWERS -->
+
+<div id="powers"
+class="content-section">
+
+<h2 class="section-title">
+
+Powers & Responsibilities
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="power-card">
+
+<div class="power-icon">
+<i class="fa-solid fa-handshake"></i>
+</div>
+
+<h4>
+
+Diplomatic Negotiation
+
+</h4>
+
+<p>
+
+Represent national interests and negotiate with other delegations.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="power-card">
+
+<div class="power-icon">
+<i class="fa-solid fa-scale-balanced"></i>
+</div>
+
+<h4>
+
+Policy Advocacy
+
+</h4>
+
+<p>
+
+Defend and promote official government positions.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="power-card">
+
+<div class="power-icon">
+<i class="fa-solid fa-globe"></i>
+</div>
+
+<h4>
+
+International Representation
+
+</h4>
+
+<p>
+
+Serve as the public face of the country within committee.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="power-card">
+
+<div class="power-icon">
+<i class="fa-solid fa-vote-yea"></i>
+</div>
+
+<h4>
+
+Voting Authority
+
+</h4>
+
+<p>
+
+Cast votes and support resolutions consistent with national interests.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- GOVERNMENT STRUCTURE -->
+
+<div id="government"
+class="content-section">
+
+<h2 class="section-title">
+
+Role Within Government
+
+</h2>
+
+<div class="feature-card">
+
+<div class="row text-center">
+
+<div class="col-lg-3">
+
+<h4>
+
+Prime Minister
+
+</h4>
+
+<p>
+
+Head of Government
+
+</p>
+
+</div>
+
+<div class="col-lg-3">
+
+<h4>
+
+External Affairs Minister
+
+</h4>
+
+<p>
+
+Foreign Policy Leadership
+
+</p>
+
+</div>
+
+<div class="col-lg-3">
+
+<h4>
+
+Permanent Representative
+
+</h4>
+
+<p>
+
+UN Representation
+
+</p>
+
+</div>
+
+<div class="col-lg-3">
+
+<h4>
+
+Diplomatic Mission
+
+</h4>
+
+<p>
+
+Policy Execution
+
+</p>
+
+</div>
+
+</div>
+
+<hr class="my-4">
+
+<p>
+
+The Permanent Representative operates as the direct diplomatic link between the Government of India and the United Nations. While strategic direction originates from national leadership, the Representative is responsible for translating policy into diplomatic action.
+
+</p>
+
+<p>
+
+Within committee, delegates should think of themselves as senior diplomats entrusted with protecting national interests, building international partnerships and communicating government priorities.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- HOW THIS PORTFOLIO THINKS -->
+
+<div class="content-section">
+
+<h2 class="section-title">
+
+How This Portfolio Thinks
+
+</h2>
+
+<div class="feature-card">
+
+<p>
+
+Every portfolio approaches problems differently. A Permanent Representative evaluates developments through a diplomatic and strategic lens rather than a purely domestic one.
+
+</p>
+
+<div class="row mt-4">
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>1</h5>
+
+<p>
+
+Protect National Interests
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>2</h5>
+
+<p>
+
+Maintain Stability
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>3</h5>
+
+<p>
+
+Strengthen Partnerships
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>4</h5>
+
+<p>
+
+Promote Diplomacy
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<p class="mt-4">
+
+When faced with difficult decisions, delegates should prioritize national objectives while balancing international responsibilities and long-term strategic interests.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- CORE OBJECTIVES -->
+
+<div id="objectives"
+class="content-section">
+
+<h2 class="section-title">
+
+Core Objectives
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+Protect National Interests
+
+</h4>
+
+<p>
+
+Ensure all negotiations and policy proposals align with India's strategic, economic and security priorities.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+Promote International Cooperation
+
+</h4>
+
+<p>
+
+Work constructively with other states to develop practical and consensus-based solutions.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+Strengthen Global Standing
+
+</h4>
+
+<p>
+
+Advance India's position as a responsible and influential international actor.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+Maintain Policy Consistency
+
+</h4>
+
+<p>
+
+Ensure statements, negotiations and votes remain consistent with official government positions.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- COMMUNICATION STYLE -->
+
+<div id="style"
+class="content-section">
+
+<h2 class="section-title">
+
+Communication Style
+
+</h2>
+
+<div class="feature-card">
+
+<p>
+
+The Permanent Representative communicates with professionalism, confidence and diplomatic precision.
+
+</p>
+
+<div class="row g-4 mt-3">
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>
+
+Formal
+
+</h5>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>
+
+Strategic
+
+</h5>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>
+
+Solution-Oriented
+
+</h5>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card text-center">
+
+<h5>
+
+Diplomatic
+
+</h5>
+
+</div>
+
+</div>
+
+</div>
+
+<p class="mt-4">
+
+Delegates should avoid emotional arguments, personal attacks or unnecessary confrontation. Effective representatives persuade through evidence, logic and constructive engagement.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- STRATEGIC PRIORITIES -->
+
+<div class="content-section">
+
+<h2 class="section-title">
+
+Strategic Priorities
+
+</h2>
+
+<div class="feature-card">
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>
+
+Security
+
+</h4>
+
+<p>
+
+Protect national sovereignty and support international stability.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>
+
+Economic Growth
+
+</h4>
+
+<p>
+
+Support policies that encourage development and international cooperation.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>
+
+Global Influence
+
+</h4>
+
+<p>
+
+Expand diplomatic partnerships and strengthen India's role in global governance.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RED LINES -->
+
+<div id="redlines"
+class="content-section">
+
+<h2 class="section-title">
+
+Policy Red Lines
+
+</h2>
+
+<div class="feature-card">
+
+<p>
+
+Every portfolio has positions it cannot realistically compromise on. Understanding these boundaries is critical to maintaining credibility and policy consistency throughout committee.
+
+</p>
+
+<div class="row g-4 mt-3">
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>
+
+National Sovereignty
+
+</h4>
+
+<p>
+
+Oppose measures that unnecessarily undermine sovereign decision-making or territorial integrity.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>
+
+National Security
+
+</h4>
+
+<p>
+
+Protect strategic interests and oppose initiatives that create disproportionate security risks.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="info-card">
+
+<h4>
+
+Policy Consistency
+
+</h4>
+
+<p>
+
+Avoid supporting proposals that directly contradict established national policy positions.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- LIKELY QUESTIONS -->
+
+<div id="questions"
+class="content-section">
+
+<h2 class="section-title">
+
+Likely Questions You'll Face
+
+</h2>
+
+<div class="accordion" id="questionAccordion">
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#q1">
+
+Questions From Other Delegates
+
+</button>
+
+</h2>
+
+<div id="q1"
+class="accordion-collapse collapse show">
+
+<div class="accordion-body">
+
+<ul>
+
+<li>Why does your country support this position?</li>
+
+<li>How will your proposal be implemented?</li>
+
+<li>What evidence supports your solution?</li>
+
+<li>How does your proposal affect developing nations?</li>
+
+<li>Would your country support amendments?</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#q2">
+
+Questions From Chairs
+
+</button>
+
+</h2>
+
+<div id="q2"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<ul>
+
+<li>How does this align with your foreign policy?</li>
+
+<li>What previous international efforts exist?</li>
+
+<li>Why is your solution realistic?</li>
+
+<li>How does your proposal address root causes?</li>
+
+<li>What compromises are you willing to make?</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#q3">
+
+Press Conference Questions
+
+</button>
+
+</h2>
+
+<div id="q3"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<ul>
+
+<li>How would you justify your government's actions?</li>
+
+<li>What criticism does your country face?</li>
+
+<li>How does your country respond to allegations?</li>
+
+<li>What is your government's long-term vision?</li>
+
+<li>How does this agenda affect your nation domestically?</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- TALKING POINTS -->
+
+<div class="content-section">
+
+<h2 class="section-title">
+
+Sample Talking Points
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+Opening Statement
+
+</h4>
+
+<p>
+
+Acknowledge the importance of the issue, reaffirm commitment to international cooperation and outline national priorities.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+During Debate
+
+</h4>
+
+<p>
+
+Focus on practical solutions, coalition-building and evidence-based policy arguments.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+During Negotiations
+
+</h4>
+
+<p>
+
+Identify shared interests, remain flexible where possible and maintain consistency on core priorities.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>
+
+Closing Remarks
+
+</h4>
+
+<p>
+
+Summarize achievements, highlight consensus reached and reinforce commitment to implementation.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- PORTFOLIO SUCCESS FRAMEWORK -->
+
+<div class="content-section">
+
+<h2 class="section-title">
+
+Portfolio Success Framework
+
+</h2>
+
+<div class="feature-card">
+
+<div class="row text-center">
+
+<div class="col-lg-2">
+
+<h5>
+
+Research
+
+</h5>
+
+<p>
+
+Know the facts
+
+</p>
+
+</div>
+
+<div class="col-lg-2">
+
+<h5>
+
+Policy
+
+</h5>
+
+<p>
+
+Know your position
+
+</p>
+
+</div>
+
+<div class="col-lg-2">
+
+<h5>
+
+Diplomacy
+
+</h5>
+
+<p>
+
+Build relationships
+
+</p>
+
+</div>
+
+<div class="col-lg-2">
+
+<h5>
+
+Negotiation
+
+</h5>
+
+<p>
+
+Find consensus
+
+</p>
+
+</div>
+
+<div class="col-lg-2">
+
+<h5>
+
+Leadership
+
+</h5>
+
+<p>
+
+Drive solutions
+
+</p>
+
+</div>
+
+<div class="col-lg-2">
+
+<h5>
+
+Impact
+
+</h5>
+
+<p>
+
+Influence outcomes
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- READINESS CHECKLIST -->
+
+<div id="checklist"
+class="content-section">
+
+<h2 class="section-title">
+
+Portfolio Readiness Checklist
+
+</h2>
+
+<div class="feature-card">
+
+<div class="form-check mb-3">
+
+<input class="form-check-input" type="checkbox">
+
+<label class="form-check-label">
+
+I understand my portfolio's responsibilities.
+
+</label>
+
+</div>
+
+<div class="form-check mb-3">
+
+<input class="form-check-input" type="checkbox">
+
+<label class="form-check-label">
+
+I can explain my country's position clearly.
+
+</label>
+
+</div>
+
+<div class="form-check mb-3">
+
+<input class="form-check-input" type="checkbox">
+
+<label class="form-check-label">
+
+I understand my authority and limitations.
+
+</label>
+
+</div>
+
+<div class="form-check mb-3">
+
+<input class="form-check-input" type="checkbox">
+
+<label class="form-check-label">
+
+I am prepared for committee questioning.
+
+</label>
+
+</div>
+
+<div class="form-check mb-3">
+
+<input class="form-check-input" type="checkbox">
+
+<label class="form-check-label">
+
+I can negotiate and build alliances.
+
+</label>
+
+</div>
+
+<div class="form-check mb-3">
+
+<input class="form-check-input" type="checkbox">
+
+<label class="form-check-label">
+
+I am ready to represent my country.
+
+</label>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer
+style="
+background:#0A0E1A;
+color:white;
+padding:60px 0;
+">
+
+<div class="container text-center">
+
+<h3 style="font-family:'Playfair Display',serif;">
+
+MUN Buddy
+
+</h3>
+
+<p class="mt-3">
+
+Represent Confidently.
+Negotiate Effectively.
+Lead Diplomatically.
+
+</p>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

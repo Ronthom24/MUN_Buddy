@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MUN Buddy | Conference Guide</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+--un-blue:#009EDB;
+--un-navy:#00528C;
+--gold:#C9A84C;
+--dark:#0A0E1A;
+--light:#F8FAFC;
+--muted:#64748B;
+}
+
+body{
+font-family:'DM Sans',sans-serif;
+background:#f8fafc;
+color:#1e293b;
+}
+
+h1,h2,h3,h4,h5{
+font-family:'Playfair Display',serif;
+}
+
+.navbar{
+background:#0A0E1A!important;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.navbar-brand{
+font-family:'Playfair Display',serif;
+font-size:1.8rem;
+font-weight:900;
+color:white!important;
+}
+
+.navbar-brand span{
+color:var(--un-blue);
+}
+
+.nav-link{
+color:rgba(255,255,255,.8)!important;
+}
+
+.conference-hero{
+
+min-height:70vh;
+
+background:
+linear-gradient(
+rgba(0,0,0,.60),
+rgba(0,0,0,.80)
+),
+
+url('https://images.unsplash.com/photo-1511578314322-379afb476865?w=1800&q=80');
+
+background-size:cover;
+background-position:center;
+
+display:flex;
+align-items:center;
+
+color:white;
+}
+
+.hero-tag{
+
+display:inline-block;
+
+padding:10px 18px;
+
+background:rgba(255,255,255,.12);
+
+border-radius:999px;
+
+margin-bottom:20px;
+
+}
+
+.hero-title{
+font-size:4rem;
+font-weight:900;
+}
+
+.hero-subtitle{
+max-width:850px;
+opacity:.92;
+}
+
+.conference-panel{
+
+margin-top:-70px;
+
+position:relative;
+z-index:100;
+
+}
+
+.conference-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:24px;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.08);
+
+}
+
+.section-title{
+font-size:2.5rem;
+margin-bottom:30px;
+}
+
+.info-card{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+height:100%;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.info-label{
+
+font-size:.75rem;
+
+letter-spacing:1px;
+
+text-transform:uppercase;
+
+color:var(--muted);
+
+}
+
+.info-value{
+
+margin-top:10px;
+
+font-size:1.05rem;
+
+font-weight:700;
+
+}
+
+.feature-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:24px;
+
+height:100%;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.eb-card{
+
+background:white;
+
+padding:30px;
+
+border-radius:24px;
+
+text-align:center;
+
+height:100%;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+
+}
+
+.eb-avatar{
+
+width:90px;
+height:90px;
+
+border-radius:50%;
+
+background:#e2e8f0;
+
+margin:0 auto 20px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:2rem;
+color:#64748b;
+
+}
+
+@media(max-width:768px){
+
+.hero-title{
+font-size:2.6rem;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg">
+
+<div class="container">
+
+<a class="navbar-brand" href="../index.html">
+MUN<span>Buddy</span>
+</a>
+
+<button class="navbar-toggler"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navMenu">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse"
+id="navMenu">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item">
+<a class="nav-link" href="dashboard.html">Dashboard</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="conference-guide.html">Conference</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="country.html">Country</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="committee.html">Committee</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="agenda.html">Agenda</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="notes.html">Notes</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="../login.html">Logout</a>
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="conference-hero">
+
+<div class="container">
+
+<div class="hero-tag">
+
+RITMUN 2026 Delegate Orientation
+
+</div>
+
+<h1 class="hero-title">
+
+RITMUN 2026
+
+</h1>
+
+<p class="hero-subtitle">
+
+Your complete conference handbook.
+Understand expectations, evaluation criteria,
+committee procedures, preparation requirements
+and strategies that will help you perform
+at your highest level.
+
+</p>
+
+</div>
+
+</section>
+
+<!-- CONFERENCE PANEL -->
+
+<div class="container conference-panel">
+
+<div class="conference-card">
+
+<div class="row">
+
+<div class="col-lg-3">
+
+<h5>Conference</h5>
+
+<h3>RITMUN 2026</h3>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>Committee</h5>
+
+<h3>UN Security Council</h3>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>Country</h5>
+
+<h3>India</h3>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>Preparation Progress</h5>
+
+<h3>35%</h3>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CONFERENCE INTELLIGENCE -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Conference Intelligence
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Conference Dates</div>
+<div class="info-value">18–20 July 2026</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Venue</div>
+<div class="info-value">RIT Campus</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Delegates</div>
+<div class="info-value">350+</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Committees</div>
+<div class="info-value">12</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Dress Code</div>
+<div class="info-value">Western Formals</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Language</div>
+<div class="info-value">English</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Conference Theme</div>
+<div class="info-value">Innovation Through Diplomacy</div>
+</div>
+</div>
+
+<div class="col-lg-3">
+<div class="info-card">
+<div class="info-label">Contact</div>
+<div class="info-value">secretariat@ritmun.org</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- MESSAGE FROM SECRETARIAT -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Message From The Secretariat
+
+</h2>
+
+<div class="feature-card">
+
+<p>
+
+Welcome to RITMUN 2026.
+
+RITMUN aims to create an environment where diplomacy,
+critical thinking, negotiation and leadership intersect.
+This conference is designed not merely as an academic
+exercise but as a realistic simulation of international
+decision-making.
+
+</p>
+
+<p>
+
+Delegates are encouraged to move beyond speeches
+and focus on collaboration, coalition-building,
+research-driven debate and practical policymaking.
+
+</p>
+
+<p>
+
+Success at RITMUN is not determined solely by how often
+you speak, but by how effectively you influence discussion,
+build consensus and contribute meaningful solutions.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- EXECUTIVE BOARD -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Committee Leadership
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="eb-card">
+
+<div class="eb-avatar">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<h4>Arjun Mehta</h4>
+
+<p class="text-muted">
+Chairperson
+</p>
+
+<p>
+
+Responsible for moderating debate,
+evaluating delegates and guiding committee proceedings.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="eb-card">
+
+<div class="eb-avatar">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<h4>Sarah Johnson</h4>
+
+<p class="text-muted">
+Vice Chair
+</p>
+
+<p>
+
+Supports committee moderation,
+tracks participation and assists in evaluations.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="eb-card">
+
+<div class="eb-avatar">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<h4>Rahul Sharma</h4>
+
+<p class="text-muted">
+Rapporteur
+</p>
+
+<p>
+
+Maintains records,
+tracks resolutions and assists procedural operations.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CONFERENCE RULES -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Conference Rules & Expectations
+
+</h2>
+
+<div class="accordion" id="conferenceRules">
+
+<!-- DRESS CODE -->
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#dressCode">
+
+Dress Code & Professionalism
+
+</button>
+
+</h2>
+
+<div id="dressCode"
+class="accordion-collapse collapse show">
+
+<div class="accordion-body">
+
+<p>
+
+Delegates are expected to maintain professional standards throughout the conference.
+
+</p>
+
+<p>
+
+Western formals are required during all committee sessions, ceremonies and official conference activities.
+
+</p>
+
+<p>
+
+Professional appearance contributes to the diplomatic atmosphere of committee and reflects the seriousness expected of participants.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ATTENDANCE -->
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#attendance">
+
+Attendance Policy
+
+</button>
+
+</h2>
+
+<div id="attendance"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+Delegates are expected to attend all committee sessions.
+
+</p>
+
+<p>
+
+Repeated absences may affect eligibility for awards and reduce opportunities for participation.
+
+</p>
+
+<p>
+
+Consistent attendance demonstrates commitment and professionalism.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- DEVICE POLICY -->
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#devices">
+
+Device Policy
+
+</button>
+
+</h2>
+
+<div id="devices"
+class="accordion-collapse collapse">
+
+<div class="accordion-body">
+
+<p>
+
+Electronic devices may be used only in accordance with committee guidelines.
+
+</p>
+
+<p>
+
+Delegates should prioritize active participation over screen time and remain engaged throughout proceedings.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- COMMITTEE-SPECIFIC RULES -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+How UNSC Operates at RITMUN
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>Debate Structure</h4>
+
+<p>
+
+Committee sessions typically alternate between formal debate, moderated caucuses and unmoderated caucuses.
+
+</p>
+
+<p>
+
+Delegates are encouraged to actively engage in both structured and informal negotiations.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>Resolution Development</h4>
+
+<p>
+
+Ideas progress from discussion to working papers and eventually draft resolutions.
+
+</p>
+
+<p>
+
+Strong resolutions are collaborative, realistic and aligned with committee mandate.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>Speaking Time</h4>
+
+<p>
+
+Speaking times may vary depending on committee progress and chair discretion.
+
+</p>
+
+<p>
+
+Delegates should communicate clearly, concisely and with policy accuracy.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>Participation Expectations</h4>
+
+<p>
+
+Quality of participation matters more than quantity.
+
+</p>
+
+<p>
+
+Constructive contributions, diplomacy and leadership are valued throughout committee.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- AWARDS & EVALUATION -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Awards & Evaluation
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Best Delegate</h4>
+
+<p>
+
+Awarded to delegates demonstrating exceptional research, diplomacy, leadership, negotiation and committee influence.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Outstanding Delegate</h4>
+
+<p>
+
+Recognizes delegates who consistently contribute high-quality debate and strong policy-driven solutions.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Honourable Mention</h4>
+
+<p>
+
+Awarded to delegates who demonstrate strong preparation and active committee participation.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Special Mention</h4>
+
+<p>
+
+Recognizes delegates showing notable potential, improvement and engagement throughout committee.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="feature-card mt-4">
+
+<h4>How Delegates Are Evaluated</h4>
+
+<ul>
+
+<li>Country & Agenda Research</li>
+
+<li>Policy Accuracy</li>
+
+<li>Public Speaking</li>
+
+<li>Diplomacy & Negotiation</li>
+
+<li>Resolution Writing</li>
+
+<li>Leadership & Initiative</li>
+
+<li>Professionalism</li>
+
+<li>Collaboration</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CHAIR EXPECTATIONS -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+What Chairs Look For
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h3 class="mb-4">
+
+Chairs Appreciate
+
+</h3>
+
+<ul>
+
+<li>Policy-driven speeches</li>
+
+<li>Effective diplomacy</li>
+
+<li>Bloc leadership</li>
+
+<li>Constructive negotiation</li>
+
+<li>Creative but realistic solutions</li>
+
+<li>Active participation in drafting</li>
+
+<li>Respectful conduct</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h3 class="mb-4">
+
+Common Mistakes
+
+</h3>
+
+<ul>
+
+<li>Reading pre-written speeches</li>
+
+<li>Ignoring country policy</li>
+
+<li>Overly aggressive behaviour</li>
+
+<li>Speaking without substance</li>
+
+<li>Unrealistic resolutions</li>
+
+<li>Failure to negotiate</li>
+
+<li>Minimal participation outside speeches</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="feature-card mt-4">
+
+<h4>
+
+A Note From Experienced Chairs
+
+</h4>
+
+<p>
+
+Many delegates believe awards are won through speeches alone. In reality, some of the strongest delegates spend most of their time negotiating, drafting solutions, building alliances and helping move committee forward.
+
+</p>
+
+<p>
+
+Leadership is often demonstrated through collaboration and influence rather than speaking frequency.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- DELEGATE SURVIVAL GUIDE -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Delegate Survival Guide
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>First MUN?</h4>
+
+<p>
+
+Many first-time delegates worry about not knowing enough, speaking poorly or making mistakes. The reality is that preparation and participation matter far more than perfection.
+
+</p>
+
+<p>
+
+Focus on understanding your country, your committee and your agenda. Confidence develops throughout committee.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>What If I Freeze During A Speech?</h4>
+
+<p>
+
+Pause.
+
+Take a breath.
+
+Return to your country's position.
+
+Committee values substance over flawless delivery.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>What If I Get Challenged?</h4>
+
+<p>
+
+Defend policy, not emotion.
+
+Strong delegates remain calm, cite facts and return discussion to the agenda.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card">
+
+<h4>What If I Don't Know Procedure?</h4>
+
+<p>
+
+Observe experienced delegates, ask chairs for clarification and focus on understanding the purpose behind motions and points.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ADVANCED DELEGATE GUIDE -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Advanced Delegate Guide
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Bloc Building</h4>
+
+<p>
+
+Identify countries with aligned interests early and begin informal discussions before major debates begin.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Negotiation</h4>
+
+<p>
+
+Most committee outcomes are determined outside formal speeches through strategic negotiations.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Resolution Leadership</h4>
+
+<p>
+
+Contributing ideas and coordinating drafting efforts often creates stronger committee influence.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="info-card">
+
+<h4>Diplomatic Influence</h4>
+
+<p>
+
+Influence comes from trust, preparation and consistency rather than volume.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PREPARATION ROADMAP -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+RITMUN Preparation Roadmap
+
+</h2>
+
+<div class="feature-card">
+
+<h4>4 Weeks Before Conference</h4>
+
+<ul>
+
+<li>Understand assigned country and committee</li>
+
+<li>Read conference materials</li>
+
+<li>Begin agenda research</li>
+
+</ul>
+
+<hr>
+
+<h4>3 Weeks Before Conference</h4>
+
+<ul>
+
+<li>Study foreign policy</li>
+
+<li>Research allies and opponents</li>
+
+<li>Identify possible solutions</li>
+
+</ul>
+
+<hr>
+
+<h4>2 Weeks Before Conference</h4>
+
+<ul>
+
+<li>Draft opening speech</li>
+
+<li>Prepare key talking points</li>
+
+<li>Review committee procedure</li>
+
+</ul>
+
+<hr>
+
+<h4>1 Week Before Conference</h4>
+
+<ul>
+
+<li>Practice speeches</li>
+
+<li>Review notes</li>
+
+<li>Finalize research</li>
+
+</ul>
+
+<hr>
+
+<h4>Night Before Conference</h4>
+
+<ul>
+
+<li>Review agenda summaries</li>
+
+<li>Pack materials</li>
+
+<li>Sleep properly</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CONFERENCE TIMELINE -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Conference Timeline
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-2">
+
+<div class="info-card text-center">
+
+<h5>08:00</h5>
+
+<p>Registration</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2">
+
+<div class="info-card text-center">
+
+<h5>09:00</h5>
+
+<p>Opening Ceremony</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2">
+
+<div class="info-card text-center">
+
+<h5>10:00</h5>
+
+<p>Session I</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2">
+
+<div class="info-card text-center">
+
+<h5>13:00</h5>
+
+<p>Lunch</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2">
+
+<div class="info-card text-center">
+
+<h5>14:00</h5>
+
+<p>Session II</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2">
+
+<div class="info-card text-center">
+
+<h5>17:00</h5>
+
+<p>Adjournment</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- RESOURCES -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Conference Resources
+
+</h2>
+
+<div class="row g-4">
+
+<!-- BACKGROUND GUIDE -->
+
+<div class="col-lg-3">
+
+<div class="feature-card">
+
+<h4>
+<i class="fa-solid fa-file-pdf me-2 text-danger"></i>
+Background Guide
+</h4>
+
+<p>
+
+Official committee guide containing agenda background and research directions.
+
+</p>
+
+<a href="../documents/background-guide.pdf"
+download
+class="action-btn">
+
+<i class="fa-solid fa-download me-2"></i>
+
+Download PDF
+
+</a>
+
+</div>
+
+</div>
+
+<!-- RULES OF PROCEDURE -->
+
+<div class="col-lg-3">
+
+<div class="feature-card">
+
+<h4>
+<i class="fa-solid fa-file-pdf me-2 text-danger"></i>
+Rules of Procedure
+</h4>
+
+<p>
+
+Committee rules, motions, voting and procedural guidelines.
+
+</p>
+
+<a href="../documents/rules-of-procedure.pdf"
+download
+class="action-btn">
+
+<i class="fa-solid fa-download me-2"></i>
+
+Download PDF
+
+</a>
+
+</div>
+
+</div>
+
+<!-- CHAIR LETTER -->
+
+<div class="col-lg-3">
+
+<div class="feature-card">
+
+<h4>
+<i class="fa-solid fa-file-pdf me-2 text-danger"></i>
+Chair Letter
+</h4>
+
+<p>
+
+Executive Board expectations and committee-specific guidance.
+
+</p>
+
+<a href="../documents/chair-letter.pdf"
+download
+class="action-btn">
+
+<i class="fa-solid fa-download me-2"></i>
+
+Download PDF
+
+</a>
+
+</div>
+
+</div>
+
+<!-- DELEGATE HANDBOOK -->
+
+<div class="col-lg-3">
+
+<div class="feature-card">
+
+<h4>
+<i class="fa-solid fa-file-pdf me-2 text-danger"></i>
+Delegate Handbook
+</h4>
+
+<p>
+
+Conference logistics, schedules and delegate information.
+
+</p>
+
+<a href="../documents/delegate-handbook.pdf"
+download
+class="action-btn">
+
+<i class="fa-solid fa-download me-2"></i>
+
+Download PDF
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+    
+<!-- READINESS ASSESSMENT -->
+
+<section class="py-5">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Delegate Readiness Assessment
+
+</h2>
+
+<div class="feature-card">
+
+<h4>Before entering committee, ask yourself:</h4>
+
+<div class="mt-4">
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Can I explain my country's position without notes?
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Do I understand my committee's powers and limitations?
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Can I identify my country's allies and rivals?
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Do I have realistic solutions for the agenda?
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Am I prepared to negotiate and collaborate?
+</label>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FINAL PREPARATION CHECKLIST -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Final Preparation Checklist
+
+</h2>
+
+<div class="feature-card">
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Conference Guide Reviewed
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Country Research Complete
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Committee Research Complete
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Agenda Research Complete
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Opening Speech Prepared
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Position Paper Submitted
+</label>
+</div>
+
+<div class="form-check mb-3">
+<input class="form-check-input" type="checkbox">
+<label class="form-check-label">
+Ready For Committee
+</label>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer
+style="
+background:#0A0E1A;
+color:white;
+padding:60px 0;
+">
+
+<div class="container text-center">
+
+<h3 style="font-family:'Playfair Display',serif;">
+MUN Buddy
+</h3>
+
+<p class="mt-3">
+
+Prepare Better.
+Debate Smarter.
+Lead Diplomatically.
+
+</p>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

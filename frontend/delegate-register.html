@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Delegate Registration | MUN Buddy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="assets/css/auth.css">
+
+</head>
+
+<body>
+
+<div class="auth-layout">
+
+  <!-- LEFT PANEL -->
+
+  <section class="auth-info">
+
+    <div class="auth-tag">
+
+      Delegate Registration
+
+    </div>
+
+    <h1>
+
+      Start Your
+      <br>
+
+      <span>MUN Journey.</span>
+
+    </h1>
+
+    <p class="auth-description">
+
+      Create your MUN Buddy account to access conference registrations,
+      country intelligence, committee research, agenda insights and
+      AI-powered preparation tools built specifically for delegates.
+
+    </p>
+
+    <div class="auth-features">
+
+      <span>Conference Registration</span>
+
+      <span>Country Intelligence</span>
+
+      <span>Committee Intelligence</span>
+
+      <span>Agenda Research</span>
+
+      <span>Current Affairs</span>
+
+      <span>Speech Builder</span>
+
+      <span>Position Papers</span>
+
+      <span>Research Assistant</span>
+
+    </div>
+
+  </section>
+
+  <!-- RIGHT PANEL -->
+
+  <section class="auth-card">
+
+    <h2>
+
+      Create Account
+
+    </h2>
+
+    <p>
+
+      Set up your delegate account and get started.
+
+    </p>
+
+    <form id="delegateRegisterForm">
+
+      <div class="form-group">
+
+        <label for="name">
+
+          Full Name
+
+        </label>
+
+        <input
+        type="text"
+        id="name"
+        placeholder="Enter your full name"
+        required>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="email">
+
+          Email Address
+
+        </label>
+
+        <input
+        type="email"
+        id="email"
+        placeholder="Enter your email address"
+        required>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="phone">
+
+          Phone Number
+
+        </label>
+
+        <input
+        type="tel"
+        id="phone"
+        placeholder="Enter your phone number"
+        required>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="college">
+
+          College / Institution
+
+        </label>
+
+        <input
+        type="text"
+        id="college"
+        placeholder="Enter your college or institution"
+        required>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="experience">
+
+          MUN Experience
+
+        </label>
+
+        <select id="experience" required>
+
+          <option value="">
+            Select Experience Level
+          </option>
+
+          <option>
+            First Time Delegate
+          </option>
+
+          <option>
+            Beginner (1-3 Conferences)
+          </option>
+
+          <option>
+            Intermediate (4-10 Conferences)
+          </option>
+
+          <option>
+            Advanced (10+ Conferences)
+          </option>
+
+          <option>
+            Executive Board Experience
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="password">
+
+          Password
+
+        </label>
+
+        <input
+        type="password"
+        id="password"
+        minlength="6"
+        placeholder="Minimum 6 characters"
+        required>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="confirmPassword">
+
+          Confirm Password
+
+        </label>
+
+        <input
+        type="password"
+        id="confirmPassword"
+        minlength="6"
+        placeholder="Re-enter password"
+        required>
+
+      </div>
+
+      <button
+      type="submit"
+      class="primary-btn">
+
+        Create Account
+
+      </button>
+
+      <div class="back-link">
+
+        <a href="delegate-login.html">
+
+          <i class="fas fa-arrow-left"></i>
+
+          Back to Login
+
+        </a>
+
+      </div>
+
+    </form>
+
+  </section>
+
+</div>
+
+<script>
+
+document
+.getElementById('delegateRegisterForm')
+.addEventListener('submit', function(e){
+
+  e.preventDefault();
+
+  const password =
+    document.getElementById('password').value;
+
+  const confirmPassword =
+    document.getElementById('confirmPassword').value;
+
+  if(password !== confirmPassword){
+
+    alert('Passwords do not match.');
+
+    return;
+
+  }
+
+  window.location.href='delegate/dashboard.html';
+
+});
+
+</script>
+
+</body>
+
+</html>

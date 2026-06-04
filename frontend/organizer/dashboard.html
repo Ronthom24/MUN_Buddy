@@ -12,7 +12,8 @@
 
 <link rel="stylesheet" href="../assets/css/organizer.css">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
 
@@ -24,20 +25,28 @@
 
 <aside class="organizer-sidebar">
 
-<div class="organizer-logo">
+<a href="../index.html" class="organizer-logo">
 MUN<span>Buddy</span>
-</div>
+</a>
 
 <nav>
+
+<div class="sidebar-heading">
+OVERVIEW
+</div>
 
 <a href="dashboard.html" class="active">
 <i class="fas fa-chart-line"></i>
 Dashboard
 </a>
 
+<div class="sidebar-heading">
+CONFERENCE
+</div>
+
 <a href="conferences.html">
 <i class="fas fa-building-columns"></i>
-Conferences
+Conference
 </a>
 
 <a href="committees.html">
@@ -45,20 +54,9 @@ Conferences
 Committees
 </a>
 
-<a href="agendas.html">
-<i class="fas fa-file-lines"></i>
-Agendas
-</a>
-
-<a href="countries.html">
-<i class="fas fa-globe"></i>
-Countries
-</a>
-
-<a href="portfolios.html">
-<i class="fas fa-user-tie"></i>
-Portfolios
-</a>
+<div class="sidebar-heading">
+PEOPLE
+</div>
 
 <a href="delegates.html">
 <i class="fas fa-user-group"></i>
@@ -70,6 +68,10 @@ Delegates
 Assignments
 </a>
 
+<div class="sidebar-heading">
+CONTENT
+</div>
+
 <a href="resources.html">
 <i class="fas fa-folder-open"></i>
 Resources
@@ -80,10 +82,18 @@ Resources
 Announcements
 </a>
 
+<div class="sidebar-heading">
+AI
+</div>
+
 <a href="analytics.html">
-<i class="fas fa-chart-pie"></i>
+<i class="fas fa-robot"></i>
 Analytics
 </a>
+
+<div class="sidebar-heading">
+SYSTEM
+</div>
 
 <a href="settings.html">
 <i class="fas fa-gear"></i>
@@ -94,7 +104,7 @@ Settings
 
 </aside>
 
-<!-- MAIN -->
+<!-- MAIN CONTENT -->
 
 <main class="organizer-content">
 
@@ -103,524 +113,573 @@ Settings
 <div>
 
 <h1 class="page-title">
-Organizer Dashboard
+Conference Command Center
 </h1>
 
 <p class="page-subtitle">
-Manage conferences, delegates, committees and resources from one central workspace.
+Monitor conference health, delegate activity, assignments and readiness.
 </p>
 
 </div>
 
 <button class="btn-primary">
 <i class="fas fa-plus"></i>
-Create Conference
+ New Announcement
 </button>
 
 </div>
 
-<!-- STATS -->
+<!-- HERO -->
 
-<div class="stats-grid">
+<section class="management-card">
 
-<div class="stat-card">
+<h2 style="margin-bottom:10px;">
+MUN Buddy International 2026
+</h2>
 
-<div class="stat-label">
-Active Conferences
-</div>
+<p class="page-subtitle">
+Registration Open • Conference Begins In 14 Days
+</p>
 
-<div class="stat-number">
-03
-</div>
-
-</div>
+<div class="stats-grid section-spacing">
 
 <div class="stat-card">
-
-<div class="stat-label">
-Committees
-</div>
-
-<div class="stat-number">
-18
-</div>
-
+<div class="stat-label">Delegates</div>
+<div class="stat-number">482</div>
 </div>
 
 <div class="stat-card">
-
-<div class="stat-label">
-Delegates
-</div>
-
-<div class="stat-number">
-482
-</div>
-
+<div class="stat-label">Committees</div>
+<div class="stat-number">18</div>
 </div>
 
 <div class="stat-card">
-
-<div class="stat-label">
-Resources
+<div class="stat-label">Countries</div>
+<div class="stat-number">54</div>
 </div>
 
-<div class="stat-number">
-54
-</div>
-
+<div class="stat-card">
+<div class="stat-label">Resources</div>
+<div class="stat-number">126</div>
 </div>
 
 </div>
-
-<!-- DASHBOARD GRID -->
-
-<div class="dashboard-grid">
-
-  <!-- QUICK ACTIONS -->
-
-  <section class="management-card">
-
-    <h3>
-      Quick Actions
-    </h3>
-
-    <p class="page-subtitle mb-4">
-      Frequently used organizer workflows.
-    </p>
-
-    <div style="display:grid;gap:12px;">
-
-      <button class="btn-primary">
-        Create Committee
-      </button>
-
-      <button class="btn-primary">
-        Add Agenda
-      </button>
-
-      <button class="btn-primary">
-        Add Country
-      </button>
-
-      <button class="btn-primary">
-        Assign Delegates
-      </button>
-
-    </div>
-
-  </section>
-
-  <!-- RECENT ACTIVITY -->
-
-  <section class="management-card">
-
-    <h3>
-      Recent Activity
-    </h3>
-
-    <p class="page-subtitle mb-4">
-      Latest actions across the platform.
-    </p>
-
-    <div style="display:grid;gap:18px;">
-
-      <div>
-        <strong>New Delegate Registered</strong>
-        <p class="page-subtitle">
-          Delhi Public School • 5 minutes ago
-        </p>
-      </div>
-
-      <div>
-        <strong>Agenda Updated</strong>
-        <p class="page-subtitle">
-          UNSC • Emerging Technologies
-        </p>
-      </div>
-
-      <div>
-        <strong>Country Assigned</strong>
-        <p class="page-subtitle">
-          India assigned to Delegate #142
-        </p>
-      </div>
-
-      <div>
-        <strong>Resource Uploaded</strong>
-        <p class="page-subtitle">
-          Background Guide.pdf
-        </p>
-      </div>
-
-    </div>
-
-  </section>
-
-</div>
-
-<!-- CONFERENCE OVERVIEW -->
-
-<section
-class="management-card"
-style="margin-top:24px;">
-
-  <h3>
-    Conference Overview
-  </h3>
-
-  <p class="page-subtitle mb-4">
-    Current conference status and operational metrics.
-  </p>
-
-  <table class="data-table">
-
-    <thead>
-
-      <tr>
-
-        <th>Conference</th>
-
-        <th>Status</th>
-
-        <th>Delegates</th>
-
-        <th>Committees</th>
-
-        <th>Registration Deadline</th>
-
-      </tr>
-
-    </thead>
-
-    <tbody>
-
-      <tr>
-
-        <td>
-          MUN Buddy International 2026
-        </td>
-
-        <td>
-          Active
-        </td>
-
-        <td>
-          482
-        </td>
-
-        <td>
-          18
-        </td>
-
-        <td>
-          15 Aug 2026
-        </td>
-
-      </tr>
-
-      <tr>
-
-        <td>
-          Youth Diplomacy Summit
-        </td>
-
-        <td>
-          Draft
-        </td>
-
-        <td>
-          0
-        </td>
-
-        <td>
-          6
-        </td>
-
-        <td>
-          Not Published
-        </td>
-
-      </tr>
-
-    </tbody>
-
-  </table>
 
 </section>
 
-<!-- SECOND ROW -->
+<!-- CONFERENCE HEALTH -->
 
-<div
-class="dashboard-grid"
-style="margin-top:24px;">
+<section class="section-spacing">
 
-  <!-- COMMITTEE SNAPSHOT -->
+<h2 style="margin-bottom:20px;">
+Conference Health
+</h2>
 
-  <section class="management-card">
+<div class="dashboard-grid">
 
-    <h3>
-      Committee Snapshot
-    </h3>
+<div class="health-card">
 
-    <p class="page-subtitle mb-4">
-      Distribution of committees across active conferences.
-    </p>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<h3>Registrations</h3>
+<strong>76%</strong>
+</div>
 
-    <div style="display:grid;gap:18px;">
+<p class="page-subtitle">
+380 of 500 target delegates registered
+</p>
 
-      <div>
-
-        <strong>UN Security Council</strong>
-
-        <p class="page-subtitle">
-          15 Delegates Assigned
-        </p>
-
-      </div>
-
-      <div>
-
-        <strong>UNHRC</strong>
-
-        <p class="page-subtitle">
-          28 Delegates Assigned
-        </p>
-
-      </div>
-
-      <div>
-
-        <strong>WHO</strong>
-
-        <p class="page-subtitle">
-          22 Delegates Assigned
-        </p>
-
-      </div>
-
-      <div>
-
-        <strong>UNGA</strong>
-
-        <p class="page-subtitle">
-          193 Country Allocations
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- REGISTRATION PIPELINE -->
-
-  <section class="management-card">
-
-    <h3>
-      Registration Pipeline
-    </h3>
-
-    <p class="page-subtitle mb-4">
-      Delegate application workflow.
-    </p>
-
-    <div style="display:grid;gap:20px;">
-
-      <div>
-
-        <div
-        style="
-        display:flex;
-        justify-content:space-between;
-        margin-bottom:8px;">
-
-          <span>Pending Review</span>
-
-          <strong>54</strong>
-
-        </div>
-
-      </div>
-
-      <div>
-
-        <div
-        style="
-        display:flex;
-        justify-content:space-between;
-        margin-bottom:8px;">
-
-          <span>Approved</span>
-
-          <strong>312</strong>
-
-        </div>
-
-      </div>
-
-      <div>
-
-        <div
-        style="
-        display:flex;
-        justify-content:space-between;
-        margin-bottom:8px;">
-
-          <span>Waitlisted</span>
-
-          <strong>18</strong>
-
-        </div>
-
-      </div>
-
-      <div>
-
-        <div
-        style="
-        display:flex;
-        justify-content:space-between;
-        margin-bottom:8px;">
-
-          <span>Rejected</span>
-
-          <strong>7</strong>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
+<div class="progress-track">
+<div class="progress-fill" style="width:76%;"></div>
+</div>
 
 </div>
 
-<!-- ANNOUNCEMENTS -->
+<div class="health-card">
 
-<section
-class="management-card"
-style="margin-top:24px;">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<h3>Assignments</h3>
+<strong>88%</strong>
+</div>
 
-  <div
-  style="
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;">
+<p class="page-subtitle">
+423 delegates assigned
+</p>
 
-    <div>
+<div class="progress-track">
+<div class="progress-fill" style="width:88%;"></div>
+</div>
 
-      <h3>
-        Recent Announcements
-      </h3>
+</div>
 
-      <p class="page-subtitle">
-        Messages recently published to delegates.
-      </p>
+<div class="health-card">
 
-    </div>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<h3>Resources</h3>
+<strong>92%</strong>
+</div>
 
-    <button class="btn-primary">
+<p class="page-subtitle">
+Background guides uploaded
+</p>
 
-      <i class="fas fa-bullhorn"></i>
+<div class="progress-track">
+<div class="progress-fill" style="width:92%;"></div>
+</div>
 
-      New Announcement
+</div>
 
-    </button>
+<div class="health-card">
 
-  </div>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<h3>Committee Readiness</h3>
+<strong>83%</strong>
+</div>
 
-  <table class="data-table">
+<p class="page-subtitle">
+15 of 18 committees fully prepared
+</p>
 
-    <thead>
+<div class="progress-track">
+<div class="progress-fill" style="width:83%;"></div>
+</div>
 
-      <tr>
+</div>
 
-        <th>Title</th>
+</div>
 
-        <th>Audience</th>
+</section>
 
-        <th>Date</th>
+<!-- ATTENTION REQUIRED -->
 
-        <th>Status</th>
+<section class="section-spacing">
 
-      </tr>
+<h2 style="margin-bottom:20px;">
+Attention Required
+</h2>
 
-    </thead>
+<div class="dashboard-grid">
 
-    <tbody>
+<div class="alert-card alert-warning">
 
-      <tr>
+<h3>
+<i class="fas fa-user-clock"></i>
+ 14 Registrations Pending
+</h3>
 
-        <td>
-          Updated Background Guide Released
-        </td>
+<p style="margin-top:10px;">
+Delegates awaiting approval.
+</p>
 
-        <td>
-          All Delegates
-        </td>
+</div>
 
-        <td>
-          12 Jul 2026
-        </td>
+<div class="alert-card alert-danger">
 
-        <td>
-          Published
-        </td>
+<h3>
+<i class="fas fa-folder-open"></i>
+ 2 Committees Missing Resources
+</h3>
 
-      </tr>
+<p style="margin-top:10px;">
+Upload committee guides before publication.
+</p>
 
-      <tr>
+</div>
 
-        <td>
-          Committee Briefing Schedule
-        </td>
+<div class="alert-card alert-warning">
 
-        <td>
-          UNSC
-        </td>
+<h3>
+<i class="fas fa-link"></i>
+ 8 Delegates Unassigned
+</h3>
 
-        <td>
-          10 Jul 2026
-        </td>
+<p style="margin-top:10px;">
+Committee or country allocation required.
+</p>
 
-        <td>
-          Published
-        </td>
+</div>
 
-      </tr>
+<div class="alert-card alert-success">
 
-      <tr>
+<h3>
+<i class="fas fa-check-circle"></i>
+ Current Affairs Updated
+</h3>
 
-        <td>
-          Registration Extension Notice
-        </td>
+<p style="margin-top:10px;">
+Latest news briefing approved and published.
+</p>
 
-        <td>
-          All Schools
-        </td>
+</div>
 
-        <td>
-          08 Jul 2026
-        </td>
+</div>
 
-        <td>
-          Scheduled
-        </td>
+</section>
 
-      </tr>
+<!-- QUICK ACTIONS -->
 
-    </tbody>
+<section class="section-spacing">
 
-  </table>
+<h2 style="margin-bottom:20px;">
+Quick Actions
+</h2>
+
+<div class="action-grid">
+
+<div class="action-card">
+
+<i class="fas fa-user-check fa-2x mb-3"></i>
+
+<h3>Approve Registrations</h3>
+
+<p class="page-subtitle">
+Review and approve incoming delegate applications.
+</p>
+
+</div>
+
+<div class="action-card">
+
+<i class="fas fa-link fa-2x mb-3"></i>
+
+<h3>Assign Delegates</h3>
+
+<p class="page-subtitle">
+Allocate committees and countries.
+</p>
+
+</div>
+
+<div class="action-card">
+
+<i class="fas fa-folder-plus fa-2x mb-3"></i>
+
+<h3>Upload Resources</h3>
+
+<p class="page-subtitle">
+Add guides, research material and references.
+</p>
+
+</div>
+
+<div class="action-card">
+
+<i class="fas fa-bullhorn fa-2x mb-3"></i>
+
+<h3>Send Announcement</h3>
+
+<p class="page-subtitle">
+Notify delegates and executive board members.
+</p>
+
+</div>
+
+<div class="action-card">
+
+<i class="fas fa-robot fa-2x mb-3"></i>
+
+<h3>Generate Intelligence</h3>
+
+<p class="page-subtitle">
+Refresh AI-generated briefing content.
+</p>
+
+</div>
+
+<div class="action-card">
+
+<i class="fas fa-newspaper fa-2x mb-3"></i>
+
+<h3>Review Current Affairs</h3>
+
+<p class="page-subtitle">
+Approve AI-curated news updates.
+</p>
+
+</div>
+
+</div>
+
+</section>
+<!-- COMMITTEE READINESS -->
+
+<section class="section-spacing">
+
+<h2 style="margin-bottom:20px;">
+Committee Readiness
+</h2>
+
+<div class="management-card">
+
+<table class="data-table">
+
+<thead>
+
+<tr>
+<th>Committee</th>
+<th>Countries</th>
+<th>Resources</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>UN Security Council</td>
+<td>Assigned</td>
+<td>Uploaded</td>
+<td>
+<span class="status-badge status-active">
+Ready
+</span>
+</td>
+</tr>
+
+<tr>
+<td>UNHRC</td>
+<td>Assigned</td>
+<td>Uploaded</td>
+<td>
+<span class="status-badge status-active">
+Ready
+</span>
+</td>
+</tr>
+
+<tr>
+<td>WHO</td>
+<td>Assigned</td>
+<td>Missing Guide</td>
+<td>
+<span class="status-badge status-draft">
+Attention Needed
+</span>
+</td>
+</tr>
+
+<tr>
+<td>Crisis Committee</td>
+<td>Assigned</td>
+<td>Uploaded</td>
+<td>
+<span class="status-badge status-active">
+Ready
+</span>
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<!-- REGISTRATION PIPELINE + AI OPERATIONS -->
+
+<div class="dashboard-grid section-spacing">
+
+<section class="management-card">
+
+<h2>
+Registration Pipeline
+</h2>
+
+<div class="activity-item">
+
+<strong>Pending Review</strong>
+
+<p class="page-subtitle">
+14 delegate applications
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Approved</strong>
+
+<p class="page-subtitle">
+380 delegates
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Waitlisted</strong>
+
+<p class="page-subtitle">
+22 delegates
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Rejected</strong>
+
+<p class="page-subtitle">
+8 delegates
+</p>
+
+</div>
+
+</section>
+
+<section class="management-card">
+
+<h2>
+AI Operations
+</h2>
+
+<div class="activity-item">
+
+<strong>Country Intelligence</strong>
+
+<p class="page-subtitle">
+54 countries generated
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Committee Intelligence</strong>
+
+<p class="page-subtitle">
+18 committees generated
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Current Affairs</strong>
+
+<p class="page-subtitle">
+Updated 2 hours ago
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Agenda Research</strong>
+
+<p class="page-subtitle">
+17 of 18 agendas processed
+</p>
+
+</div>
+
+</section>
+
+</div>
+
+<!-- RECENT ACTIVITY -->
+
+<section class="section-spacing">
+
+<h2 style="margin-bottom:20px;">
+Recent Activity
+</h2>
+
+<div class="management-card">
+
+<div class="activity-item">
+
+<strong>Delegate Approved</strong>
+
+<p class="page-subtitle">
+John Smith approved for UN Security Council
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Country Assigned</strong>
+
+<p class="page-subtitle">
+India assigned in WHO
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Background Guide Uploaded</strong>
+
+<p class="page-subtitle">
+UNHRC Background Guide.pdf
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Announcement Published</strong>
+
+<p class="page-subtitle">
+Registration Deadline Reminder
+</p>
+
+</div>
+
+<div class="activity-item">
+
+<strong>Current Affairs Approved</strong>
+
+<p class="page-subtitle">
+Latest geopolitical briefing published
+</p>
+
+</div>
+
+</div>
 
 </section>
 
 </main>
 
 </div>
+
+<script>
+
+document.querySelectorAll('.action-card')[0]
+?.addEventListener('click',()=>{
+window.location.href='delegates.html';
+});
+
+document.querySelectorAll('.action-card')[1]
+?.addEventListener('click',()=>{
+window.location.href='assignments.html';
+});
+
+document.querySelectorAll('.action-card')[2]
+?.addEventListener('click',()=>{
+window.location.href='resources.html';
+});
+
+document.querySelectorAll('.action-card')[3]
+?.addEventListener('click',()=>{
+window.location.href='announcements.html';
+});
+
+document.querySelectorAll('.action-card')[4]
+?.addEventListener('click',()=>{
+window.location.href='analytics.html';
+});
+
+document.querySelectorAll('.action-card')[5]
+?.addEventListener('click',()=>{
+window.location.href='current-affairs.html';
+});
+
+</script>
 
 <script src="../assets/js/organizer/admin.js"></script>
 <script src="../assets/js/organizer/dashboard.js"></script>

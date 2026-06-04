@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   const currentPage =
-    window.location.pathname.split('/').pop();
+    window.location.pathname
+      .split('/')
+      .pop();
 
   const sidebarLinks =
     document.querySelectorAll('.organizer-sidebar a');

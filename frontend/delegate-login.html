@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Delegate Login | MUN Buddy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="assets/css/auth.css">
+
+</head>
+
+<body>
+
+<div class="auth-layout">
+
+  <!-- LEFT PANEL -->
+
+  <section class="auth-info">
+
+    <div class="auth-tag">
+
+      Delegate Access
+
+    </div>
+
+    <h1>
+
+      Prepare.
+      <br>
+      Debate.
+      <br>
+      <span>Lead.</span>
+
+    </h1>
+
+    <p class="auth-description">
+
+      Access everything you need for your conference in one place.
+      Research your assigned country, understand your committee,
+      master your agenda and use AI-powered tools to prepare
+      speeches, position papers, resolutions and moderated caucuses.
+
+    </p>
+
+    <div class="auth-features">
+
+      <span>Country Intelligence</span>
+
+      <span>Committee Intelligence</span>
+
+      <span>Agenda Intelligence</span>
+
+      <span>Current Affairs</span>
+
+      <span>Speech Builder</span>
+
+      <span>Position Papers</span>
+
+      <span>Research Assistant</span>
+
+      <span>Notes Assistant</span>
+
+    </div>
+
+  </section>
+
+  <!-- RIGHT PANEL -->
+
+  <section class="auth-card">
+
+    <h2>
+
+      Welcome Back
+
+    </h2>
+
+    <p>
+
+      Sign in to access your conference workspace.
+
+    </p>
+
+    <form id="delegateLoginForm">
+
+      <div class="form-group">
+
+        <label for="email">
+
+          Email Address
+
+        </label>
+
+        <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Enter your email address"
+        required>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="password">
+
+          Password
+
+        </label>
+
+        <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Enter your password"
+        minlength="6"
+        required>
+
+      </div>
+
+      <div class="login-options">
+
+        <label class="remember-me">
+
+          <input type="checkbox">
+
+          <span>
+
+            Remember Me
+
+          </span>
+
+        </label>
+
+        <a href="#">
+
+          Forgot Password?
+
+        </a>
+
+      </div>
+
+      <button
+      type="submit"
+      class="primary-btn">
+
+        Login
+
+      </button>
+
+      <a
+      href="delegate-register.html"
+      class="secondary-btn">
+
+        Register as Delegate
+
+      </a>
+
+      <div class="back-link">
+
+        <a href="login.html">
+
+          <i class="fas fa-arrow-left"></i>
+
+          Back
+
+        </a>
+
+      </div>
+
+    </form>
+
+  </section>
+
+</div>
+
+<script>
+
+document
+.getElementById('delegateLoginForm')
+.addEventListener('submit', function(e){
+
+  e.preventDefault();
+
+  window.location.href='delegate/dashboard.html';
+
+});
+
+</script>
+
+</body>
+
+</html>

@@ -4,291 +4,1063 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Organizer Registration | MUN Buddy</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>
+MUN Buddy | Organizer Registration
+</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap"
+rel="stylesheet">
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<link rel="stylesheet" href="assets/css/auth.css">
+<style>
+
+:root{
+
+--un-blue:#009EDB;
+--un-navy:#00528C;
+
+--dark:#07111E;
+
+--light:#F8FAFC;
+
+--muted:#64748B;
+
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'DM Sans',sans-serif;
+
+background:#F8FAFC;
+
+color:#0F172A;
+
+}
+
+/* HERO */
+
+.hero{
+
+background:
+
+linear-gradient(
+rgba(5,12,28,.82),
+rgba(5,12,28,.88)
+),
+
+url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1800&q=80');
+
+background-size:cover;
+background-position:center;
+
+color:white;
+
+padding:100px 0;
+
+}
+
+.hero h1{
+
+font-family:'Playfair Display',serif;
+
+font-size:4rem;
+
+font-weight:900;
+
+margin-bottom:15px;
+
+}
+
+.hero h1 span{
+
+color:var(--un-blue);
+
+}
+
+.hero p{
+
+max-width:760px;
+
+font-size:1.1rem;
+
+line-height:1.8;
+
+opacity:.92;
+
+}
+
+/* FORM AREA */
+
+.form-section{
+
+padding:80px 0;
+
+}
+
+.form-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:26px;
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.06);
+
+margin-bottom:30px;
+
+}
+
+.section-title{
+
+font-family:'Playfair Display',serif;
+
+font-size:2rem;
+
+margin-bottom:25px;
+
+}
+
+.section-title span{
+
+color:var(--un-blue);
+
+}
+
+.form-label{
+
+font-weight:600;
+
+margin-bottom:8px;
+
+}
+
+.form-control,
+.form-select{
+
+border-radius:14px;
+
+padding:14px;
+
+border:1px solid #E2E8F0;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+border-color:var(--un-blue);
+
+box-shadow:none;
+
+}
+
+textarea{
+
+min-height:140px;
+
+resize:none;
+
+}
+
+/* BUTTONS */
+
+.btn-primary-custom{
+
+background:var(--un-blue);
+
+border:none;
+
+padding:14px 26px;
+
+border-radius:14px;
+
+font-weight:700;
+
+color:white;
+
+transition:.25s;
+
+}
+
+.btn-primary-custom:hover{
+
+background:var(--un-navy);
+
+color:white;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:992px){
+
+.hero h1{
+
+font-size:2.8rem;
+
+}
+
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="auth-layout">
+<!-- HERO -->
 
-  <!-- LEFT PANEL -->
+<section class="hero">
 
-  <section class="auth-info">
+<div class="container">
 
-    <div class="auth-tag">
+<h1>
 
-      Organizer Registration
+Organizer
+<span>Registration</span>
 
-    </div>
+</h1>
 
-    <h1>
+<p>
 
-      Build.
-      <br>
+Create your conference,
+configure organizer access
+and launch registrations.
 
-      Organize.
-      <br>
+This single setup creates the entire
+conference ecosystem for MUN Buddy.
 
-      <span>Inspire.</span>
-
-    </h1>
-
-    <p class="auth-description">
-
-      Create your organizer account and manage your entire Model United Nations
-      conference through MUN Buddy. Handle registrations, assignments,
-      committees, announcements, resources and conference operations
-      from one platform.
-
-    </p>
-
-    <div class="auth-features">
-
-      <span>Conference Setup</span>
-
-      <span>Committee Management</span>
-
-      <span>Delegate Registration</span>
-
-      <span>Country Assignment</span>
-
-      <span>Portfolio Assignment</span>
-
-      <span>Resources Center</span>
-
-      <span>Announcements</span>
-
-      <span>Analytics Dashboard</span>
-
-    </div>
-
-  </section>
-
-  <!-- RIGHT PANEL -->
-
-  <section class="auth-card">
-
-    <h2>
-
-      Create Organizer Account
-
-    </h2>
-
-    <p>
-
-      Set up your organizer account and start managing conferences.
-
-    </p>
-
-    <form id="organizerRegisterForm">
-
-      <div class="form-group">
-
-        <label for="name">
-
-          Full Name
-
-        </label>
-
-        <input
-        type="text"
-        id="name"
-        placeholder="Enter your full name"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="email">
-
-          Email Address
-
-        </label>
-
-        <input
-        type="email"
-        id="email"
-        placeholder="Enter your email address"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="phone">
-
-          Phone Number
-
-        </label>
-
-        <input
-        type="tel"
-        id="phone"
-        placeholder="Enter your phone number"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="institution">
-
-          College / Institution
-
-        </label>
-
-        <input
-        type="text"
-        id="institution"
-        placeholder="Enter institution name"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="role">
-
-          Position / Role
-
-        </label>
-
-        <select id="role" required>
-
-          <option value="">
-            Select Your Role
-          </option>
-
-          <option>
-            Secretary General
-          </option>
-
-          <option>
-            Director General
-          </option>
-
-          <option>
-            USG
-          </option>
-
-          <option>
-            Faculty Coordinator
-          </option>
-
-          <option>
-            Conference Director
-          </option>
-
-          <option>
-            Executive Board Member
-          </option>
-
-          <option>
-            Other
-          </option>
-
-        </select>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="password">
-
-          Password
-
-        </label>
-
-        <input
-        type="password"
-        id="password"
-        minlength="6"
-        placeholder="Minimum 6 characters"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="confirmPassword">
-
-          Confirm Password
-
-        </label>
-
-        <input
-        type="password"
-        id="confirmPassword"
-        minlength="6"
-        placeholder="Re-enter password"
-        required>
-
-      </div>
-
-      <button
-      type="submit"
-      class="primary-btn">
-
-        Create Organizer Account
-
-      </button>
-
-      <div class="back-link">
-
-        <a href="organizer-login.html">
-
-          <i class="fas fa-arrow-left"></i>
-
-          Back to Login
-
-        </a>
-
-      </div>
-
-    </form>
-
-  </section>
+</p>
 
 </div>
 
-<script>
+</section>
 
-document
-.getElementById('organizerRegisterForm')
-.addEventListener('submit', function(e){
+<!-- FORM -->
 
-  e.preventDefault();
+<section class="form-section">
 
-  const password =
-    document.getElementById('password').value;
+<div class="container">
 
-  const confirmPassword =
-    document.getElementById('confirmPassword').value;
+<form>
 
-  if(password !== confirmPassword){
+<!-- PRIMARY ORGANIZER -->
 
-    alert('Passwords do not match.');
+<div class="form-card">
 
-    return;
+<h2 class="section-title">
 
-  }
+Primary Organizer
 
-  window.location.href='organizer/dashboard.html';
+</h2>
 
-});
+<div class="row g-4">
 
-</script>
+<div class="col-md-6">
+
+<label class="form-label">
+
+Full Name *
+
+</label>
+
+<input
+type="text"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Email Address *
+
+</label>
+
+<input
+type="email"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Phone Number *
+
+</label>
+
+<input
+type="text"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Password *
+
+</label>
+
+<input
+type="password"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Confirm Password *
+
+</label>
+
+<input
+type="password"
+class="form-control">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CONFERENCE DETAILS -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Conference <span>Details</span>
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-md-8">
+
+<label class="form-label">
+
+Conference Name *
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="RITMUN 2026">
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Conference Acronym *
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="RITMUN">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Institution / School *
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="Ramaiah Institute of Technology">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Location *
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="Bangalore, India">
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Start Date *
+
+</label>
+
+<input
+type="date"
+class="form-control">
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+End Date *
+
+</label>
+
+<input
+type="date"
+class="form-control">
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Registration Deadline *
+
+</label>
+
+<input
+type="date"
+class="form-control">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ABOUT CONFERENCE -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+About The <span>Conference</span>
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:20px;
+line-height:1.8;
+">
+
+Provide a short description of your conference,
+its goals, themes and what delegates can expect.
+
+</p>
+
+<label class="form-label">
+
+Conference Description
+
+</label>
+
+<textarea
+class="form-control"
+placeholder="Describe your conference..."></textarea>
+
+</div>
+
+  <!-- COMMITTEES -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Committees
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:25px;
+line-height:1.8;
+">
+
+Select the committees that will be available
+for this conference.
+
+</p>
+
+<div class="row g-3">
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="unsc">
+
+<label
+class="form-check-label"
+for="unsc">
+
+UNSC
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="unga">
+
+<label
+class="form-check-label"
+for="unga">
+
+UNGA
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="unhrc">
+
+<label
+class="form-check-label"
+for="unhrc">
+
+UNHRC
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="disec">
+
+<label
+class="form-check-label"
+for="disec">
+
+DISEC
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="ecosoc">
+
+<label
+class="form-check-label"
+for="ecosoc">
+
+ECOSOC
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="who">
+
+<label
+class="form-check-label"
+for="who">
+
+WHO
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="unwomen">
+
+<label
+class="form-check-label"
+for="unwomen">
+
+UN Women
+
+</label>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="form-check">
+
+<input
+class="form-check-input"
+type="checkbox"
+id="crisis">
+
+<label
+class="form-check-label"
+for="crisis">
+
+Crisis Committee
+
+</label>
+
+</div>
+
+</div>
+
+</div>
+
+<hr class="my-4">
+
+<label class="form-label">
+
+Custom Committee
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="Enter custom committee name if required">
+
+</div>
+
+<!-- ORGANIZER ACCESS -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Additional Organizer Access
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:25px;
+line-height:1.8;
+">
+
+Add organizer email addresses that should receive
+dashboard access for this conference.
+
+The primary organizer will automatically receive access.
+
+</p>
+
+<div class="row g-3 align-items-end">
+
+<div class="col-md-9">
+
+<label class="form-label">
+
+Organizer Email
+
+</label>
+
+<input
+type="email"
+class="form-control"
+placeholder="chair@conference.org">
+
+</div>
+
+<div class="col-md-3">
+
+<button
+type="button"
+class="btn btn-primary-custom w-100">
+
+Add Email
+
+</button>
+
+</div>
+
+</div>
+
+<div
+style="
+margin-top:25px;
+padding:20px;
+background:#F8FAFC;
+border-radius:16px;
+border:1px solid #E2E8F0;
+">
+
+<h6
+style="
+font-weight:700;
+margin-bottom:15px;
+">
+
+Organizer Access List
+
+</h6>
+
+<ul
+style="
+margin:0;
+padding-left:20px;
+line-height:2;
+">
+
+<li>usg@ritmun.org</li>
+
+<li>chair.unsc@ritmun.org</li>
+
+<li>vicechair@ritmun.org</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<!-- REGISTRATION SETTINGS -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Registration <span>Settings</span>
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Registration Status
+
+</label>
+
+<select class="form-select">
+
+<option>
+Open Immediately
+</option>
+
+<option>
+Keep Closed
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Maximum Delegates
+
+</label>
+
+<input
+type="number"
+class="form-control"
+placeholder="200">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CONFERENCE SUMMARY -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Conference <span>Summary</span>
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Conference
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+">
+
+RITMUN 2026
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Committees
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+">
+
+6 Selected
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Organizers
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+">
+
+4 Total
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Registration
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+">
+
+Open
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SUBMIT -->
+
+<div
+class="text-center"
+style="margin-top:40px;">
+
+<button
+type="submit"
+class="btn-primary-custom"
+style="
+font-size:1rem;
+padding:16px 36px;
+">
+
+<a
+href="organizer/dashboard.html"
+class="btn-primary-custom text-decoration-none">
+
+<i class="fa-solid fa-building-columns me-2"></i>
+
+Create Conference
+
+</a>
+</button>
+
+<p
+style="
+margin-top:15px;
+color:var(--muted);
+font-size:.95rem;
+">
+
+This will create your conference,
+register the primary organizer
+and grant access to all authorized organizer emails.
+
+</p>
+
+</div>
+
+</form>
+
+</div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

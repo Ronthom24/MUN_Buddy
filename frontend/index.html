@@ -30,39 +30,100 @@
       font-family: 'Playfair Display', serif;
     }
 
-    /* ── NAVBAR ── */
-    .navbar {
-      background: rgba(10,14,26,0.97) !important;
-      border-bottom: 1px solid rgba(0,158,219,0.18);
-      backdrop-filter: blur(12px);
-    }
-    .navbar-brand {
-      font-size: 1.55rem;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      color: #fff !important;
-    }
-    .navbar-brand span { color: var(--un-blue); }
-    .nav-link {
-      color: rgba(255,255,255,0.78) !important;
-      font-size: .9rem;
-      font-weight: 500;
-      letter-spacing: .4px;
-      position: relative;
-      padding-bottom: 2px !important;
-      transition: color .2s;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 0; height: 2px;
-      background: var(--un-blue);
-      transition: width .3s;
-    }
-    .nav-link:hover { color: #fff !important; }
-    .nav-link:hover::after { width: 100%; }
+  /* ── NAVBAR ── */
 
+.navbar {
+
+  background: rgba(10,14,26,0.97) !important;
+
+  border-bottom: 1px solid rgba(0,158,219,0.18);
+
+  backdrop-filter: blur(12px);
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 9999;
+
+  transition:
+    transform .35s ease,
+    background .3s ease;
+
+}
+
+.navbar.hide-nav {
+
+  transform: translateY(-100%);
+
+}
+
+.navbar-brand {
+
+  font-size: 1.55rem;
+
+  font-weight: 900;
+
+  letter-spacing: -0.5px;
+
+  color: #fff !important;
+
+}
+
+.navbar-brand span {
+
+  color: var(--un-blue);
+
+}
+
+.nav-link {
+
+  color: rgba(255,255,255,0.78) !important;
+
+  font-size: .9rem;
+
+  font-weight: 500;
+
+  letter-spacing: .4px;
+
+  position: relative;
+
+  padding-bottom: 2px !important;
+
+  transition: color .2s;
+
+}
+
+.nav-link::after {
+
+  content: '';
+
+  position: absolute;
+
+  bottom: 0;
+  left: 0;
+
+  width: 0;
+
+  height: 2px;
+
+  background: var(--un-blue);
+
+  transition: width .3s;
+
+}
+
+.nav-link:hover {
+
+  color: #fff !important;
+
+}
+
+.nav-link:hover::after {
+
+  width: 100%;
+
+}
     /* ── HERO ── */
     #hero {
       position: relative;
@@ -468,407 +529,908 @@
   </style>
 </head>
 <body>
-
-<!-- UN STRIP -->
+  <!-- UN STRIP -->
 <div class="un-strip"></div>
 
-<!-- ─────────────── NAVBAR ─────────────── -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark ">
+
   <div class="container">
-    <a class="navbar-brand" href="#">MUN<span>Buddy</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+
+    <a class="navbar-brand" href="index.html">
+      MUN<span>Buddy</span>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav">
+
       <span class="navbar-toggler-icon"></span>
+
     </button>
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav ms-auto gap-1">
 
-          <li class="nav-item">
-            <a class="nav-link" href="#hero">
-              <i class="fa fa-house me-1 opacity-50"></i>Home
-            </a>
-          </li>
+    <div
+      class="collapse navbar-collapse"
+      id="navbarNav">
 
-          <li class="nav-item">
-            <a class="nav-link" href="#features">
-              <i class="fa fa-layer-group me-1 opacity-50"></i>Features
-            </a>
-          </li>
+      <ul class="navbar-nav ms-auto align-items-lg-center">
 
-          <li class="nav-item">
-            <a class="nav-link" href="#news">
-              <i class="fa fa-newspaper me-1 opacity-50"></i>News
-            </a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#hero">
+            Home
+          </a>
+        </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="#learn">
-              <i class="fa fa-graduation-cap me-1 opacity-50"></i>About MUN Buddy
-            </a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#how-it-works">
+            How It Works
+          </a>
+        </li>
 
-          
+        <li class="nav-item">
+          <a class="nav-link" href="#features">
+            Features
+          </a>
+        </li>
 
-  <li class="nav-item">
-    <a class="nav-link" href="login.html">
-      <i class="fa fa-right-to-bracket me-1 opacity-50"></i>Login
-    </a>
-  </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#news">
+            Current Affairs
+          </a>
+        </li>
 
-  <li class="nav-item">
-    <a class="btn btn-sm btn-primary ms-2 px-3"
-      href="register.html"
-      style="background:var(--un-blue);border:none;">
-      Register
-    </a>
-  </li>
+        
+
+        <li class="nav-item ms-lg-3">
+
+          <a
+            href="login.html"
+            class="btn btn-sm btn-primary px-4">
+
+            Login
+
+          </a>
+
+        </li>
 
       </ul>
+
     </div>
+
   </div>
+
 </nav>
 
-<!-- ─────────────── HERO ─────────────── -->
+<!-- HERO -->
+
 <section id="hero">
-  <!-- Fallback poster image for video -->
+
   <video id="hero-video" autoplay muted loop playsinline
     poster="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1600&q=80">
     <source src="https://cdn.coverr.co/videos/coverr-business-team-discussion-1566971496955?download=1080p" type="video/mp4">
   </video>
+
   <div class="hero-overlay"></div>
+
   <div class="hero-content container">
+
     <div class="hero-badge">
-      🌐 The Complete Model UN Platform
+
+      The Complete Model UN Platform
+
     </div>
 
     <h1>
-      Run Better Conferences.
-<br>
-      <span>Prepare Better Delegates.</span>
+
+      The Complete
+
+      <br>
+
+      <span>
+
+        Model United Nations Platform
+
+      </span>
+
     </h1>
 
     <p class="lead">
-      MUN Buddy provides organizers with everything needed
-      to manage a conference and gives delegates the intelligence,
-      research tools and AI assistance required to excel in committee.
-    </p>  
 
-    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+      Create conferences.
 
-      <a href="login.html" class="btn-hero">
+      Register delegates.
+
+      Manage assignments.
+
+      Access personalized committee intelligence.
+
+      Everything needed to run and prepare for
+      Model United Nations in one platform.
+
+    </p>
+
+    <div
+      class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+
+      <a
+        href="delegate-register.html"
+        class="btn-hero">
+
         <i class="fa fa-user-graduate me-2"></i>
-        Delegate Portal
+
+        Register as Delegate
+
       </a>
 
-      <a href="login.html" class="btn btn-outline-light px-4 py-3 fw-semibold">
+      <a
+        href="organizer-register.html"
+        class="btn btn-outline-light px-4 py-3 fw-semibold">
+
         <i class="fa fa-user-tie me-2"></i>
-        Organizer Portal
+
+        Register as Organizer
+
       </a>
-      
+
     </div>
+
+    <div class="mt-4">
+
+      <p class="text-white-50">
+
+        Already have an account?
+
+        <a
+          href="login.html"
+          class="text-white fw-bold text-decoration-none">
+
+          Login Here
+
+        </a>
+
+      </p>
+
+    </div>
+
   </div>
+
   <div class="hero-scroll-hint">
-    <i class="fa fa-chevron-down d-block mb-1"></i> Scroll
+
+    <i class="fa fa-chevron-down d-block mb-1"></i>
+
+    Scroll
+
   </div>
+
 </section>
 
-<!-- ─────────────── BREAKING NEWS ─────────────── -->
-<section id="news">
-  <div class="container">
-    <div class="text-center mb-5">
-      <div class="section-label"><i class="fa fa-circle-dot me-1"></i> Live Updates</div>
-      <h2 class="section-title">Current Affairs  <span style="color:var(--accent-red);">Intelligence</span></h2>
-      <div class="section-divider"></div>
-    </div>
+<!-- HOW IT WORKS -->
 
-    <div class="position-relative px-5 px-md-5">
-      <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4500">
-        <div class="carousel-indicators">
-          <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="0" class="active"></button>
-          <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="1"></button>
-          <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="2"></button>
-          <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="3"></button>
-          <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="4"></button>
-        </div>
-
-        <div class="carousel-inner">
-
-          <!-- Slide 1 -->
-          <div class="carousel-item active">
-            <div class="row g-4">
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=80" class="news-card-img" alt="Climate" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-breaking">Breaking</span>
-                    <h5>Global Climate Talks Resume in Geneva</h5>
-                    <p>World leaders reconvene to address stalling emission targets as IPCC warns of critical tipping points within the decade.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>2 hours ago &nbsp;·&nbsp; Geneva</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=80" class="news-card-img" alt="UN" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-update">Update</span>
-                    <h5>UN Security Council Passes Ceasefire Resolution</h5>
-                    <p>A landmark 14-1 vote brings a temporary halt to hostilities in the disputed region, opening humanitarian corridors.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>5 hours ago &nbsp;·&nbsp; New York</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 d-none d-md-block">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1464746133101-a2c3f88e0dd9?w=600&q=80" class="news-card-img" alt="Delegates" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-analysis">Analysis</span>
-                    <h5>Rising Powers Reshape the Multilateral Agenda</h5>
-                    <p>Analysts examine how the G20 bloc is pushing for reform of Security Council veto powers, and what it means for global governance.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>1 day ago &nbsp;·&nbsp; Analysis</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 2 -->
-          <div class="carousel-item">
-            <div class="row g-4">
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80" class="news-card-img" alt="Education" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-update">Update</span>
-                    <h5>UNESCO Announces $3B Education Fund for Conflict Zones</h5>
-                    <p>The initiative targets 60 million displaced children, deploying mobile learning units and teacher-training programs.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>3 hours ago &nbsp;·&nbsp; Paris</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?w=600&q=80" class="news-card-img" alt="Health" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-breaking">Breaking</span>
-                    <h5>WHO Declares New Epidemic Watch in Sub-Saharan Africa</h5>
-                    <p>Health officials are mobilising rapid response teams following a surge in haemorrhagic fever cases across three nations.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>6 hours ago &nbsp;·&nbsp; Geneva</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 d-none d-md-block">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" class="news-card-img" alt="Economy" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-analysis">Analysis</span>
-                    <h5>IMF Projects Diverging Recovery Paths Post-2026</h5>
-                    <p>Emerging markets show resilience as advanced economies navigate debt restructuring — a MUN economics perspective.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>2 days ago &nbsp;·&nbsp; Washington D.C.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 3 -->
-          <div class="carousel-item">
-            <div class="row g-4">
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80" class="news-card-img" alt="Tech" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-urgent">Urgent</span>
-                    <h5>AI Governance Treaty Negotiations Reach Critical Stage</h5>
-                    <p>Delegates from 120 nations are deadlocked over enforcement mechanisms for the proposed Global AI Safety Framework.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>1 hour ago &nbsp;·&nbsp; Vienna</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" class="news-card-img" alt="Water" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-breaking">Breaking</span>
-                    <h5>Transboundary Water Rights Summit Concludes</h5>
-                    <p>Eleven river-basin nations sign the Nairobi Accord on shared freshwater management — the first deal of its kind.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>4 hours ago &nbsp;·&nbsp; Nairobi</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 d-none d-md-block">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=600&q=80" class="news-card-img" alt="Summit" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-feature">Feature</span>
-                    <h5>MUN Conference Season 2026 — A Delegate's Preview</h5>
-                    <p>From NYMUN to LIMUN, we break down the year's most prestigious simulations and how to prepare your position papers.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>3 days ago &nbsp;·&nbsp; MUN Buddy</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="carousel-item">
-            <div class="row g-4">
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&q=80" class="news-card-img" alt="Space" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-analysis">Analysis</span>
-                    <h5>COPUOS Debates Moon Mining Regulations</h5>
-                    <p>The UN Committee on Outer Space revisits the 1967 Outer Space Treaty as commercial lunar missions accelerate.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>8 hours ago &nbsp;·&nbsp; Vienna</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80" class="news-card-img" alt="Resolution" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-update">Update</span>
-                    <h5>UNHRC Passes Landmark Migrant Rights Resolution</h5>
-                    <p>The resolution mandates fair asylum processing timelines and bans indefinite detention for asylum seekers.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>12 hours ago &nbsp;·&nbsp; Geneva</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 d-none d-md-block">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&q=80" class="news-card-img" alt="Research" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-feature">Feature</span>
-                    <h5>How to Write a Winning Position Paper</h5>
-                    <p>Our expert delegates share research frameworks, citation strategies, and rhetorical structures used by award-winning papers.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>5 days ago &nbsp;·&nbsp; MUN Buddy</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 5 -->
-          <div class="carousel-item">
-            <div class="row g-4">
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5ce?w=600&q=80" class="news-card-img" alt="Biodiversity" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-breaking">Breaking</span>
-                    <h5>CBD Summit Targets 40% Ocean Protection by 2030</h5>
-                    <p>The Convention on Biological Diversity strengthens the 30×30 pledge to include deeper marine and pelagic zones.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>30 min ago &nbsp;·&nbsp; Montreal</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=600&q=80" class="news-card-img" alt="Security" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-urgent">Urgent</span>
-                    <h5>Cybersecurity Attacks Target UN Aid Infrastructure</h5>
-                    <p>OCHA confirms coordinated intrusions disrupted aid logistics in two active conflict zones, triggering emergency protocols.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>45 min ago &nbsp;·&nbsp; New York</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 d-none d-md-block">
-                <div class="news-card">
-                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80" class="news-card-img" alt="Delegates" />
-                  <div class="news-card-body">
-                    <span class="news-badge badge-feature">Feature</span>
-                    <h5>Soft Power & Public Speaking for Delegates</h5>
-                    <p>Learn how top-ranked delegates leverage rhetoric, active listening, and coalition-building to pass resolutions.</p>
-                    <div class="news-meta"><i class="fa fa-clock me-1"></i>6 days ago &nbsp;·&nbsp; MUN Buddy</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /.carousel-inner -->
-
-        <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
-          <i class="fa fa-chevron-left"></i>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
-          <i class="fa fa-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="ai-suite" style="padding:100px 0;background:#ffffff;">
+<section
+  id="how-it-works"
+  style="padding:90px 0;background:#f8fafc;">
 
   <div class="container">
 
     <div class="text-center mb-5">
 
       <div class="section-label">
-        AI-Powered Preparation
+
+
       </div>
 
-      <h2 class="section-title" style="color:#0f172a;">
-        Built For
+      <h2
+        class="section-title"
+        style="color:#1e293b;">
+
+        Your Journey With
+
         <span style="color:var(--un-blue);">
-          Winning Delegates
+
+          MUN Buddy
+
         </span>
+
       </h2>
 
       <div class="section-divider"></div>
 
-      <p class="text-muted mx-auto" style="max-width:750px;">
-        Every tool inside MUN Buddy is designed to help delegates
-        research faster, prepare smarter and perform better in committee.
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-lg-6">
+
+        <div class="learn-card learn-card-un">
+
+          <span class="learn-emoji">
+
+            🏛️
+
+          </span>
+
+          <h3>
+
+            For Organizers
+
+          </h3>
+
+          <p>
+
+            Create an organizer account,
+            launch your conference,
+            manage registrations,
+            assign delegates and oversee
+            conference operations from one place.
+
+          </p>
+
+          <a
+            href="organizer-register.html"
+            class="btn-learn">
+
+            Register as Organizer →
+
+          </a>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-6">
+
+        <div class="learn-card learn-card-mun">
+
+          <span class="learn-emoji">
+
+            🌍
+
+          </span>
+
+          <h3>
+
+            For Delegates
+
+          </h3>
+
+          <p>
+
+            Create your delegate account,
+            register for conferences,
+            receive your assignment and unlock
+            personalized intelligence tools,
+            research support and preparation resources.
+
+          </p>
+
+          <a
+            href="delegate-register.html"
+            class="btn-learn">
+
+            Register as Delegate →
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- PLATFORM FEATURES -->
+
+<section id="features">
+
+  <div class="container">
+
+    <div class="text-center mb-5">
+
+      <div class="section-label">
+
+        Platform Features
+
+      </div>
+
+      <h2
+        class="section-title"
+        style="color:#1e293b;">
+
+        Built For
+
+        <span style="color:var(--un-blue);">
+
+          Delegates & Organizers
+
+        </span>
+
+      </h2>
+
+      <div class="section-divider"></div>
+
+      <p
+        class="mx-auto"
+        style="
+        max-width:800px;
+        color:#64748b;
+        line-height:1.8;">
+
+        MUN Buddy combines conference management,
+        delegate preparation and AI-powered assistance
+        into one seamless platform.
+
+      </p>
+
+    </div>
+
+    <!-- DELEGATES -->
+
+    <div class="row g-4 mb-5">
+
+      <div class="col-12">
+
+        <h3
+          class="mb-4"
+          style="
+          font-family:'Playfair Display',serif;
+          color:#0f172a;">
+
+          Delegate Intelligence Suite
+
+        </h3>
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-earth-asia"></i>
+
+          <h6>
+
+            Country Intelligence
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-building-columns"></i>
+
+          <h6>
+
+            Committee Intelligence
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-scale-balanced"></i>
+
+          <h6>
+
+            Agenda Intelligence
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-folder-open"></i>
+
+          <h6>
+
+            Research Hub
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-microphone"></i>
+
+          <h6>
+
+            Speech Builder
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-file-lines"></i>
+
+          <h6>
+
+            Position Papers
+
+          </h6>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ORGANIZERS -->
+
+    <div class="row g-4">
+
+      <div class="col-12">
+
+        <h3
+          class="mb-4"
+          style="
+          font-family:'Playfair Display',serif;
+          color:#0f172a;">
+
+          Organizer Workspace
+
+        </h3>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-calendar-check"></i>
+
+          <h6>
+
+            Conference Management
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-users"></i>
+
+          <h6>
+
+            Delegate Registration
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-list-check"></i>
+
+          <h6>
+
+            Assignments
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-bullhorn"></i>
+
+          <h6>
+
+            Announcements
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-chart-line"></i>
+
+          <h6>
+
+            Analytics
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-folder-tree"></i>
+
+          <h6>
+
+            Resources
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-building"></i>
+
+          <h6>
+
+            Committees
+
+          </h6>
+
+        </div>
+
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+
+        <div class="feature-mini">
+
+          <i class="fa fa-globe"></i>
+
+          <h6>
+
+            Country Allocation
+
+          </h6>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- AI PREPARATION -->
+
+<section
+id="learn"
+style="padding-top:0;">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<div class="section-label">
+
+AI Powered Preparation
+
+</div>
+
+<h2
+class="section-title"
+style="color:#1e293b;">
+
+Research Faster.
+
+<span style="color:var(--un-blue);">
+
+Debate Smarter.
+
+</span>
+
+</h2>
+
+<div class="section-divider"></div>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="learn-card learn-card-un">
+
+<span class="learn-emoji">
+
+🤖
+
+</span>
+
+<h3>
+
+AI Research Assistant
+
+</h3>
+
+<p>
+
+Instantly gather information,
+analyze agenda topics,
+understand country positions
+and build stronger arguments.
+
+</p>
+
+<a href="#" class="btn-learn">
+
+Explore AI Tools →
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="learn-card learn-card-mun">
+
+<span class="learn-emoji">
+
+📝
+
+</span>
+
+<h3>
+
+Speechs & Position Papers
+
+</h3>
+
+<p>
+
+Generate speeches,
+draft position papers,
+create resolutions
+and organize your preparation.
+
+</p>
+
+<a href="#" class="btn-learn">
+
+See Delegate Tools →
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CURRENT AFFAIRS -->
+
+<section id="news">
+
+  <div class="container">
+
+    <div class="text-center mb-5">
+
+      <div class="section-label">
+
+        Current Affairs Intelligence
+
+      </div>
+
+      <h2 class="section-title">
+
+        Stay Ahead Of
+
+        <span style="color:var(--accent-red);">
+
+          Global Events
+
+        </span>
+
+      </h2>
+
+      <div class="section-divider"></div>
+
+      <p
+        class="mx-auto"
+        style="
+        max-width:760px;
+        color:rgba(255,255,255,.75);
+        ">
+
+        Monitor international developments,
+        Security Council activity,
+        climate negotiations,
+        conflicts and emerging geopolitical trends.
+
       </p>
 
     </div>
 
     <div class="row g-4">
 
-      <div class="col-md-4">
-        <div class="feature-mini">
-          <i class="fa fa-flag"></i>
-          <h6>Country Intelligence</h6>
+      <div class="col-lg-4">
+
+        <div class="news-card">
+
+          <img
+            src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=80"
+            class="news-card-img">
+
+          <div class="news-card-body">
+
+            <span class="news-badge badge-breaking">
+
+              Breaking
+
+            </span>
+
+            <h5>
+
+              Global Climate Talks Resume
+
+            </h5>
+
+            <p>
+
+              World leaders reconvene to address
+              emissions targets and international
+              climate commitments.
+
+            </p>
+
+            <div class="news-meta">
+
+              Geneva • 2 Hours Ago
+
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
-      <div class="col-md-4">
-        <div class="feature-mini">
-          <i class="fa fa-building-columns"></i>
-          <h6>Committee Intelligence</h6>
+      <div class="col-lg-4">
+
+        <div class="news-card">
+
+          <img
+            src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=80"
+            class="news-card-img">
+
+          <div class="news-card-body">
+
+            <span class="news-badge badge-update">
+
+              Update
+
+            </span>
+
+            <h5>
+
+              Security Council Resolution Passed
+
+            </h5>
+
+            <p>
+
+              A landmark resolution gains support,
+              opening new diplomatic opportunities.
+
+            </p>
+
+            <div class="news-meta">
+
+              United Nations • Today
+
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
-      <div class="col-md-4">
-        <div class="feature-mini">
-          <i class="fa fa-scroll"></i>
-          <h6>Agenda Intelligence</h6>
+      <div class="col-lg-4">
+
+        <div class="news-card">
+
+          <img
+            src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80"
+            class="news-card-img">
+
+          <div class="news-card-body">
+
+            <span class="news-badge badge-analysis">
+
+              Analysis
+
+            </span>
+
+            <h5>
+
+              AI Governance Negotiations Continue
+
+            </h5>
+
+            <p>
+
+              States continue discussions regarding
+              global AI governance frameworks
+              and regulation.
+
+            </p>
+
+            <div class="news-meta">
+
+              Vienna • Analysis
+
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
-      <div class="col-md-4">
-        <div class="feature-mini">
-          <i class="fa fa-microphone"></i>
-          <h6>Speech Generator</h6>
-        </div>
-      </div>
+    </div>
 
-      <div class="col-md-4">
-        <div class="feature-mini">
-          <i class="fa fa-file-lines"></i>
-          <h6>Position Paper Builder</h6>
-        </div>
-      </div>
+    <div class="text-center mt-5">
 
-      <div class="col-md-4">
-        <div class="feature-mini">
-          <i class="fa fa-scale-balanced"></i>
-          <h6>Resolution Assistant</h6>
-        </div>
-      </div>
+      <a
+        href="#"
+        class="btn-hero">
+
+        Explore Current Affairs
+
+      </a>
 
     </div>
 
@@ -876,319 +1438,234 @@
 
 </section>
 
-<!-- ─────────────── WHAT IS UN / MUN ─────────────── -->
-<section id="learn">
-  <div class="container">
+<!-- FOOTER -->
 
-    <div class="text-center mb-5">
-
-      <div class="section-label">
-        Why MUN Buddy
-      </div>
-
-      <h2 class="section-title" style="color:#0f172a;">
-        One Platform.
-        <span style="color:var(--un-blue);">
-          Complete Conference Experience.
-        </span>
-      </h2>
-
-      <div class="section-divider"></div>
-
-      <p class="text-muted mx-auto" style="max-width:760px;">
-        MUN Buddy brings together conference management,
-        delegate preparation, AI research tools and committee intelligence
-        into a single platform designed specifically for Model United Nations.
-      </p>
-
-    </div>
-
-    <div class="row g-4 mt-4">
-
-      <div class="col-lg-3">
-        <div class="feature-mini">
-          <i class="fa fa-building-columns"></i>
-          <h5>For Organizers</h5>
-          <p>
-            Create conferences, manage committees,
-            assign delegates and publish resources.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-lg-3">
-        <div class="feature-mini">
-          <i class="fa fa-user-graduate"></i>
-          <h5>For Delegates</h5>
-          <p>
-            Access personalized intelligence
-            based on your assigned country and committee.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-lg-3">
-        <div class="feature-mini">
-          <i class="fa fa-robot"></i>
-          <h5>AI Assistance</h5>
-          <p>
-            Generate speeches, position papers,
-            resolutions and research instantly.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-lg-3">
-        <div class="feature-mini">
-          <i class="fa fa-globe"></i>
-          <h5>Current Affairs</h5>
-          <p>
-            Stay updated with real-world developments
-            relevant to your agenda.
-          </p>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-<!-- ─────────────── FEATURE CARDS ─────────────── -->
-<section id="features">
-  <div class="text-center mb-5">
-    
-  <div class="section-label">
-    Platform Features
-  </div>
-
-    <h2 class="section-title" style="color:#0f172a;">
-      Built for
-      <span style="color:var(--un-blue);">
-        Delegates & Organizers
-      </span>
-    </h2>
-
-    <div class="section-divider"></div>
-
-    <p class="text-muted mx-auto" style="max-width:700px;">
-  One platform for delegates preparing for debate and organizers
-  managing conferences, committees, and country assignments.
-    </p>
-
-  </div>
-
-<div class="row g-5 mt-4">
-
-  <!-- Delegates -->
-  <div class="col-lg-6">
-
-    <h3 class="fw-bold mb-4 text-center">
-  <i class="fa fa-user-graduate text-primary me-2"></i>
-      For Delegates
-    </h3>
-
-    <div class="row g-3">
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-globe"></i>
-          <h6>Country Research</h6>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-landmark"></i>
-          <h6>Committee Prep</h6>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-scroll"></i>
-          <h6>Resolution Drafting</h6>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-note-sticky"></i>
-          <h6>Personal Notes</h6>
-        </div>
-      </div>
-
-      <div class="col-12 d-flex justify-content-center">
-        <div class="feature-mini" style="width:48%;">
-         <i class="fa fa-microphone"></i>
-          <h6>Speech Practice</h6>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- Organizers -->
-  <div class="col-lg-6">
-
-    <h3 class="fw-bold mb-4 text-center">
-      <i class="fa fa-user-tie text-success me-2"></i>
-          For Organizers
-    </h3>
-    
-    <div class="row g-3">
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-users"></i>
-          <h6>Delegate Management</h6>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-earth-americas"></i>
-          <h6>Country Assignment</h6>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-building-columns"></i>
-          <h6>Committee Oversight</h6>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="feature-mini">
-          <i class="fa fa-chart-line"></i>
-          <h6>Resolution Review</h6>
-        </div>
-      </div>
-
-      <div class="col-12 d-flex justify-content-center">
-         <div class="feature-mini" style="width:48%;">
-          <i class="fa fa-clipboard-check"></i>
-            <h6>Feedback & Analytics</h6>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-</section>
-
-<!-- ─────────────── FOOTER ─────────────── -->
 <footer>
+
   <div class="container">
+
     <div class="row g-5">
 
-      <!-- Brand -->
       <div class="col-lg-4">
-        <div class="footer-brand">MUN<span>Buddy</span></div>
 
-        <p class="footer-desc mt-2">
-          The complete platform for Model United Nations delegates and organizers.
-          Research smarter, prepare effectively, and manage conferences with confidence.
+        <div class="footer-brand">
+
+          MUN<span>Buddy</span>
+
+        </div>
+
+        <p class="footer-desc mt-3">
+
+          The complete platform for Model United Nations.
+
+          From conference creation and delegate registration
+          to assignments, intelligence and preparation —
+          everything in one place.
+
         </p>
 
-        <div class="mt-3">
-          <a href="#" class="social-btn" aria-label="Twitter">
+        <div class="mt-4">
+
+          <a href="#" class="social-btn">
             <i class="fab fa-twitter"></i>
           </a>
 
-          <a href="#" class="social-btn" aria-label="Facebook">
+          <a href="#" class="social-btn">
             <i class="fab fa-facebook-f"></i>
           </a>
 
-          <a href="#" class="social-btn" aria-label="Instagram">
+          <a href="#" class="social-btn">
             <i class="fab fa-instagram"></i>
           </a>
 
-          <a href="#" class="social-btn" aria-label="LinkedIn">
+          <a href="#" class="social-btn">
             <i class="fab fa-linkedin-in"></i>
           </a>
+
         </div>
+
       </div>
 
-      <!-- Navigation -->
       <div class="col-6 col-lg-2">
+
         <div class="footer-heading">
-          Navigate
+
+          Platform
+
         </div>
 
         <ul class="footer-links">
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#features">Features</a></li>
-          <li><a href="#news">News</a></li>
-          <li><a href="#learn">How It Works</a></li>
-          <li><a href="login.html">Login</a></li>
+
+          <li>
+            <a href="#hero">Home</a>
+          </li>
+
+          <li>
+            <a href="#how-it-works">How It Works</a>
+          </li>
+
+          <li>
+            <a href="#features">Features</a>
+          </li>
+
+          <li>
+            <a href="#news">Current Affairs</a>
+          </li>
+
+          <li>
+            <a href="login.html">Login</a>
+          </li>
+
         </ul>
+
       </div>
 
-      <!-- Resources -->
       <div class="col-6 col-lg-2">
+
         <div class="footer-heading">
-          Resources
+
+          Quick Links
+
         </div>
 
         <ul class="footer-links">
-          <li><a href="https://www.un.org" target="_blank">United Nations</a></li>
-          <li><a href="https://bestdelegate.com" target="_blank">Best Delegate</a></li>
-          <li><a href="#">Delegate Resources</a></li>
-          <li><a href="#">Organizer Resources</a></li>
-          <li><a href="#">Resolution Library</a></li>
+
+          <li>
+            <a href="delegate-register.html">
+              Delegate Registration
+            </a>
+          </li>
+
+          <li>
+            <a href="organizer-register.html">
+              Organizer Registration
+            </a>
+          </li>
+
+          <li>
+            <a href="login.html">
+              Login
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              Support
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              Contact
+            </a>
+          </li>
+
         </ul>
+
       </div>
 
-      <!-- Newsletter -->
       <div class="col-lg-4">
+
         <div class="footer-heading">
+
           Stay Updated
+
         </div>
 
-        <p style="font-size:.875rem; color:var(--text-muted-light); margin-bottom:1rem; line-height:1.65;">
-          Get breaking UN news, MUN conference updates,
-          preparation resources, and platform announcements.
+        <p
+          style="
+          font-size:.9rem;
+          color:var(--text-muted-light);
+          line-height:1.7;
+          ">
+
+          Receive conference updates,
+          current affairs briefings,
+          platform announcements
+          and new feature releases.
+
         </p>
 
-        <div class="d-flex">
+        <div class="d-flex mt-3">
+
           <input
             type="email"
             class="newsletter-input form-control"
-            placeholder="your@email.com"
-          />
+            placeholder="your@email.com">
 
-          <button class="btn-subscribe btn">
+          <button class="btn-subscribe">
+
             Subscribe
+
           </button>
+
         </div>
 
-        <p style="font-size:.72rem; color:#475569; margin-top:.6rem;">
+        <p
+          style="
+          font-size:.75rem;
+          color:#64748B;
+          margin-top:10px;
+          ">
+
           No spam. Unsubscribe anytime.
+
         </p>
+
       </div>
 
     </div>
 
-    <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+    <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center">
+
       <span>
-        © 2026 MUN Buddy. All rights reserved.
+
+        © 2026 MUN Buddy.
+        All Rights Reserved.
+
       </span>
 
       <span>
-        Empowering delegates and organizers worldwide 🌐
+
+        Empowering Delegates & Organizers Worldwide 🌍
+
       </span>
+
     </div>
 
   </div>
+
 </footer>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="assets/js/site.js"></script>
+<script>
+
+let lastScrollTop = 0;
+
+const navbar = document.querySelector('.navbar');
+
+window.addEventListener('scroll', () => {
+
+  let currentScroll =
+    window.pageYOffset ||
+    document.documentElement.scrollTop;
+
+  if(currentScroll > lastScrollTop && currentScroll > 120){
+
+    navbar.classList.add('hide-nav');
+
+  } else {
+
+    navbar.classList.remove('hide-nav');
+
+  }
+
+  lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+
+});
+
+</script>
 </body>
 </html>

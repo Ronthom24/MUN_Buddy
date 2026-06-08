@@ -4,279 +4,940 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Delegate Registration | MUN Buddy</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>
+MUN Buddy | Delegate Registration
+</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap"
+rel="stylesheet">
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<link rel="stylesheet" href="assets/css/auth.css">
+<style>
+
+:root{
+
+--un-blue:#009EDB;
+--un-navy:#00528C;
+
+--dark:#07111E;
+
+--light:#F8FAFC;
+
+--muted:#64748B;
+
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'DM Sans',sans-serif;
+
+background:#F8FAFC;
+
+color:#0F172A;
+
+}
+
+/* HERO */
+
+.hero{
+
+background:
+
+linear-gradient(
+rgba(5,12,28,.82),
+rgba(5,12,28,.88)
+),
+
+url('https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1800&q=80');
+
+background-size:cover;
+background-position:center;
+
+color:white;
+
+padding:100px 0;
+
+}
+
+.hero h1{
+
+font-family:'Playfair Display',serif;
+
+font-size:4rem;
+
+font-weight:900;
+
+margin-bottom:15px;
+
+}
+
+.hero h1 span{
+
+color:var(--un-blue);
+
+}
+
+.hero p{
+
+max-width:760px;
+
+font-size:1.1rem;
+
+line-height:1.8;
+
+opacity:.92;
+
+}
+
+/* FORM AREA */
+
+.form-section{
+
+padding:80px 0;
+
+}
+
+.form-card{
+
+background:white;
+
+padding:35px;
+
+border-radius:26px;
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.06);
+
+margin-bottom:30px;
+
+}
+
+.section-title{
+
+font-family:'Playfair Display',serif;
+
+font-size:2rem;
+
+margin-bottom:25px;
+
+}
+
+.section-title span{
+
+color:var(--un-blue);
+
+}
+
+.form-label{
+
+font-weight:600;
+
+margin-bottom:8px;
+
+}
+
+.form-control,
+.form-select{
+
+border-radius:14px;
+
+padding:14px;
+
+border:1px solid #E2E8F0;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+border-color:var(--un-blue);
+
+box-shadow:none;
+
+}
+
+textarea{
+
+min-height:140px;
+
+resize:none;
+
+}
+
+.btn-primary-custom{
+
+background:var(--un-blue);
+
+border:none;
+
+padding:14px 26px;
+
+border-radius:14px;
+
+font-weight:700;
+
+color:white;
+
+transition:.25s;
+
+}
+
+.btn-primary-custom:hover{
+
+background:var(--un-navy);
+
+color:white;
+
+}
+
+@media(max-width:992px){
+
+.hero h1{
+
+font-size:2.8rem;
+
+}
+
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="auth-layout">
+<!-- HERO -->
 
-  <!-- LEFT PANEL -->
+<section class="hero">
 
-  <section class="auth-info">
+<div class="container">
 
-    <div class="auth-tag">
+<h1>
 
-      Delegate Registration
+Delegate
+<span>Registration</span>
 
-    </div>
+</h1>
 
-    <h1>
+<p>
 
-      Start Your
-      <br>
+Register for a conference,
+submit your preferences
+and begin your MUN journey.
 
-      <span>MUN Journey.</span>
+Once approved and assigned,
+you will gain access to your
+personalized delegate dashboard.
 
-    </h1>
-
-    <p class="auth-description">
-
-      Create your MUN Buddy account to access conference registrations,
-      country intelligence, committee research, agenda insights and
-      AI-powered preparation tools built specifically for delegates.
-
-    </p>
-
-    <div class="auth-features">
-
-      <span>Conference Registration</span>
-
-      <span>Country Intelligence</span>
-
-      <span>Committee Intelligence</span>
-
-      <span>Agenda Research</span>
-
-      <span>Current Affairs</span>
-
-      <span>Speech Builder</span>
-
-      <span>Position Papers</span>
-
-      <span>Research Assistant</span>
-
-    </div>
-
-  </section>
-
-  <!-- RIGHT PANEL -->
-
-  <section class="auth-card">
-
-    <h2>
-
-      Create Account
-
-    </h2>
-
-    <p>
-
-      Set up your delegate account and get started.
-
-    </p>
-
-    <form id="delegateRegisterForm">
-
-      <div class="form-group">
-
-        <label for="name">
-
-          Full Name
-
-        </label>
-
-        <input
-        type="text"
-        id="name"
-        placeholder="Enter your full name"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="email">
-
-          Email Address
-
-        </label>
-
-        <input
-        type="email"
-        id="email"
-        placeholder="Enter your email address"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="phone">
-
-          Phone Number
-
-        </label>
-
-        <input
-        type="tel"
-        id="phone"
-        placeholder="Enter your phone number"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="college">
-
-          College / Institution
-
-        </label>
-
-        <input
-        type="text"
-        id="college"
-        placeholder="Enter your college or institution"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="experience">
-
-          MUN Experience
-
-        </label>
-
-        <select id="experience" required>
-
-          <option value="">
-            Select Experience Level
-          </option>
-
-          <option>
-            First Time Delegate
-          </option>
-
-          <option>
-            Beginner (1-3 Conferences)
-          </option>
-
-          <option>
-            Intermediate (4-10 Conferences)
-          </option>
-
-          <option>
-            Advanced (10+ Conferences)
-          </option>
-
-          <option>
-            Executive Board Experience
-          </option>
-
-        </select>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="password">
-
-          Password
-
-        </label>
-
-        <input
-        type="password"
-        id="password"
-        minlength="6"
-        placeholder="Minimum 6 characters"
-        required>
-
-      </div>
-
-      <div class="form-group">
-
-        <label for="confirmPassword">
-
-          Confirm Password
-
-        </label>
-
-        <input
-        type="password"
-        id="confirmPassword"
-        minlength="6"
-        placeholder="Re-enter password"
-        required>
-
-      </div>
-
-      <button
-      type="submit"
-      class="primary-btn">
-
-        Create Account
-
-      </button>
-
-      <div class="back-link">
-
-        <a href="delegate-login.html">
-
-          <i class="fas fa-arrow-left"></i>
-
-          Back to Login
-
-        </a>
-
-      </div>
-
-    </form>
-
-  </section>
+</p>
 
 </div>
 
-<script>
+</section>
 
-document
-.getElementById('delegateRegisterForm')
-.addEventListener('submit', function(e){
+<!-- FORM -->
 
-  e.preventDefault();
+<section class="form-section">
 
-  const password =
-    document.getElementById('password').value;
+<div class="container">
 
-  const confirmPassword =
-    document.getElementById('confirmPassword').value;
+<form action="dashboard.html">
 
-  if(password !== confirmPassword){
+<!-- DELEGATE DETAILS -->
 
-    alert('Passwords do not match.');
+<div class="form-card">
 
-    return;
+<h2 class="section-title">
 
-  }
+Delegate <span>Details</span>
 
-  window.location.href='delegate/dashboard.html';
+</h2>
 
-});
+<div class="row g-4">
 
-</script>
+<div class="col-md-6">
+
+<label class="form-label">
+
+Full Name *
+
+</label>
+
+<input
+type="text"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Email Address *
+
+</label>
+
+<input
+type="email"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Phone Number *
+
+</label>
+
+<input
+type="text"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+School / Institution *
+
+</label>
+
+<input
+type="text"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Grade / Year *
+
+</label>
+
+<input
+type="text"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Previous MUN Experience
+
+</label>
+
+<select class="form-select">
+
+<option>
+
+Beginner
+
+</option>
+
+<option>
+
+1 - 3 Conferences
+
+</option>
+
+<option>
+
+4 - 10 Conferences
+
+</option>
+
+<option>
+
+10+ Conferences
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Password *
+
+</label>
+
+<input
+type="password"
+class="form-control">
+
+</div>
+
+<div class="col-md-6">
+
+<label class="form-label">
+
+Confirm Password *
+
+</label>
+
+<input
+type="password"
+class="form-control">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CONFERENCE SELECTION -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Conference <span>Selection</span>
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:25px;
+line-height:1.8;
+">
+
+Select the conference you wish to register for.
+
+Available conferences will eventually be loaded
+from the database.
+
+</p>
+
+<div class="row g-4">
+
+<div class="col-md-12">
+
+<label class="form-label">
+
+Conference *
+
+</label>
+
+<select class="form-select">
+
+<option>
+
+RITMUN 2026
+
+</option>
+
+<option>
+
+NPSMUN 2026
+
+</option>
+
+<option>
+
+DPSMUN 2026
+
+</option>
+
+<option>
+
+PESMUN 2026
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- DELEGATE PROFILE -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Delegate <span>Profile</span>
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:25px;
+line-height:1.8;
+">
+
+Tell organizers a little about yourself.
+This helps during delegate selection
+and assignment.
+
+</p>
+
+<label class="form-label">
+
+Brief Delegate Profile
+
+</label>
+
+<textarea
+class="form-control"
+placeholder="Tell us about your interests, MUN experience, strengths and areas of interest..."></textarea>
+
+</div>
+
+<!-- COMMITTEE PREFERENCES -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Committee <span>Preferences</span>
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:25px;
+line-height:1.8;
+">
+
+Select your preferred committees.
+These preferences will assist organizers
+during delegate allocations.
+
+</p>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Committee Preference 1 *
+
+</label>
+
+<select class="form-select">
+
+<option>UNSC</option>
+
+<option>UNGA</option>
+
+<option>UNHRC</option>
+
+<option>DISEC</option>
+
+<option>ECOSOC</option>
+
+<option>WHO</option>
+
+<option>UN Women</option>
+
+<option>Crisis Committee</option>
+
+</select>
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Committee Preference 2
+
+</label>
+
+<select class="form-select">
+
+<option>UNSC</option>
+
+<option>UNGA</option>
+
+<option>UNHRC</option>
+
+<option>DISEC</option>
+
+<option>ECOSOC</option>
+
+<option>WHO</option>
+
+<option>UN Women</option>
+
+<option>Crisis Committee</option>
+
+</select>
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Committee Preference 3
+
+</label>
+
+<select class="form-select">
+
+<option>UNSC</option>
+
+<option>UNGA</option>
+
+<option>UNHRC</option>
+
+<option>DISEC</option>
+
+<option>ECOSOC</option>
+
+<option>WHO</option>
+
+<option>UN Women</option>
+
+<option>Crisis Committee</option>
+
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- COUNTRY PREFERENCES -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Country <span>Preferences</span>
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:25px;
+line-height:1.8;
+">
+
+Provide your preferred country allocations.
+Organizers may use these preferences
+during assignments.
+
+</p>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Country Preference 1
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="France">
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Country Preference 2
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="Japan">
+
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label">
+
+Country Preference 3
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="Brazil">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SPECIAL REQUIREMENTS -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Additional <span>Information</span>
+
+</h2>
+
+<p
+style="
+color:var(--muted);
+margin-bottom:25px;
+line-height:1.8;
+">
+
+Any accessibility requirements,
+special accommodations or notes for organizers.
+
+</p>
+
+<label class="form-label">
+
+Special Requirements / Notes
+
+</label>
+
+<textarea
+class="form-control"
+placeholder="Optional information for conference organizers..."></textarea>
+
+</div>
+
+<!-- APPLICATION SUMMARY -->
+
+<div class="form-card">
+
+<h2 class="section-title">
+
+Application <span>Summary</span>
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Conference
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+">
+
+RITMUN 2026
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Committees
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+">
+
+3 Preferences
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Countries
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+">
+
+3 Preferences
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div
+style="
+background:#F8FAFC;
+padding:20px;
+border-radius:18px;
+border:1px solid #E2E8F0;
+">
+
+<div
+style="
+font-size:.8rem;
+text-transform:uppercase;
+color:var(--muted);
+letter-spacing:1px;
+">
+
+Status
+
+</div>
+
+<div
+style="
+font-weight:700;
+margin-top:10px;
+color:#16A34A;
+">
+
+Ready
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SUBMIT -->
+
+<div
+class="text-center"
+style="margin-top:40px;">
+
+<a
+href="delegate/dashboard.html"
+class="btn-primary-custom text-decoration-none">
+
+<i class="fa-solid fa-file-signature me-2"></i>
+
+Submit Registration
+
+</a>
+
+<p
+style="
+margin-top:15px;
+color:var(--muted);
+font-size:.95rem;
+">
+
+Your registration will be reviewed by the conference organizers.
+Once approved and assigned, you will receive access to your delegate dashboard.
+
+</p>
+
+</div>
+
+</form>
+
+</div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

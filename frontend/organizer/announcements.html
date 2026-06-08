@@ -1,13 +1,1476 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Organizer Announcements | MUN Buddy</title>
-  <link rel="stylesheet" href="../assets/css/organizer.css" />
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MUN Buddy | Announcements Center</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+
+--un-blue:#009EDB;
+--un-navy:#00528C;
+--dark:#07111E;
+--light:#F8FAFC;
+--muted:#64748B;
+
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'DM Sans',sans-serif;
+background:var(--light);
+color:#0F172A;
+
+}
+
+.navbar{
+
+background:#07111E;
+padding:16px 0;
+border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.navbar-brand{
+
+font-family:'Playfair Display',serif;
+font-size:1.8rem;
+font-weight:900;
+color:white!important;
+
+}
+
+.navbar-brand span{
+
+color:var(--un-blue);
+
+}
+
+.nav-link{
+
+color:rgba(255,255,255,.75)!important;
+margin-left:15px;
+
+}
+
+.nav-link:hover{
+
+color:white!important;
+
+}
+
+.dropdown-menu{
+
+border:none;
+border-radius:16px;
+padding:10px;
+box-shadow:0 15px 40px rgba(0,0,0,.12);
+
+}
+
+.dropdown-item{
+
+border-radius:10px;
+padding:10px 14px;
+font-weight:500;
+
+}
+
+.dropdown-item:hover{
+
+background:#F1F5F9;
+color:var(--un-blue);
+
+}
+
+.dashboard-hero{
+
+background:
+
+linear-gradient(
+rgba(5,12,28,.82),
+rgba(5,12,28,.88)
+),
+
+url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1800&q=80');
+
+background-size:cover;
+background-position:center;
+
+color:white;
+
+padding:90px 0;
+
+}
+
+.hero-top{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:20px;
+
+}
+
+.hero-title{
+
+font-family:'Playfair Display',serif;
+font-size:4rem;
+font-weight:900;
+
+}
+
+.hero-title span{
+
+color:var(--un-blue);
+
+}
+
+.hero-subtitle{
+
+max-width:760px;
+line-height:1.8;
+opacity:.9;
+
+}
+
+.hero-btn{
+
+background:var(--un-blue);
+padding:14px 24px;
+border-radius:14px;
+color:white;
+text-decoration:none;
+font-weight:700;
+
+}
+
+.hero-btn:hover{
+
+background:var(--un-navy);
+color:white;
+
+}
+
+.section{
+
+padding:80px 0;
+
+}
+
+.section-title{
+
+font-family:'Playfair Display',serif;
+font-size:2.2rem;
+margin-bottom:35px;
+
+}
+
+.card-premium{
+
+background:white;
+padding:30px;
+border-radius:26px;
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.06);
+
+height:100%;
+
+}
+
+.stat-label{
+
+font-size:.85rem;
+text-transform:uppercase;
+letter-spacing:1px;
+color:var(--muted);
+
+}
+
+.stat-value{
+
+font-size:2rem;
+font-weight:800;
+margin-top:10px;
+
+}
+
+@media(max-width:992px){
+
+.hero-title{
+
+font-size:2.8rem;
+
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
-  <h1>Organizer Announcements</h1>
-  <script src="../assets/js/organizer/announcements.js"></script>
+
+<!-- USE YOUR STANDARD ORGANIZER NAVBAR HERE -->
+
+<section class="dashboard-hero">
+
+<div class="container">
+
+<div class="hero-top">
+
+<div>
+
+<h1 class="hero-title">
+
+Announcements
+<span>Center</span>
+
+</h1>
+
+<p class="hero-subtitle">
+
+Create updates,
+notify participants,
+publish important information
+and keep your conference community informed.
+
+</p>
+
+</div>
+
+<a
+href="#create-announcement"
+class="hero-btn">
+
+Create Announcement
+
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Announcement Overview
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Total Announcements
+
+</div>
+
+<div class="stat-value">
+
+24
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Published
+
+</div>
+
+<div class="stat-value">
+
+18
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Scheduled
+
+</div>
+
+<div class="stat-value">
+
+4
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Drafts
+
+</div>
+
+<div class="stat-value">
+
+2
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CREATE ANNOUNCEMENT -->
+
+<section
+id="create-announcement"
+class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Create Announcement
+
+</h2>
+
+<div class="card-premium">
+
+<div class="row g-4">
+
+<div class="col-lg-8">
+
+<label class="form-label">
+
+Announcement Title
+
+</label>
+
+<input
+type="text"
+class="form-control"
+placeholder="Enter announcement title">
+
+</div>
+
+<div class="col-lg-4">
+
+<label class="form-label">
+
+Category
+
+</label>
+
+<select class="form-select">
+
+<option>
+
+General Update
+
+</option>
+
+<option>
+
+Registration
+
+</option>
+
+<option>
+
+Assignments
+
+</option>
+
+<option>
+
+Resources
+
+</option>
+
+<option>
+
+Committee Update
+
+</option>
+
+<option>
+
+Emergency Notice
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-lg-6">
+
+<label class="form-label">
+
+Target Audience
+
+</label>
+
+<select class="form-select">
+
+<option>
+
+All Participants
+
+</option>
+
+<option>
+
+Delegates Only
+
+</option>
+
+<option>
+
+Organizers Only
+
+</option>
+
+<option>
+
+Committee Staff
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-lg-6">
+
+<label class="form-label">
+
+Priority
+
+</label>
+
+<select class="form-select">
+
+<option>
+
+Normal
+
+</option>
+
+<option>
+
+Important
+
+</option>
+
+<option>
+
+Urgent
+
+</option>
+
+</select>
+
+</div>
+
+<div class="col-12">
+
+<label class="form-label">
+
+Announcement Content
+
+</label>
+
+<textarea
+class="form-control"
+rows="10"
+placeholder="Write your announcement here..."></textarea>
+
+</div>
+
+<div class="col-lg-6">
+
+<label class="form-label">
+
+Publish Date
+
+</label>
+
+<input
+type="datetime-local"
+class="form-control">
+
+</div>
+
+<div class="col-lg-6">
+
+<label class="form-label">
+
+Attachment
+
+</label>
+
+<input
+type="file"
+class="form-control">
+
+</div>
+
+</div>
+
+<div class="mt-4">
+
+<button
+class="btn btn-primary me-2">
+
+<i class="fa-solid fa-paper-plane me-2"></i>
+
+Publish Now
+
+</button>
+
+<button
+class="btn btn-outline-secondary me-2">
+
+<i class="fa-solid fa-clock me-2"></i>
+
+Schedule
+
+</button>
+
+<button
+class="btn btn-outline-dark">
+
+<i class="fa-solid fa-floppy-disk me-2"></i>
+
+Save Draft
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ANNOUNCEMENT INSIGHTS -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Announcement Insights
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Most Active Category
+
+</h4>
+
+<h2>
+
+Assignments
+
+</h2>
+
+<p>
+
+Most frequently used announcement type.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Latest Published
+
+</h4>
+
+<h2>
+
+2 Hours Ago
+
+</h2>
+
+<p>
+
+Most recent conference update.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Pending Approval
+
+</h4>
+
+<h2>
+
+4
+
+</h2>
+
+<p>
+
+Scheduled announcements awaiting release.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PUBLISHED ANNOUNCEMENTS -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Published Announcements
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="card-premium">
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+
+<h4>
+
+Delegate Allocations Released
+
+</h4>
+
+<span class="badge bg-success">
+
+Published
+
+</span>
+
+</div>
+
+<p class="text-muted">
+
+Assignments • Delegates • Today
+
+</p>
+
+<p>
+
+Committee and portfolio allocations have now been released. Delegates can access their dashboards to view assignments.
+
+</p>
+
+<div class="mt-4">
+
+<button class="btn btn-outline-primary btn-sm">
+
+View
+
+</button>
+
+<button class="btn btn-outline-secondary btn-sm">
+
+Edit
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="card-premium">
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+
+<h4>
+
+Background Guides Uploaded
+
+</h4>
+
+<span class="badge bg-success">
+
+Published
+
+</span>
+
+</div>
+
+<p class="text-muted">
+
+Resources • All Participants • Yesterday
+
+</p>
+
+<p>
+
+Conference resources and background guides are now available through the Resource Center.
+
+</p>
+
+<div class="mt-4">
+
+<button class="btn btn-outline-primary btn-sm">
+
+View
+
+</button>
+
+<button class="btn btn-outline-secondary btn-sm">
+
+Edit
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SCHEDULED ANNOUNCEMENTS -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Scheduled Announcements
+
+</h2>
+
+<div class="card-premium">
+
+<div class="table-responsive">
+
+<table class="table align-middle">
+
+<thead>
+
+<tr>
+
+<th>Title</th>
+<th>Audience</th>
+<th>Publish Time</th>
+<th>Priority</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+
+Opening Ceremony Reminder
+
+</td>
+
+<td>
+
+All Participants
+
+</td>
+
+<td>
+
+15 Jul 2026 • 08:00 AM
+
+</td>
+
+<td>
+
+Important
+
+</td>
+
+<td>
+
+<span class="badge bg-warning text-dark">
+
+Scheduled
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Committee Room Allocation
+
+</td>
+
+<td>
+
+Delegates
+
+</td>
+
+<td>
+
+14 Jul 2026 • 06:00 PM
+
+</td>
+
+<td>
+
+Normal
+
+</td>
+
+<td>
+
+<span class="badge bg-warning text-dark">
+
+Scheduled
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+Conference Check-In Instructions
+
+</td>
+
+<td>
+
+All Participants
+
+</td>
+
+<td>
+
+13 Jul 2026 • 07:00 PM
+
+</td>
+
+<td>
+
+Important
+
+</td>
+
+<td>
+
+<span class="badge bg-warning text-dark">
+
+Scheduled
+
+</span>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- DRAFT CENTER -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Draft Center
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-6">
+
+<div class="card-premium">
+
+<h4>
+
+Emergency Contact Information
+
+</h4>
+
+<p class="text-muted">
+
+Last edited 2 hours ago
+
+</p>
+
+<p>
+
+Draft announcement containing emergency procedures and important conference contacts.
+
+</p>
+
+<div class="mt-4">
+
+<button class="btn btn-primary">
+
+Continue Editing
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="card-premium">
+
+<h4>
+
+Closing Ceremony Information
+
+</h4>
+
+<p class="text-muted">
+
+Last edited yesterday
+
+</p>
+
+<p>
+
+Draft announcement regarding awards, certificates and closing ceremony logistics.
+
+</p>
+
+<div class="mt-4">
+
+<button class="btn btn-primary">
+
+Continue Editing
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- DELIVERY STATISTICS -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Delivery Statistics
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+
+<div class="card-premium text-center">
+
+<div class="stat-label">
+
+Delegates Reached
+
+</div>
+
+<div class="stat-value">
+
+127
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium text-center">
+
+<div class="stat-label">
+
+Organizers Reached
+
+</div>
+
+<div class="stat-value">
+
+6
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium text-center">
+
+<div class="stat-label">
+
+Announcements Sent
+
+</div>
+
+<div class="stat-value">
+
+24
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium text-center">
+
+<div class="stat-label">
+
+Scheduled Posts
+
+</div>
+
+<div class="stat-value">
+
+4
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- COMMUNICATION SUMMARY -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Communication Summary
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Most Active Audience
+
+</h4>
+
+<h2>
+
+Delegates
+
+</h2>
+
+<p>
+
+Majority of announcements target delegates.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Most Used Category
+
+</h4>
+
+<h2>
+
+Assignments
+
+</h2>
+
+<p>
+
+Highest volume of conference updates.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Latest Activity
+
+</h4>
+
+<h2>
+
+2 Hours Ago
+
+</h2>
+
+<p>
+
+Most recent announcement published.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- QUICK ACTIONS -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Quick Actions
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Resources
+
+</h4>
+
+<p>
+
+Manage conference documents and guides.
+
+</p>
+
+<a
+href="resources.html"
+class="hero-btn">
+
+Open
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Settings
+
+</h4>
+
+<p>
+
+Manage conference settings and access.
+
+</p>
+
+<a
+href="settings.html"
+class="hero-btn">
+
+Open
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Dashboard
+
+</h4>
+
+<p>
+
+Return to organizer dashboard.
+
+</p>
+
+<a
+href="dashboard.html"
+class="hero-btn">
+
+Open
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer
+style="
+background:#07111E;
+color:white;
+padding:70px 0;
+margin-top:40px;
+">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-6">
+
+<h3
+style="
+font-family:'Playfair Display',serif;
+font-size:2rem;
+margin-bottom:15px;
+">
+
+MUN<span style="color:#009EDB;">Buddy</span>
+
+</h3>
+
+<p
+style="
+opacity:.8;
+max-width:600px;
+line-height:1.8;
+">
+
+Keep delegates informed.
+Publish updates.
+Manage conference communications.
+
+</p>
+
+</div>
+
+<div class="col-lg-6 text-lg-end mt-4 mt-lg-0">
+
+<a
+href="dashboard.html"
+style="
+color:white;
+text-decoration:none;
+margin-right:20px;
+">
+
+Dashboard
+
+</a>
+
+<a
+href="settings.html"
+style="
+color:white;
+text-decoration:none;
+margin-right:20px;
+">
+
+Settings
+
+</a>
+
+<a
+href="../login.html"
+style="
+color:white;
+text-decoration:none;
+">
+
+Logout
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
+
 </html>

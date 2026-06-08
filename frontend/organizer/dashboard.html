@@ -92,6 +92,37 @@ color:white!important;
 
 }
 
+.dropdown-menu{
+
+border:none;
+
+border-radius:16px;
+
+padding:10px;
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.12);
+
+}
+
+.dropdown-item{
+
+border-radius:10px;
+
+padding:10px 14px;
+
+font-weight:500;
+
+}
+
+.dropdown-item:hover{
+
+background:#F1F5F9;
+
+color:var(--un-blue);
+
+}
+
 /* HERO */
 
 .dashboard-hero{
@@ -413,10 +444,10 @@ data-bs-target="#navMenu">
 <div class="collapse navbar-collapse"
 id="navMenu">
 
-<ul class="navbar-nav ms-auto">
+<ul class="navbar-nav ms-auto align-items-lg-center">
 
 <li class="nav-item">
-<a class="nav-link active"
+<a class="nav-link"
 href="dashboard.html">
 Dashboard
 </a>
@@ -436,33 +467,98 @@ Assignments
 </a>
 </li>
 
-<li class="nav-item">
-<a class="nav-link"
-href="announcements.html">
-Announcements
+<!-- CONFERENCE DROPDOWN -->
+
+<li class="nav-item dropdown">
+
+<a
+class="nav-link dropdown-toggle"
+href="#"
+role="button"
+data-bs-toggle="dropdown">
+
+Conference
+
+</a>
+
+<ul class="dropdown-menu">
+
+<li>
+<a
+class="dropdown-item"
+href="committees.html">
+
+Committees
+
 </a>
 </li>
 
-<li class="nav-item">
-<a class="nav-link"
-href="analytics.html">
-Analytics
+<li>
+<a
+class="dropdown-item"
+href="countries.html">
+
+Portfolios
+
 </a>
+</li>
+
+<li>
+<a
+class="dropdown-item"
+href="agendas.html">
+
+Agendas
+
+</a>
+</li>
+
+<li>
+<a
+class="dropdown-item"
+href="resources.html">
+
+Resources
+
+</a>
+</li>
+
+<li>
+<a
+class="dropdown-item"
+href="announcements.html">
+
+Announcements
+
+</a>
+</li>
+
+<li>
+<a
+class="dropdown-item"
+href="settings.html">
+
+Settings
+
+</a>
+</li>
+
+</ul>
+
 </li>
 
 <li class="nav-item">
 <a class="nav-link"
 href="../login.html">
+
 Logout
+
 </a>
 </li>
 
 </ul>
 
 </div>
-
-</div>
-
 </nav>
 
 <section class="dashboard-hero">

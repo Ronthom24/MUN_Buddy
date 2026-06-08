@@ -1,13 +1,1778 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Organizer Countries | MUN Buddy</title>
-  <link rel="stylesheet" href="../assets/css/organizer.css" />
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+MUN Buddy | Portfolio Management
+
+</title>
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+:root{
+
+--un-blue:#009EDB;
+--un-navy:#00528C;
+--dark:#07111E;
+--light:#F8FAFC;
+--muted:#64748B;
+
+}
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+
+}
+
+body{
+
+font-family:'DM Sans',sans-serif;
+background:#F8FAFC;
+color:#0F172A;
+
+}
+
+.navbar{
+
+background:#07111E;
+padding:16px 0;
+border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.navbar-brand{
+
+font-family:'Playfair Display',serif;
+font-size:1.8rem;
+font-weight:900;
+color:white !important;
+
+}
+
+.navbar-brand span{
+
+color:var(--un-blue);
+
+}
+
+.nav-link{
+
+color:rgba(255,255,255,.75)!important;
+margin-left:15px;
+font-weight:500;
+
+}
+
+.nav-link:hover{
+
+color:white!important;
+
+}
+
+.dropdown-menu{
+
+border:none;
+border-radius:16px;
+padding:10px;
+box-shadow:0 15px 40px rgba(0,0,0,.12);
+
+}
+
+.dropdown-item{
+
+border-radius:10px;
+padding:10px 14px;
+
+}
+
+.dropdown-item:hover{
+
+background:#F1F5F9;
+color:var(--un-blue);
+
+}
+
+.dashboard-hero{
+
+background:
+
+linear-gradient(
+rgba(5,12,28,.82),
+rgba(5,12,28,.88)
+),
+
+url('https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1800&q=80');
+
+background-size:cover;
+background-position:center;
+
+padding:90px 0;
+
+color:white;
+
+}
+
+.hero-top{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:30px;
+flex-wrap:wrap;
+
+}
+
+.hero-title{
+
+font-family:'Playfair Display',serif;
+font-size:4rem;
+font-weight:900;
+
+}
+
+.hero-title span{
+
+color:var(--un-blue);
+
+}
+
+.hero-subtitle{
+
+max-width:700px;
+line-height:1.8;
+opacity:.9;
+
+}
+
+.hero-btn{
+
+background:var(--un-blue);
+padding:14px 24px;
+border-radius:14px;
+text-decoration:none;
+color:white;
+font-weight:700;
+display:inline-block;
+
+}
+
+.hero-btn:hover{
+
+background:var(--un-navy);
+color:white;
+
+}
+
+.section{
+
+padding:80px 0;
+
+}
+
+.section-title{
+
+font-family:'Playfair Display',serif;
+font-size:2.5rem;
+margin-bottom:35px;
+
+}
+
+.card-premium{
+
+background:white;
+padding:30px;
+border-radius:26px;
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.06);
+
+height:100%;
+
+}
+
+.stat-label{
+
+font-size:.85rem;
+letter-spacing:1px;
+text-transform:uppercase;
+color:var(--muted);
+
+}
+
+.stat-value{
+
+font-size:2rem;
+font-weight:800;
+margin-top:10px;
+
+}
+
+.form-control,
+.form-select{
+
+padding:14px;
+border-radius:12px;
+
+}
+
+.progress{
+
+height:12px;
+border-radius:10px;
+
+}
+
+.progress-bar{
+
+background:var(--un-blue);
+
+}
+
+footer a:hover{
+
+color:var(--un-blue)!important;
+
+}
+
+@media(max-width:992px){
+
+.hero-title{
+
+font-size:2.8rem;
+
+}
+
+.hero-top{
+
+flex-direction:column;
+align-items:flex-start;
+
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
-  <h1>Organizer Countries</h1>
-  <script src="../assets/js/organizer/countries.js"></script>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+
+<div class="container">
+
+<a
+class="navbar-brand"
+href="dashboard.html">
+
+MUN<span>Buddy</span>
+
+</a>
+
+<button
+class="navbar-toggler"
+type="button"
+data-bs-toggle="collapse"
+data-bs-target="#navbarNav">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div
+class="collapse navbar-collapse"
+id="navbarNav">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item">
+
+<a
+class="nav-link"
+href="dashboard.html">
+
+Dashboard
+
+</a>
+
+</li>
+
+<li class="nav-item">
+
+<a
+class="nav-link"
+href="delegates.html">
+
+Delegates
+
+</a>
+
+</li>
+
+<li class="nav-item">
+
+<a
+class="nav-link"
+href="assignments.html">
+
+Assignments
+
+</a>
+
+</li>
+
+<li class="nav-item dropdown">
+
+<a
+class="nav-link dropdown-toggle"
+href="#"
+role="button"
+data-bs-toggle="dropdown">
+
+Conference
+
+</a>
+
+<ul class="dropdown-menu">
+
+<li>
+
+<a
+class="dropdown-item"
+href="committees.html">
+
+Committees
+
+</a>
+
+</li>
+
+<li>
+
+<a
+class="dropdown-item"
+href="countries.html">
+
+Portfolios
+
+</a>
+
+</li>
+
+<li>
+
+<a
+class="dropdown-item"
+href="resources.html">
+
+Resources
+
+</a>
+
+</li>
+
+<li>
+
+<a
+class="dropdown-item"
+href="announcements.html">
+
+Announcements
+
+</a>
+
+</li>
+
+<li>
+
+<a
+class="dropdown-item"
+href="settings.html">
+
+Settings
+
+</a>
+
+</li>
+
+</ul>
+
+</li>
+
+<li class="nav-item">
+
+<a
+class="nav-link"
+href="../login.html">
+
+Logout
+
+</a>
+
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</nav>
+
+<section class="dashboard-hero">
+
+<div class="container">
+
+<div class="hero-top">
+
+<div>
+
+<h1 class="hero-title">
+
+Portfolio
+<span>Management</span>
+
+</h1>
+
+<p class="hero-subtitle">
+
+Create portfolios,
+manage representation,
+monitor assignments
+and oversee committee participation.
+
+</p>
+
+</div>
+
+<a
+href="#workspace"
+class="hero-btn">
+
+Create Portfolio
+
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Portfolio Overview
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Total Portfolios
+
+</div>
+
+<div class="stat-value">
+
+128
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Assigned
+
+</div>
+
+<div class="stat-value">
+
+97
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Available
+
+</div>
+
+<div class="stat-value">
+
+31
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-3">
+
+<div class="card-premium">
+
+<div class="stat-label">
+
+Committees Covered
+
+</div>
+
+<div class="stat-value">
+
+6
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PORTFOLIO DIRECTORY -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Portfolio Directory
+
+</h2>
+
+<div class="row g-4">
+
+<!-- FRANCE -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<h4>
+
+France
+
+</h4>
+
+<p
+style="
+color:var(--muted);
+margin:15px 0;
+">
+
+Committee:
+UN Security Council
+
+</p>
+
+<div class="mb-2">
+
+<strong>Type:</strong>
+
+Country
+
+</div>
+
+<div class="mb-2">
+
+<strong>Status:</strong>
+
+Assigned
+
+</div>
+
+<div class="mb-4">
+
+<strong>Delegate:</strong>
+
+John Smith
+
+</div>
+
+<a
+href="#workspace"
+class="hero-btn">
+
+Manage
+
+</a>
+
+</div>
+
+</div>
+
+<!-- USA -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<h4>
+
+United States
+
+</h4>
+
+<p
+style="
+color:var(--muted);
+margin:15px 0;
+">
+
+Committee:
+UN Security Council
+
+</p>
+
+<div class="mb-2">
+
+<strong>Type:</strong>
+
+Country
+
+</div>
+
+<div class="mb-2">
+
+<strong>Status:</strong>
+
+Available
+
+</div>
+
+<div class="mb-4">
+
+<strong>Delegate:</strong>
+
+—
+
+</div>
+
+<a
+href="#workspace"
+class="hero-btn">
+
+Manage
+
+</a>
+
+</div>
+
+</div>
+
+<!-- INDIA -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<h4>
+
+India
+
+</h4>
+
+<p
+style="
+color:var(--muted);
+margin:15px 0;
+">
+
+Committee:
+UNHRC
+
+</p>
+
+<div class="mb-2">
+
+<strong>Type:</strong>
+
+Country
+
+</div>
+
+<div class="mb-2">
+
+<strong>Status:</strong>
+
+Assigned
+
+</div>
+
+<div class="mb-4">
+
+<strong>Delegate:</strong>
+
+Sarah Lee
+
+</div>
+
+<a
+href="#workspace"
+class="hero-btn">
+
+Manage
+
+</a>
+
+</div>
+
+</div>
+
+<!-- PRESIDENT -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<h4>
+
+President
+
+</h4>
+
+<p
+style="
+color:var(--muted);
+margin:15px 0;
+">
+
+Committee:
+Crisis Committee
+
+</p>
+
+<div class="mb-2">
+
+<strong>Type:</strong>
+
+Position
+
+</div>
+
+<div class="mb-2">
+
+<strong>Status:</strong>
+
+Assigned
+
+</div>
+
+<div class="mb-4">
+
+<strong>Delegate:</strong>
+
+Alex Morgan
+
+</div>
+
+<a
+href="#workspace"
+class="hero-btn">
+
+Manage
+
+</a>
+
+</div>
+
+</div>
+
+<!-- CIA DIRECTOR -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<h4>
+
+CIA Director
+
+</h4>
+
+<p
+style="
+color:var(--muted);
+margin:15px 0;
+">
+
+Committee:
+Crisis Committee
+
+</p>
+
+<div class="mb-2">
+
+<strong>Type:</strong>
+
+Position
+
+</div>
+
+<div class="mb-2">
+
+<strong>Status:</strong>
+
+Available
+
+</div>
+
+<div class="mb-4">
+
+<strong>Delegate:</strong>
+
+—
+
+</div>
+
+<a
+href="#workspace"
+class="hero-btn">
+
+Manage
+
+</a>
+
+</div>
+
+</div>
+
+<!-- WHO DIRECTOR -->
+
+<div class="col-lg-4">
+
+<div class="card-premium">
+
+<h4>
+
+WHO Director-General
+
+</h4>
+
+<p
+style="
+color:var(--muted);
+margin:15px 0;
+">
+
+Committee:
+WHO
+
+</p>
+
+<div class="mb-2">
+
+<strong>Type:</strong>
+
+Position
+
+</div>
+
+<div class="mb-2">
+
+<strong>Status:</strong>
+
+Assigned
+
+</div>
+
+<div class="mb-4">
+
+<strong>Delegate:</strong>
+
+Emily Davis
+
+</div>
+
+<a
+href="#workspace"
+class="hero-btn">
+
+Manage
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PORTFOLIO WORKSPACE -->
+
+<section
+id="workspace"
+class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Portfolio Workspace
+
+</h2>
+
+<div class="card-premium">
+
+<div class="row g-5">
+
+<!-- LEFT SIDE -->
+
+<div class="col-lg-6">
+
+<h4 class="mb-4">
+
+Portfolio Details
+
+</h4>
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Portfolio Name
+
+</label>
+
+<input
+type="text"
+class="form-control"
+value="France">
+
+</div>
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Committee
+
+</label>
+
+<select class="form-select">
+
+<option selected>
+
+UN Security Council
+
+</option>
+
+<option>
+
+UN General Assembly
+
+</option>
+
+<option>
+
+UNHRC
+
+</option>
+
+<option>
+
+WHO
+
+</option>
+
+<option>
+
+Crisis Committee
+
+</option>
+
+</select>
+
+</div>
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Portfolio Type
+
+</label>
+
+<select class="form-select">
+
+<option selected>
+
+Country
+
+</option>
+
+<option>
+
+Position
+
+</option>
+
+<option>
+
+Observer
+
+</option>
+
+</select>
+
+</div>
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Portfolio Description
+
+</label>
+
+<textarea
+class="form-control"
+rows="5">
+
+Permanent member of the United Nations Security Council.
+
+</textarea>
+
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+
+<div class="col-lg-6">
+
+<h4 class="mb-4">
+
+Assignment Status
+
+</h4>
+
+<div class="mb-4">
+
+<label class="form-label">
+
+Assigned Delegate
+
+</label>
+
+<input
+type="text"
+class="form-control"
+value="John Smith">
+
+</div>
+
+<div
+style="
+background:#F8FAFC;
+border:1px solid #E2E8F0;
+border-radius:18px;
+padding:25px;
+margin-bottom:25px;
+">
+
+<h5 class="mb-3">
+
+Portfolio Status
+
+</h5>
+
+<div class="mb-2">
+
+<strong>
+
+Current Status:
+
+</strong>
+
+<span
+style="
+color:#16A34A;
+font-weight:700;
+">
+
+Assigned
+
+</span>
+
+</div>
+
+<div class="mb-2">
+
+<strong>
+
+Committee:
+
+</strong>
+
+UN Security Council
+
+</div>
+
+<div>
+
+<strong>
+
+Assignment State:
+
+</strong>
+
+Published
+
+</div>
+
+</div>
+
+<div
+style="
+background:#F8FAFC;
+border:1px solid #E2E8F0;
+border-radius:18px;
+padding:25px;
+">
+
+<h5 class="mb-3">
+
+Portfolio Insights
+
+</h5>
+
+<div class="mb-2">
+
+<strong>
+
+Portfolio Type:
+
+</strong>
+
+Country
+
+</div>
+
+<div class="mb-2">
+
+<strong>
+
+Availability:
+
+</strong>
+
+Occupied
+
+</div>
+
+<div>
+
+<strong>
+
+Last Updated:
+
+</strong>
+
+2 Hours Ago
+
+</div>
+
+</div>
+
+<div class="mt-4">
+
+<button
+class="btn btn-primary">
+
+<i class="fa-solid fa-floppy-disk me-2"></i>
+
+Save Portfolio
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PORTFOLIO ASSIGNMENT SUMMARY -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Portfolio Assignment Summary
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Assigned
+
+</h4>
+
+<h2>
+
+97
+
+</h2>
+
+<p>
+
+Currently allocated to delegates.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Available
+
+</h4>
+
+<h2>
+
+31
+
+</h2>
+
+<p>
+
+Ready for assignment.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Coverage
+
+</h4>
+
+<h2>
+
+76%
+
+</h2>
+
+<p>
+
+Overall assignment completion.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- PORTFOLIO AVAILABILITY MONITOR -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Portfolio Availability Monitor
+
+</h2>
+
+<div class="card-premium">
+
+<div class="row g-4">
+
+<div class="col-lg-3">
+
+<h5>
+
+UNSC
+
+</h5>
+
+<div class="progress mt-3 mb-2">
+
+<div
+class="progress-bar"
+style="width:93%;">
+
+</div>
+
+</div>
+
+<small>
+
+14 / 15 Assigned
+
+</small>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>
+
+UNGA
+
+</h5>
+
+<div class="progress mt-3 mb-2">
+
+<div
+class="progress-bar"
+style="width:80%;">
+
+</div>
+
+</div>
+
+<small>
+
+32 / 40 Assigned
+
+</small>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>
+
+UNHRC
+
+</h5>
+
+<div class="progress mt-3 mb-2">
+
+<div
+class="progress-bar"
+style="width:72%;">
+
+</div>
+
+</div>
+
+<small>
+
+18 / 25 Assigned
+
+</small>
+
+</div>
+
+<div class="col-lg-3">
+
+<h5>
+
+Crisis
+
+</h5>
+
+<div class="progress mt-3 mb-2">
+
+<div
+class="progress-bar"
+style="width:80%;">
+
+</div>
+
+</div>
+
+<small>
+
+8 / 10 Assigned
+
+</small>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ASSIGNMENT READINESS -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Assignment Readiness
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Ready For Publication
+
+</h4>
+
+<h2>
+
+97
+
+</h2>
+
+<p>
+
+Assignments completed and ready.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Pending Allocation
+
+</h4>
+
+<h2>
+
+31
+
+</h2>
+
+<p>
+
+Portfolios awaiting assignment.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Completion Rate
+
+</h4>
+
+<h2>
+
+76%
+
+</h2>
+
+<p>
+
+Current assignment progress.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- QUICK ACTIONS -->
+
+<section class="section pt-0">
+
+<div class="container">
+
+<h2 class="section-title">
+
+Quick Actions
+
+</h2>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Assignments
+
+</h4>
+
+<p>
+
+Manage delegate allocations.
+
+</p>
+
+<a
+href="assignments.html"
+class="hero-btn">
+
+Open
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Committees
+
+</h4>
+
+<p>
+
+Manage committee structures.
+
+</p>
+
+<a
+href="committees.html"
+class="hero-btn">
+
+Open
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="card-premium text-center">
+
+<h4>
+
+Dashboard
+
+</h4>
+
+<p>
+
+Return to organizer dashboard.
+
+</p>
+
+<a
+href="dashboard.html"
+class="hero-btn">
+
+Open
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer
+style="
+background:#07111E;
+color:white;
+padding:70px 0;
+margin-top:40px;
+">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-6">
+
+<h3
+style="
+font-family:'Playfair Display',serif;
+font-size:2rem;
+margin-bottom:15px;
+">
+
+MUN<span style="color:#009EDB;">Buddy</span>
+
+</h3>
+
+<p
+style="
+opacity:.8;
+max-width:600px;
+line-height:1.8;
+">
+
+Manage portfolios.
+Track assignments.
+Build stronger committees.
+
+</p>
+
+</div>
+
+<div class="col-lg-6 text-lg-end mt-4 mt-lg-0">
+
+<a
+href="dashboard.html"
+style="
+color:white;
+text-decoration:none;
+margin-right:20px;
+">
+
+Dashboard
+
+</a>
+
+<a
+href="assignments.html"
+style="
+color:white;
+text-decoration:none;
+margin-right:20px;
+">
+
+Assignments
+
+</a>
+
+<a
+href="../login.html"
+style="
+color:white;
+text-decoration:none;
+">
+
+Logout
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
+
 </html>

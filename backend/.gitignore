@@ -32,3 +32,21 @@ build/
 # Uploaded files
 src/uploads/*
 !src/uploads/.gitkeep
+
+# Python (legacy)
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+
+# MySQL Workbench
+*.mwb.bak
+
+# Temporary files
+*.tmp

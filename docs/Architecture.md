@@ -65,9 +65,15 @@ Key pieces:
    opening through `requestAnimationFrame`, which never fires in that preview tab (likely
    visibility/background throttling) — confirmed via source-level tracing, not an app bug. Worth
    a manual click-check in a real browser tab when convenient.
-3. Committee Center + Delegate Workspace wiring. *(next up)*
-3. Committee Center + Delegate Workspace wiring.
-4. Payments & Finance.
+3. **Done.** Committee Center round-out (committee stats, agenda/portfolio management UI) +
+   Schedule Management + full Delegate Workspace (separate delegate auth, sidebar shell, overview/
+   committee/schedule/resources/announcements/notes/documents/resolutions/profile). Verified
+   end-to-end as a real delegate account. Two real bugs found and fixed (agenda API response key
+   mismatch that crashed a page; `asChild`→`render` Base UI mistake repeated). Confirmed the same
+   rAF-throttling issue from Phase 2 also causes closed Dialogs to leave an invisible click-blocking
+   backdrop in this sandboxed preview tab (Base UI's dialog unmount is rAF-gated and the overlay has
+   no `data-closed:pointer-events-none` safety net) — not expected in a normal foregrounded browser.
+4. Payments & Finance. *(next up)*
 5. Results & Certificates + Attendance/QR.
 6. Communication Center (announcements, resources, FAQs, notifications, email broadcasts).
 7. Team Center + Public Website / Public Conference Pages.

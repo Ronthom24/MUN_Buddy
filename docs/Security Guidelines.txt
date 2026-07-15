@@ -1,0 +1,396 @@
+# MUN Buddy - Security Guidelines
+
+## Purpose
+
+This document defines the security standards and best practices that must be followed throughout the MUN Buddy project.
+
+Security is not a separate feature—it is a core requirement that must be considered during the design and implementation of every module.
+
+Every new feature should be evaluated from a security perspective before implementation.
+
+---
+
+# Security Principles
+
+The application should follow these principles:
+
+- Secure by Default
+- Least Privilege
+- Defense in Depth
+- Never Trust Client Input
+- Fail Securely
+- Protect Sensitive Data
+
+Security should always take precedence over convenience.
+
+---
+
+# Authentication
+
+Authentication is handled using JSON Web Tokens (JWT).
+
+Rules:
+
+- Passwords must always be hashed using bcrypt.
+- JWTs must have expiration times.
+- Tokens must never contain sensitive information.
+- Tokens must always be verified before accessing protected resources.
+- Logout should remove tokens from the client.
+
+Future enhancements may include:
+
+- Refresh Tokens
+- Multi-Factor Authentication
+- Device Sessions
+
+---
+
+# Authorization
+
+Every protected endpoint must verify:
+
+1. Authentication
+2. User Role
+3. Resource Ownership (where applicable)
+
+Never rely on frontend restrictions.
+
+Authorization must always be enforced on the backend.
+
+---
+
+# Password Security
+
+Passwords must:
+
+- Never be stored in plaintext.
+- Never be logged.
+- Never be returned in API responses.
+- Always be hashed before storage.
+
+Recommended policy:
+
+- Minimum 8 characters
+- At least one uppercase letter
+- At least one lowercase letter
+- At least one number
+- At least one special character
+
+---
+
+# Input Validation
+
+Every request must be validated.
+
+Validate:
+
+- Required fields
+- Data types
+- Length
+- Formats
+- Allowed values
+- Business rules
+
+Invalid input should never reach the business logic.
+
+---
+
+# SQL Injection Protection
+
+All database queries must use parameterized statements.
+
+Never concatenate SQL strings using user input.
+
+Incorrect:
+
+```
+SELECT * FROM users WHERE email = '${email}'
+```
+
+Correct:
+
+Use prepared statements or parameterized queries.
+
+---
+
+# Cross-Site Scripting (XSS)
+
+Never trust user-generated content.
+
+Escape or sanitize output where necessary.
+
+Avoid rendering raw HTML unless absolutely required.
+
+---
+
+# Cross-Site Request Forgery (CSRF)
+
+Current JWT-based authentication reduces CSRF risk.
+
+If cookies are introduced in the future:
+
+- Enable CSRF protection.
+- Use SameSite cookies.
+- Use Secure cookies.
+
+---
+
+# Sensitive Data
+
+Sensitive information includes:
+
+- Passwords
+- JWT Secrets
+- API Keys
+- Database Credentials
+- Payment Information
+
+Sensitive data must:
+
+- Never appear in logs.
+- Never be committed to Git.
+- Never be exposed to the frontend.
+
+---
+
+# Environment Variables
+
+Secrets belong in environment variables.
+
+Examples:
+
+JWT_SECRET
+
+DB_HOST
+
+DB_USER
+
+DB_PASSWORD
+
+API_KEYS
+
+Never hardcode credentials.
+
+Provide only a `.env.example` file in the repository.
+
+---
+
+# File Upload Security
+
+Uploaded files should always be validated.
+
+Validate:
+
+- MIME Type
+- File Extension
+- File Size
+
+Reject executable files.
+
+Rename uploaded files to avoid collisions.
+
+Store uploads outside publicly writable directories where appropriate.
+
+---
+
+# API Security
+
+Every API should:
+
+- Validate input.
+- Authenticate protected routes.
+- Authorize access.
+- Return consistent responses.
+- Handle errors safely.
+
+Avoid exposing unnecessary data.
+
+---
+
+# Error Handling
+
+Internal errors should never be exposed to users.
+
+Incorrect:
+
+```
+SQL Error near line 25...
+```
+
+Correct:
+
+```
+Internal Server Error
+```
+
+Detailed errors should only appear in server logs.
+
+---
+
+# Logging
+
+Log important events:
+
+- Login
+- Registration
+- Failed Authentication
+- Critical Errors
+- Administrative Actions
+
+Never log:
+
+- Passwords
+- JWT Tokens
+- API Keys
+- Database Credentials
+
+---
+
+# Rate Limiting
+
+Sensitive endpoints should be rate-limited.
+
+Examples:
+
+- Login
+- Registration
+- Password Reset
+
+Purpose:
+
+- Prevent brute-force attacks.
+- Reduce abuse.
+
+---
+
+# HTTPS
+
+Production deployments must always use HTTPS.
+
+Never transmit authentication tokens over unsecured connections.
+
+---
+
+# Database Security
+
+Database users should have only the permissions they require.
+
+Avoid using root credentials for the application.
+
+Backups should be encrypted and stored securely.
+
+---
+
+# Frontend Security
+
+The frontend must never:
+
+- Store passwords.
+- Store secrets.
+- Contain hardcoded credentials.
+- Trust client-side validation.
+
+Authentication tokens should be stored securely.
+
+---
+
+# Access Control
+
+Users may only access resources they own or are authorized to manage.
+
+Examples:
+
+Delegates
+
+- Their profile
+- Their registrations
+- Their certificates
+
+Organizers
+
+- Their conferences
+- Their delegates
+- Their committees
+
+---
+
+# Audit Logging
+
+Future versions should maintain audit logs for:
+
+- Conference Creation
+- Registration Approval
+- Portfolio Assignment
+- Resource Upload
+- Permission Changes
+
+Each audit record should include:
+
+- User
+- Action
+- Timestamp
+- Target Resource
+
+---
+
+# Backup & Recovery
+
+Production deployments should include:
+
+- Automated backups
+- Backup verification
+- Disaster recovery procedures
+
+Backups should never be publicly accessible.
+
+---
+
+# Dependency Security
+
+Dependencies should:
+
+- Be actively maintained.
+- Be updated regularly.
+- Be monitored for vulnerabilities.
+
+Remove unused dependencies whenever possible.
+
+---
+
+# Future Security Enhancements
+
+Potential improvements include:
+
+- Multi-Factor Authentication
+- Refresh Tokens
+- Device Management
+- Session Monitoring
+- OAuth Providers
+- Security Headers
+- Intrusion Detection
+- Audit Dashboard
+
+---
+
+# Security Checklist
+
+Before completing any feature, verify:
+
+- Input validated
+- Authorization enforced
+- Authentication verified
+- SQL injection prevented
+- Errors handled safely
+- Sensitive data protected
+- Logging implemented appropriately
+- Secrets stored securely
+
+---
+
+# Guiding Principle
+
+Every feature should be designed with security in mind from the beginning.
+
+Security should never be added as an afterthought.
+
+When in doubt, choose the more secure implementation, even if it requires additional development effort.

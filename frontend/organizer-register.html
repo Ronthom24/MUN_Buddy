@@ -259,7 +259,9 @@ conference ecosystem for MUN Buddy.
 
 <div class="container">
 
-<form>
+<form id="organizerRegisterForm">
+
+<div id="registerError" class="alert alert-danger" style="display:none;"></div>
 
 <!-- PRIMARY ORGANIZER -->
 
@@ -283,7 +285,10 @@ Full Name *
 
 <input
 type="text"
-class="form-control">
+id="fullName"
+name="fullName"
+class="form-control"
+required>
 
 </div>
 
@@ -297,7 +302,10 @@ Email Address *
 
 <input
 type="email"
-class="form-control">
+id="email"
+name="email"
+class="form-control"
+required>
 
 </div>
 
@@ -311,7 +319,10 @@ Phone Number *
 
 <input
 type="text"
-class="form-control">
+id="phone"
+name="phone"
+class="form-control"
+required>
 
 </div>
 
@@ -325,7 +336,11 @@ Password *
 
 <input
 type="password"
-class="form-control">
+id="password"
+name="password"
+class="form-control"
+minlength="6"
+required>
 
 </div>
 
@@ -339,7 +354,11 @@ Confirm Password *
 
 <input
 type="password"
-class="form-control">
+id="confirmPassword"
+name="confirmPassword"
+class="form-control"
+minlength="6"
+required>
 
 </div>
 
@@ -369,8 +388,11 @@ Conference Name *
 
 <input
 type="text"
+id="conferenceName"
+name="conferenceName"
 class="form-control"
-placeholder="RITMUN 2026">
+placeholder="RITMUN 2026"
+required>
 
 </div>
 
@@ -384,8 +406,11 @@ Conference Acronym *
 
 <input
 type="text"
+id="conferenceAcronym"
+name="conferenceAcronym"
 class="form-control"
-placeholder="RITMUN">
+placeholder="RITMUN"
+required>
 
 </div>
 
@@ -399,8 +424,11 @@ Institution / School *
 
 <input
 type="text"
+id="institution"
+name="institution"
 class="form-control"
-placeholder="Ramaiah Institute of Technology">
+placeholder="Ramaiah Institute of Technology"
+required>
 
 </div>
 
@@ -414,8 +442,11 @@ Location *
 
 <input
 type="text"
+id="location"
+name="location"
 class="form-control"
-placeholder="Bangalore, India">
+placeholder="Bangalore, India"
+required>
 
 </div>
 
@@ -429,7 +460,10 @@ Start Date *
 
 <input
 type="date"
-class="form-control">
+id="startDate"
+name="startDate"
+class="form-control"
+required>
 
 </div>
 
@@ -443,7 +477,10 @@ End Date *
 
 <input
 type="date"
-class="form-control">
+id="endDate"
+name="endDate"
+class="form-control"
+required>
 
 </div>
 
@@ -457,7 +494,10 @@ Registration Deadline *
 
 <input
 type="date"
-class="form-control">
+id="registrationDeadline"
+name="registrationDeadline"
+class="form-control"
+required>
 
 </div>
 
@@ -494,6 +534,8 @@ Conference Description
 </label>
 
 <textarea
+id="description"
+name="description"
 class="form-control"
 placeholder="Describe your conference..."></textarea>
 
@@ -703,6 +745,8 @@ Custom Committee
 
 <input
 type="text"
+id="customCommittee"
+name="customCommittee"
 class="form-control"
 placeholder="Enter custom committee name if required">
 
@@ -744,6 +788,7 @@ Organizer Email
 
 <input
 type="email"
+id="organizerEmailInput"
 class="form-control"
 placeholder="chair@conference.org">
 
@@ -753,6 +798,7 @@ placeholder="chair@conference.org">
 
 <button
 type="button"
+id="addOrganizerEmailBtn"
 class="btn btn-primary-custom w-100">
 
 Add Email
@@ -783,17 +829,12 @@ Organizer Access List
 </h6>
 
 <ul
+id="organizerEmailList"
 style="
 margin:0;
 padding-left:20px;
 line-height:2;
 ">
-
-<li>usg@ritmun.org</li>
-
-<li>chair.unsc@ritmun.org</li>
-
-<li>vicechair@ritmun.org</li>
 
 </ul>
 
@@ -821,13 +862,13 @@ Registration Status
 
 </label>
 
-<select class="form-select">
+<select id="registrationStatus" name="registrationStatus" class="form-select">
 
-<option>
+<option value="open">
 Open Immediately
 </option>
 
-<option>
+<option value="closed">
 Keep Closed
 </option>
 
@@ -845,6 +886,8 @@ Maximum Delegates
 
 <input
 type="number"
+id="maxDelegates"
+name="maxDelegates"
 class="form-control"
 placeholder="200">
 
@@ -1022,22 +1065,17 @@ style="margin-top:40px;">
 
 <button
 type="submit"
+id="submitBtn"
 class="btn-primary-custom"
 style="
 font-size:1rem;
 padding:16px 36px;
 ">
 
-
-<a
-href="organizer/dashboard.html"
-class="btn-primary-custom text-decoration-none">
-
 <i class="fa-solid fa-building-columns me-2"></i>
 
 Create Conference
 
-</a>
 </button>
 
 <p
@@ -1062,6 +1100,94 @@ and grant access to all authorized organizer emails.
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/api.js"></script>
+
+<script>
+
+const COMMITTEE_LABELS = {
+  unsc: 'UNSC', unga: 'UNGA', unhrc: 'UNHRC', disec: 'DISEC',
+  ecosoc: 'ECOSOC', who: 'WHO', unwomen: 'UN Women', crisis: 'Crisis Committee'
+};
+
+const organizerEmails = [];
+const organizerEmailInput = document.getElementById('organizerEmailInput');
+const organizerEmailList = document.getElementById('organizerEmailList');
+
+function renderOrganizerEmails() {
+  organizerEmailList.innerHTML = organizerEmails.map(email => `<li>${email}</li>`).join('');
+}
+
+document.getElementById('addOrganizerEmailBtn').addEventListener('click', () => {
+  const value = organizerEmailInput.value.trim();
+  if (value && !organizerEmails.includes(value)) {
+    organizerEmails.push(value);
+    renderOrganizerEmails();
+    organizerEmailInput.value = '';
+  }
+});
+
+const form = document.getElementById('organizerRegisterForm');
+const registerError = document.getElementById('registerError');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  registerError.style.display = 'none';
+
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (password !== confirmPassword) {
+    registerError.textContent = 'Password and Confirm Password must match.';
+    registerError.style.display = 'block';
+    return;
+  }
+
+  const committees = Object.keys(COMMITTEE_LABELS)
+    .filter(id => document.getElementById(id).checked)
+    .map(id => COMMITTEE_LABELS[id]);
+
+  const payload = {
+    fullName: document.getElementById('fullName').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    password,
+    confirmPassword,
+    conferenceName: document.getElementById('conferenceName').value,
+    conferenceAcronym: document.getElementById('conferenceAcronym').value,
+    institution: document.getElementById('institution').value,
+    location: document.getElementById('location').value,
+    description: document.getElementById('description').value,
+    startDate: document.getElementById('startDate').value,
+    endDate: document.getElementById('endDate').value,
+    registrationDeadline: document.getElementById('registrationDeadline').value,
+    maxDelegates: document.getElementById('maxDelegates').value || undefined,
+    registrationStatus: document.getElementById('registrationStatus').value,
+    committees,
+    customCommittee: document.getElementById('customCommittee').value,
+    organizerEmails
+  };
+
+  submitBtn.disabled = true;
+
+  try {
+    const result = await MunBuddyAPI.request('/auth/organizer/register', {
+      method: 'POST',
+      body: payload
+    });
+
+    MunBuddyAPI.setSession({ token: result.token, role: 'organizer' });
+    window.location.href = 'organizer/dashboard.html';
+  } catch (err) {
+    const details = Array.isArray(err.details) ? err.details.join(' ') : '';
+    registerError.textContent = `${err.message}${details ? ': ' + details : ''}`;
+    registerError.style.display = 'block';
+    submitBtn.disabled = false;
+  }
+});
+
+</script>
 
 </body>
 

@@ -1,0 +1,279 @@
+# Contributing to MUN Buddy
+
+## Purpose
+
+This document defines the development workflow, coding practices, and contribution process for the MUN Buddy project.
+
+Every code change should follow these guidelines to ensure the project remains clean, consistent, and maintainable.
+
+---
+
+# Project Philosophy
+
+MUN Buddy is a long-term, production-grade software project.
+
+Every contribution should improve one or more of the following:
+
+- Maintainability
+- Scalability
+- Security
+- Performance
+- Readability
+
+Never sacrifice long-term quality for short-term speed.
+
+---
+
+# Development Process
+
+Every feature should follow this workflow:
+
+1. Understand the requirement.
+2. Review existing architecture.
+3. Identify affected files.
+4. Design the implementation.
+5. Implement the feature.
+6. Test thoroughly.
+7. Update documentation.
+8. Commit changes.
+
+Do not skip steps.
+
+---
+
+# Feature Development
+
+Work on one feature at a time.
+
+Do not mix unrelated changes in the same implementation.
+
+A feature is considered complete only when:
+
+- Functionality is implemented.
+- Validation is complete.
+- Error handling is complete.
+- Manual testing passes.
+- Documentation is updated.
+
+---
+
+# Code Style
+
+Follow existing project conventions.
+
+Use meaningful names.
+
+Keep functions focused.
+
+Avoid duplicated logic.
+
+Write readable code before clever code.
+
+---
+
+# Backend Guidelines
+
+Controllers should:
+
+- Receive requests
+- Call services
+- Return responses
+
+Services should:
+
+- Contain business logic
+- Coordinate multiple operations
+- Handle transactions
+
+Models should:
+
+- Interact with the database
+- Execute parameterized queries
+
+Routes should:
+
+- Register endpoints
+- Apply middleware
+
+Middleware should:
+
+- Handle authentication
+- Handle authorization
+- Handle validation
+- Handle logging
+
+---
+
+# Frontend Guidelines
+
+Screens should:
+
+- Build UI
+- Display state
+- Trigger actions
+
+Widgets should:
+
+- Be reusable
+- Remain small
+- Be composable
+
+Services should:
+
+- Communicate with backend APIs
+- Handle serialization
+
+Business logic should remain outside the UI whenever possible.
+
+---
+
+# Database Guidelines
+
+Every schema change should:
+
+- Preserve normalization
+- Maintain foreign keys
+- Prevent duplicate data
+- Include appropriate indexes
+
+Never modify production schemas without understanding the impact.
+
+---
+
+# API Guidelines
+
+Every endpoint should include:
+
+- Validation
+- Authentication (where required)
+- Authorization
+- Consistent responses
+- Proper status codes
+
+---
+
+# Documentation
+
+Whenever introducing:
+
+- New feature
+- Database table
+- API endpoint
+- Architectural change
+
+Update the corresponding documentation.
+
+Documentation is part of the implementation.
+
+---
+
+# Testing
+
+Every contribution should include:
+
+- Manual testing
+- Edge case testing
+- Validation testing
+- Authorization testing
+
+No feature should be merged without verification.
+
+---
+
+# Commits
+
+Commits should be focused and descriptive.
+
+Examples:
+
+```
+
+feat: implement user registration
+
+fix: correct JWT expiration handling
+
+refactor: simplify conference service
+
+docs: update API standards
+
+```
+
+Avoid generic messages such as:
+
+```
+
+update
+
+changes
+
+fix
+
+```
+
+---
+
+# Pull Requests (Future)
+
+Each pull request should:
+
+- Solve one problem
+- Include testing notes
+- Update documentation if required
+- Avoid unrelated refactoring
+
+---
+
+# Refactoring
+
+Refactor only when:
+
+- It improves readability.
+- It improves maintainability.
+- It reduces duplication.
+- It does not change functionality.
+
+Avoid unnecessary refactoring during feature development.
+
+---
+
+# Dependency Management
+
+Before adding a dependency:
+
+- Verify it is actively maintained.
+- Check community adoption.
+- Ensure it solves a real problem.
+
+Prefer existing project utilities over introducing new libraries.
+
+---
+
+# Review Checklist
+
+Before considering work complete, verify:
+
+- Code compiles.
+- No lint errors.
+- Validation implemented.
+- Error handling complete.
+- Security considered.
+- Documentation updated.
+- Tests completed.
+
+---
+
+# Long-Term Vision
+
+Every contribution should move MUN Buddy closer to becoming an enterprise-quality conference management platform.
+
+Think beyond the current feature.
+
+Design with future scalability in mind.
+
+---
+
+# Guiding Principle
+
+Leave the codebase in a better state than you found it.
+
+Every change should improve the project without introducing unnecessary complexity.

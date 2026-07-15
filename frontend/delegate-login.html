@@ -90,6 +90,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <form id="delegateLoginForm">
 
+      <div id="loginError" class="form-error" style="display:none; color:#c0392b; margin-bottom:1rem;"></div>
+
       <div class="form-group">
 
         <label for="email">
@@ -181,15 +183,33 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 </div>
 
+<script src="assets/js/api.js"></script>
+
 <script>
 
-document
-.getElementById('delegateLoginForm')
-.addEventListener('submit', function(e){
+const delegateLoginForm = document.getElementById('delegateLoginForm');
+const loginError = document.getElementById('loginError');
+
+delegateLoginForm.addEventListener('submit', async function(e){
 
   e.preventDefault();
+  loginError.style.display = 'none';
 
-  window.location.href='delegate/dashboard.html';
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  try {
+    const result = await MunBuddyAPI.request('/auth/delegate/login', {
+      method: 'POST',
+      body: { email, password }
+    });
+
+    MunBuddyAPI.setSession({ token: result.token, role: 'delegate' });
+    window.location.href = 'delegate/dashboard.html';
+  } catch (err) {
+    loginError.textContent = err.message;
+    loginError.style.display = 'block';
+  }
 
 });
 

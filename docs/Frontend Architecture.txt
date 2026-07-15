@@ -1,0 +1,477 @@
+# MUN Buddy - Frontend Architecture
+
+## Purpose
+
+This document defines the architecture, design principles, and development standards for the Flutter frontend of MUN Buddy.
+
+The frontend should provide a modern, responsive, and intuitive user experience while remaining modular, scalable, and maintainable.
+
+The frontend communicates exclusively with the backend through REST APIs.
+
+---
+
+# Technology Stack
+
+Framework
+
+- Flutter
+
+Language
+
+- Dart
+
+Backend Communication
+
+- REST API
+- JSON
+
+Authentication
+
+- JWT
+
+Local Storage
+
+- Secure storage for authentication tokens
+- Shared Preferences only for non-sensitive data
+
+---
+
+# Frontend Philosophy
+
+The frontend should focus on:
+
+- User experience
+- Responsiveness
+- Clean UI
+- Maintainable code
+- Reusable widgets
+- Modular features
+
+Business logic should remain on the backend whenever possible.
+
+The frontend should never become the source of truth for application data.
+
+---
+
+# Architectural Style
+
+The application follows a feature-first architecture.
+
+Each feature owns:
+
+- Screens
+- Widgets
+- Models
+- Services (if feature-specific)
+- Controllers/ViewModels (if required)
+
+This keeps related files together and improves scalability.
+
+---
+
+# Suggested Folder Structure
+
+```
+lib/
+
+core/
+features/
+models/
+services/
+widgets/
+theme/
+routes/
+utils/
+main.dart
+```
+
+---
+
+# Core Module
+
+The `core` module contains application-wide functionality.
+
+Examples:
+
+- API client
+- Constants
+- Configuration
+- Authentication helpers
+- Global utilities
+- Error handling
+
+Nothing inside `core` should depend on a specific feature.
+
+---
+
+# Features
+
+Each feature should remain self-contained.
+
+Examples:
+
+Authentication
+
+Conference
+
+Registration
+
+Committee
+
+Profile
+
+Settings
+
+Resources
+
+Announcements
+
+Each feature may contain:
+
+```
+feature/
+
+screens/
+
+widgets/
+
+models/
+
+services/
+
+controllers/
+```
+
+---
+
+# Models
+
+Models represent backend objects.
+
+Examples:
+
+User
+
+Conference
+
+Committee
+
+Portfolio
+
+Registration
+
+Announcement
+
+Resource
+
+Certificate
+
+Models should support:
+
+- JSON serialization
+- JSON deserialization
+
+---
+
+# Services
+
+Services communicate with the backend.
+
+Responsibilities:
+
+- HTTP requests
+- JSON conversion
+- Error handling
+
+Services should not contain UI logic.
+
+---
+
+# Widgets
+
+Reusable UI components belong here.
+
+Examples:
+
+Buttons
+
+Cards
+
+Dialogs
+
+Input Fields
+
+Loading Indicators
+
+Empty State Views
+
+Profile Avatar
+
+Widgets should remain generic whenever possible.
+
+---
+
+# Screens
+
+Screens represent complete pages.
+
+Examples:
+
+Login
+
+Register
+
+Dashboard
+
+Conference Details
+
+Committee Details
+
+Profile
+
+Settings
+
+A screen should coordinate UI components rather than implement business logic.
+
+---
+
+# Navigation
+
+Navigation should remain centralized.
+
+Routes should be managed through a dedicated routing system.
+
+Avoid hardcoded navigation throughout the application.
+
+---
+
+# API Communication
+
+The frontend communicates with the backend using HTTPS requests.
+
+Typical flow:
+
+```
+Screen
+
+↓
+
+Service
+
+↓
+
+REST API
+
+↓
+
+Express Backend
+
+↓
+
+JSON Response
+
+↓
+
+Model
+
+↓
+
+UI Update
+```
+
+All API communication should pass through service classes.
+
+---
+
+# Authentication Flow
+
+1. User logs in.
+
+2. Backend returns JWT.
+
+3. Token stored securely.
+
+4. Every authenticated request includes:
+
+Authorization: Bearer <token>
+
+5. Logout removes stored credentials.
+
+---
+
+# State Management
+
+State should remain predictable and localized.
+
+Guidelines:
+
+- Local widget state for simple UI interactions.
+- Shared state only when multiple screens require the same data.
+- Avoid unnecessary global state.
+
+The chosen state management solution should remain consistent across the application.
+
+---
+
+# Error Handling
+
+User-friendly error messages should always be displayed.
+
+Examples:
+
+Network unavailable
+
+Invalid credentials
+
+Server unavailable
+
+Validation failed
+
+Unexpected errors should never crash the application.
+
+---
+
+# Loading States
+
+Every asynchronous operation should provide visual feedback.
+
+Examples:
+
+Loading spinner
+
+Skeleton loader
+
+Progress indicator
+
+Disabled buttons during requests
+
+---
+
+# Empty States
+
+Every list should gracefully handle empty data.
+
+Examples:
+
+No conferences available.
+
+No registrations found.
+
+No announcements.
+
+Empty states should guide the user toward the next action.
+
+---
+
+# Form Validation
+
+Validate user input before sending requests.
+
+Examples:
+
+Required fields
+
+Email format
+
+Password strength
+
+Phone number
+
+However, backend validation remains the ultimate authority.
+
+---
+
+# Theme
+
+The application should use a centralized theme.
+
+Maintain consistency for:
+
+- Colors
+- Typography
+- Icons
+- Buttons
+- Input fields
+- Cards
+- Dialogs
+
+Avoid inline styling whenever possible.
+
+---
+
+# Responsiveness
+
+The UI should work across:
+
+- Phones
+- Tablets
+- Larger screens (future)
+
+Layouts should adapt gracefully without duplicating code.
+
+---
+
+# Security
+
+The frontend must never:
+
+- Store passwords
+- Trust client-side validation
+- Expose sensitive information
+- Embed API secrets
+
+Authentication should rely entirely on secure backend verification.
+
+---
+
+# Performance
+
+Optimize for:
+
+- Fast startup
+- Smooth scrolling
+- Efficient widget rebuilding
+- Minimal unnecessary API calls
+- Lazy loading where appropriate
+
+---
+
+# Accessibility
+
+The application should:
+
+- Support readable typography
+- Maintain sufficient color contrast
+- Use accessible touch targets
+- Provide meaningful labels where appropriate
+
+---
+
+# Future Expansion
+
+The architecture should support future additions such as:
+
+- Push notifications
+- Offline support
+- Dark mode
+- Tablet layouts
+- Desktop support
+- Multiple languages
+- AI-powered features
+
+without requiring major restructuring.
+
+---
+
+# Guiding Principles
+
+Every frontend implementation should prioritize:
+
+- Simplicity
+- Consistency
+- Performance
+- Maintainability
+- Accessibility
+- User Experience
+
+The frontend should remain modular, reusable, and easy to extend as the platform evolves.

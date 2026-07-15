@@ -1,0 +1,96 @@
+const express = require("express");
+const conferenceController = require("../controllers/conferenceController");
+const committeeController = require("../controllers/committeeController");
+const delegateController = require("../controllers/delegateController");
+const assignmentController = require("../controllers/assignmentController");
+const resourceController = require("../controllers/resourceController");
+const announcementController = require("../controllers/announcementController");
+const resolutionController = require("../controllers/resolutionController");
+const feedbackController = require("../controllers/feedbackController");
+const organizerAccessController = require("../controllers/organizerAccessController");
+const { authenticate, requireRole, requireConferenceAccess } = require("../middleware/auth");
+const validateBody = require("../middleware/validate");
+const entityValidation = require("../validations/entityValidation");
+const feedbackValidation = require("../validations/feedbackValidation");
+const organizerAccessValidation = require("../validations/organizerAccessValidation");
+const upload = require("../middleware/upload");
+
+const router = express.Router();
+const asOrganizer = [authenticate, requireRole("organizer")];
+
+// Anyone with any access role on the conference can read; write access varies by route below.
+const ALL_ROLES = ["owner", "conference_manager", "organizer", "committee_director"];
+const MANAGE_STRUCTURE = ["owner", "conference_manager"];
+const OPERATIONAL = ["owner", "conference_manager", "organizer"];
+const OWNER_ONLY = ["owner"];
+const RESOLUTION_REVIEW = ["owner", "conference_manager", "committee_director"];
+
+router.get("/open", conferenceController.listOpen);
+router.get("/me", ...asOrganizer, conferenceController.listMine);
+
+router.get("/:id", ...asOrganizer, requireConferenceAccess(...ALL_ROLES), conferenceController.getOne);
+router.put("/:id", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), conferenceController.update);
+router.delete("/:id", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY), conferenceController.remove);
+
+router.get("/:id/stats", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), conferenceController.stats);
+router.get("/:id/analytics", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), conferenceController.analytics);
+
+router.get("/:id/committees", committeeController.listForConference);
+router.post(
+    "/:id/committees", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE),
+    validateBody(entityValidation.committee), committeeController.create
+);
+
+router.get("/:id/delegates", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), delegateController.listForConference);
+
+router.get("/:id/assignments", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), assignmentController.listForConference);
+router.put(
+    "/:id/assignments/:delegateId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    validateBody(entityValidation.assignment), assignmentController.assign
+);
+router.post(
+    "/:id/assignments/publish", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    assignmentController.publish
+);
+
+router.get("/:id/resources", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), resourceController.listForConference);
+router.post(
+    "/:id/resources", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), upload.single("file"),
+    validateBody(entityValidation.resource), resourceController.create
+);
+
+router.get("/:id/announcements", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), announcementController.listForConference);
+router.post(
+    "/:id/announcements", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    validateBody(entityValidation.announcement), announcementController.create
+);
+
+router.get(
+    "/:id/resolutions", ...asOrganizer, requireConferenceAccess(...RESOLUTION_REVIEW),
+    resolutionController.listForConference
+);
+
+router.post(
+    "/:id/feedback", authenticate, requireRole("delegate"),
+    validateBody(feedbackValidation.create), feedbackController.create
+);
+router.get("/:id/feedback", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), feedbackController.listForConference);
+
+router.get(
+    "/:id/organizer-access", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    organizerAccessController.list
+);
+router.post(
+    "/:id/organizer-access", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    validateBody(organizerAccessValidation.invite), organizerAccessController.invite
+);
+router.patch(
+    "/:id/organizer-access/:accessId", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    validateBody(organizerAccessValidation.update), organizerAccessController.update
+);
+router.delete(
+    "/:id/organizer-access/:accessId", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    organizerAccessController.remove
+);
+
+module.exports = router;

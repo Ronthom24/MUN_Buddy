@@ -1,0 +1,509 @@
+# MUN Buddy - Frontend Folder Structure
+
+## Purpose
+
+This document defines the organization of the Flutter frontend for MUN Buddy.
+
+The goal is to keep the frontend modular, scalable, maintainable, and easy to navigate as the application grows.
+
+Every directory has a clearly defined responsibility.
+
+New files should always be placed in the appropriate location.
+
+---
+
+# Project Structure
+
+```
+frontend/
+
+lib/
+
+├── core/
+│   ├── api/
+│   ├── config/
+│   ├── constants/
+│   ├── services/
+│   ├── storage/
+│   ├── theme/
+│   ├── utils/
+│   └── widgets/
+│
+├── features/
+│   ├── authentication/
+│   ├── conferences/
+│   ├── registrations/
+│   ├── committees/
+│   ├── resources/
+│   ├── announcements/
+│   ├── profile/
+│   └── settings/
+│
+├── models/
+│
+├── routes/
+│
+├── main.dart
+│
+assets/
+│
+test/
+```
+
+---
+
+# lib/
+
+The `lib` directory contains the complete Flutter application.
+
+Application logic should remain inside this directory.
+
+---
+
+# core/
+
+Contains functionality shared across the entire application.
+
+Examples:
+
+- API client
+- Authentication helpers
+- Theme
+- Constants
+- Global widgets
+- Utility functions
+- Secure storage
+
+The `core` module must never depend on any feature module.
+
+---
+
+# core/api/
+
+Contains:
+
+- API client
+- HTTP configuration
+- Base API service
+- Request interceptors
+- Response interceptors
+
+Every backend request should pass through this layer.
+
+---
+
+# core/config/
+
+Contains application configuration.
+
+Examples:
+
+- Base URLs
+- Environment settings
+- Feature flags
+- App configuration
+
+No business logic belongs here.
+
+---
+
+# core/constants/
+
+Contains:
+
+- Route names
+- API endpoints
+- String constants
+- Animation durations
+- Default values
+
+Avoid hardcoded values throughout the application.
+
+---
+
+# core/services/
+
+Contains application-wide services.
+
+Examples:
+
+- Authentication service
+- Storage service
+- Notification service
+- Connectivity service
+
+Feature-specific services should remain inside their respective feature folders.
+
+---
+
+# core/storage/
+
+Handles local storage.
+
+Examples:
+
+- Secure JWT storage
+- User preferences
+- Cached settings
+
+Sensitive data should use secure storage.
+
+---
+
+# core/theme/
+
+Contains the application's design system.
+
+Examples:
+
+- Colors
+- Typography
+- Themes
+- Button styles
+- Input styles
+
+All styling should be centralized.
+
+---
+
+# core/utils/
+
+Reusable helper functions.
+
+Examples:
+
+- Validators
+- Formatters
+- Date helpers
+- Extensions
+
+Utilities should remain generic.
+
+---
+
+# core/widgets/
+
+Contains reusable widgets.
+
+Examples:
+
+Primary Button
+
+Secondary Button
+
+Loading Indicator
+
+Profile Avatar
+
+Search Bar
+
+Dialogs
+
+Cards
+
+These widgets should be independent of any feature.
+
+---
+
+# features/
+
+Every application feature should be self-contained.
+
+Examples:
+
+Authentication
+
+Conference Management
+
+Registrations
+
+Committees
+
+Resources
+
+Announcements
+
+Profile
+
+Settings
+
+Features should not tightly depend on each other.
+
+---
+
+# Feature Structure
+
+Every feature should follow the same organization.
+
+```
+authentication/
+
+screens/
+
+widgets/
+
+services/
+
+models/
+
+controllers/
+```
+
+Additional folders may be introduced if justified.
+
+Consistency is more important than strict folder count.
+
+---
+
+# screens/
+
+Contains complete application pages.
+
+Examples:
+
+Login Screen
+
+Dashboard
+
+Conference Details
+
+Profile
+
+Settings
+
+A screen should compose widgets rather than implement business logic.
+
+---
+
+# widgets/
+
+Contains reusable widgets specific to a feature.
+
+Example:
+
+Conference Card
+
+Committee Tile
+
+Registration Status Badge
+
+If a widget is reusable across multiple features, move it to `core/widgets`.
+
+---
+
+# services/
+
+Handles communication with backend APIs for that feature.
+
+Examples:
+
+Conference Service
+
+Registration Service
+
+Committee Service
+
+Services should never contain UI code.
+
+---
+
+# models/
+
+Represents application data.
+
+Examples:
+
+Conference
+
+Committee
+
+Registration
+
+User
+
+Announcement
+
+Models should support JSON serialization and deserialization.
+
+---
+
+# controllers/
+
+Responsible for coordinating UI state and feature logic.
+
+Responsibilities:
+
+- Load data
+- Update state
+- Call services
+- Notify UI
+
+Controllers should not directly manipulate widgets.
+
+---
+
+# routes/
+
+Defines application navigation.
+
+Responsibilities:
+
+- Named routes
+- Route generation
+- Navigation guards
+
+Navigation should remain centralized.
+
+---
+
+# assets/
+
+Contains static application assets.
+
+Examples:
+
+Images
+
+Icons
+
+Fonts
+
+Animations
+
+Illustrations
+
+Assets should be organized into logical subfolders.
+
+---
+
+# test/
+
+Contains Flutter tests.
+
+Examples:
+
+Widget Tests
+
+Unit Tests
+
+Integration Tests
+
+Testing should mirror the application's structure.
+
+---
+
+# File Naming
+
+Use lowercase_with_underscores.
+
+Examples:
+
+```
+login_screen.dart
+
+conference_card.dart
+
+profile_service.dart
+
+auth_controller.dart
+```
+
+Avoid abbreviations.
+
+---
+
+# Widget Guidelines
+
+Widgets should be:
+
+- Small
+- Reusable
+- Easy to understand
+
+Large widgets should be split into multiple smaller widgets.
+
+---
+
+# Dependency Rules
+
+Allowed:
+
+```
+Screen
+
+↓
+
+Controller
+
+↓
+
+Service
+
+↓
+
+API
+
+↓
+
+Backend
+```
+
+Not allowed:
+
+- Widgets calling APIs directly
+- Screens containing networking logic
+- UI components managing database logic
+
+---
+
+# Separation of Concerns
+
+UI
+
+↓
+
+State Management
+
+↓
+
+Services
+
+↓
+
+Backend API
+
+↓
+
+Database
+
+Each layer has a single responsibility.
+
+---
+
+# Scalability
+
+The folder structure should easily support future modules such as:
+
+- Payments
+- Messaging
+- Certificates
+- Analytics
+- AI Features
+- Notifications
+- Attendance
+
+without major restructuring.
+
+---
+
+# Guiding Principles
+
+The frontend should remain:
+
+- Modular
+- Reusable
+- Predictable
+- Easy to navigate
+- Easy to extend
+
+Developers should always know exactly where a new file belongs.

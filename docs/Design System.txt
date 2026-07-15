@@ -1,0 +1,577 @@
+# MUN Buddy - Design System
+
+## Purpose
+
+This document defines the visual identity and UI standards for the MUN Buddy application.
+
+The goal is to create a modern, professional, and consistent interface across the entire application.
+
+Every screen, widget, and component should follow these guidelines.
+
+---
+
+# Design Philosophy
+
+MUN Buddy should feel:
+
+- Modern
+- Clean
+- Professional
+- Minimal
+- Fast
+- Easy to navigate
+
+The UI should never feel cluttered.
+
+Whitespace should be used intentionally.
+
+Every element should have a purpose.
+
+---
+
+# Design Principles
+
+The interface should prioritize:
+
+- Clarity
+- Consistency
+- Accessibility
+- Simplicity
+- Predictability
+
+Users should immediately understand how to use every screen.
+
+---
+
+# Material Design
+
+The application should follow Google's Material Design 3 guidelines.
+
+Use Flutter's Material widgets whenever appropriate.
+
+Avoid creating custom components unless necessary.
+
+---
+
+# Color Palette
+
+The application should use a centralized color system.
+
+Categories include:
+
+Primary
+
+Used for:
+
+- Primary buttons
+- Active navigation
+- Links
+- Highlights
+
+Secondary
+
+Used for:
+
+- Supporting actions
+- Secondary buttons
+
+Success
+
+Used for:
+
+- Approved registrations
+- Successful actions
+- Confirmations
+
+Warning
+
+Used for:
+
+- Waitlisted delegates
+- Important notices
+
+Error
+
+Used for:
+
+- Validation errors
+- Failed operations
+- Rejections
+
+Info
+
+Used for:
+
+- General notifications
+- Informational banners
+
+Neutral
+
+Used for:
+
+- Backgrounds
+- Borders
+- Cards
+- Dividers
+- Disabled elements
+
+All colors should be defined in one centralized theme file.
+
+---
+
+# Typography
+
+Typography should remain consistent throughout the application.
+
+Hierarchy:
+
+Display
+
+Large page titles.
+
+Headline
+
+Screen titles.
+
+Title
+
+Section headings.
+
+Body
+
+Regular text.
+
+Caption
+
+Supporting information.
+
+Labels
+
+Buttons
+
+Badges
+
+Chips
+
+Avoid excessive font variations.
+
+---
+
+# Icons
+
+Use Material Icons.
+
+Icons should:
+
+- Clearly communicate purpose.
+- Be consistent in size.
+- Not replace descriptive text when clarity is needed.
+
+Avoid decorative icons.
+
+---
+
+# Buttons
+
+Button hierarchy:
+
+Primary Button
+
+Highest emphasis.
+
+Examples:
+
+Login
+
+Register
+
+Save
+
+Approve
+
+Secondary Button
+
+Lower emphasis.
+
+Examples:
+
+Cancel
+
+Back
+
+View Details
+
+Text Button
+
+Minimal emphasis.
+
+Examples:
+
+Forgot Password
+
+Learn More
+
+Delete actions should use destructive styling.
+
+---
+
+# Cards
+
+Cards should display grouped information.
+
+Examples:
+
+Conference
+
+Committee
+
+Delegate
+
+Announcement
+
+Cards should have:
+
+- Rounded corners
+- Consistent spacing
+- Subtle elevation
+
+Avoid excessive shadows.
+
+---
+
+# Input Fields
+
+Every form should use consistent input components.
+
+Features:
+
+- Labels
+- Helper text
+- Validation messages
+- Icons where appropriate
+
+Password fields should support:
+
+Show / Hide password.
+
+---
+
+# Dialogs
+
+Dialogs should only be used for:
+
+- Confirmation
+- Critical warnings
+- Important decisions
+
+Examples:
+
+Delete Conference
+
+Reject Delegate
+
+Logout
+
+Avoid unnecessary dialogs.
+
+---
+
+# Bottom Sheets
+
+Bottom sheets should be used for:
+
+- Filters
+- Quick actions
+- Mobile-friendly menus
+
+---
+
+# Navigation
+
+Navigation should remain predictable.
+
+Primary destinations:
+
+Dashboard
+
+Conferences
+
+Profile
+
+Settings
+
+Avoid deep navigation hierarchies.
+
+---
+
+# App Bar
+
+Each screen should include:
+
+- Clear title
+- Contextual actions
+- Back navigation where appropriate
+
+Avoid overcrowding the app bar.
+
+---
+
+# Lists
+
+Lists should support:
+
+- Empty state
+- Loading state
+- Pagination (when required)
+
+List items should remain visually consistent.
+
+---
+
+# Tables
+
+Administrative data may use tables.
+
+Examples:
+
+Registrations
+
+Assignments
+
+Payments
+
+Tables should support:
+
+Sorting
+
+Searching
+
+Filtering
+
+Pagination
+
+---
+
+# Badges
+
+Badges should indicate status.
+
+Examples:
+
+Pending
+
+Approved
+
+Rejected
+
+Waitlisted
+
+Completed
+
+Cancelled
+
+Status colors should remain consistent.
+
+---
+
+# Chips
+
+Use chips for:
+
+Committee names
+
+Portfolio names
+
+Filters
+
+Tags
+
+Role indicators
+
+---
+
+# Avatars
+
+Users should display:
+
+Profile image
+
+or
+
+Initials
+
+if no image exists.
+
+---
+
+# Loading States
+
+Never leave users waiting without feedback.
+
+Use:
+
+Circular Progress Indicator
+
+Skeleton loaders
+
+Button loading indicators
+
+Loading states should match the surrounding UI.
+
+---
+
+# Empty States
+
+Every empty screen should provide:
+
+- A clear explanation.
+- An illustration (optional).
+- A call-to-action.
+
+Example:
+
+"No conferences available."
+
+↓
+
+"Create your first conference."
+
+---
+
+# Error States
+
+Errors should:
+
+Explain what happened.
+
+Explain what the user can do.
+
+Avoid technical language.
+
+---
+
+# Success Feedback
+
+Successful actions should provide immediate feedback.
+
+Examples:
+
+Snackbar
+
+Toast
+
+Success dialog (for major actions)
+
+---
+
+# Animations
+
+Animations should be subtle.
+
+Examples:
+
+Page transitions
+
+Button feedback
+
+Loading animations
+
+Expansion tiles
+
+Avoid excessive animation.
+
+---
+
+# Responsive Design
+
+The interface should adapt to:
+
+Phones
+
+Tablets
+
+Large screens
+
+Avoid fixed widths.
+
+Use flexible layouts.
+
+---
+
+# Accessibility
+
+The application should support:
+
+- Adequate touch targets
+- Readable typography
+- Color contrast
+- Screen readers (future)
+- Keyboard navigation (future)
+
+Accessibility should never be an afterthought.
+
+---
+
+# Dark Mode
+
+Future versions should support dark mode.
+
+All colors should be theme-based instead of hardcoded.
+
+---
+
+# Consistency Rules
+
+Every new screen should:
+
+Use the same spacing.
+
+Use the same typography.
+
+Use the same colors.
+
+Reuse existing widgets whenever possible.
+
+Avoid creating duplicate UI components.
+
+---
+
+# Reusable Components
+
+The following should become reusable widgets:
+
+Primary Button
+
+Secondary Button
+
+Text Field
+
+Search Bar
+
+Conference Card
+
+Committee Card
+
+Delegate Card
+
+Status Badge
+
+Loading Indicator
+
+Confirmation Dialog
+
+Empty State
+
+Error Widget
+
+Profile Avatar
+
+---
+
+# Guiding Principle
+
+Every screen should feel like it belongs to the same application.
+
+Consistency is more important than creativity.
+
+When implementing new UI, always prefer reusing existing design patterns and components rather than introducing new ones.

@@ -1,0 +1,566 @@
+# MUN Buddy - Project Conventions
+
+## Purpose
+
+This document defines the coding conventions, naming standards, architectural patterns, and development practices used throughout the MUN Buddy project.
+
+Unlike the Development Rules document, this file focuses on consistency.
+
+Whenever multiple valid approaches exist, the conventions in this document should be followed.
+
+Consistency is preferred over personal preference.
+
+---
+
+# General Principles
+
+The project should remain:
+
+- Predictable
+- Consistent
+- Maintainable
+- Scalable
+- Easy to understand
+
+Every new file should look like it naturally belongs in the project.
+
+---
+
+# Naming Conventions
+
+## Variables
+
+Use camelCase.
+
+Examples
+
+```
+conferenceName
+
+delegateCount
+
+registrationStatus
+```
+
+---
+
+## Functions
+
+Use camelCase.
+
+Functions should clearly describe an action.
+
+Examples
+
+```
+createConference()
+
+approveRegistration()
+
+assignPortfolio()
+
+generateCertificate()
+```
+
+Avoid names like:
+
+```
+doStuff()
+
+process()
+
+temp()
+```
+
+---
+
+## Classes
+
+Use PascalCase.
+
+Examples
+
+```
+ConferenceService
+
+RegistrationController
+
+JwtMiddleware
+
+AuthValidator
+```
+
+---
+
+## Constants
+
+Use UPPER_SNAKE_CASE.
+
+Examples
+
+```
+JWT_SECRET
+
+MAX_FILE_SIZE
+
+DEFAULT_PAGE_SIZE
+```
+
+---
+
+## Database Tables
+
+Use:
+
+- lowercase
+- plural
+- snake_case
+
+Examples
+
+```
+users
+
+conferences
+
+registrations
+
+committees
+
+portfolios
+
+assignments
+```
+
+---
+
+## Database Columns
+
+Use snake_case.
+
+Examples
+
+```
+conference_id
+
+created_at
+
+updated_at
+
+password_hash
+```
+
+---
+
+## API Routes
+
+Use:
+
+- lowercase
+- plural nouns
+- RESTful design
+
+Examples
+
+```
+/users
+
+/conferences
+
+/registrations
+
+/committees
+```
+
+Avoid:
+
+```
+/getConference
+
+/createUser
+
+/deleteCommittee
+```
+
+---
+
+# File Naming
+
+Use descriptive filenames.
+
+Backend
+
+```
+auth.controller.js
+
+auth.service.js
+
+auth.routes.js
+
+conference.model.js
+
+jwt.middleware.js
+```
+
+Frontend
+
+```
+login_screen.dart
+
+conference_card.dart
+
+profile_service.dart
+
+registration_controller.dart
+```
+
+Avoid abbreviations unless universally understood.
+
+---
+
+# Folder Naming
+
+Folders should always use lowercase.
+
+Examples
+
+```
+controllers
+
+services
+
+middleware
+
+routes
+
+validators
+
+widgets
+```
+
+---
+
+# Import Order
+
+Imports should be grouped consistently.
+
+Backend
+
+1. Node modules
+2. Third-party packages
+3. Internal modules
+4. Relative imports
+
+Frontend
+
+1. Flutter SDK
+2. Packages
+3. Core modules
+4. Feature modules
+5. Local imports
+
+---
+
+# Function Design
+
+Functions should:
+
+- Perform one task.
+- Have a single responsibility.
+- Be easy to test.
+- Be easy to reuse.
+
+Avoid excessively long functions.
+
+If a function exceeds roughly 40–50 lines, consider breaking it into smaller functions.
+
+---
+
+# Controller Conventions
+
+Controllers should:
+
+- Receive request
+- Validate input (if not handled by middleware)
+- Call services
+- Return responses
+
+Controllers should never:
+
+- Execute SQL
+- Contain business rules
+- Perform complex calculations
+
+---
+
+# Service Conventions
+
+Services should:
+
+- Implement business logic
+- Coordinate multiple operations
+- Handle transactions
+- Remain reusable
+
+Services should not:
+
+- Return HTTP responses
+- Access request objects
+- Access response objects
+
+---
+
+# Model Conventions
+
+Models should:
+
+- Interact with the database
+- Execute parameterized queries
+- Return structured data
+
+Models should never:
+
+- Implement business logic
+- Handle authentication
+- Perform validation
+
+---
+
+# Middleware Conventions
+
+Middleware should be:
+
+- Independent
+- Reusable
+- Generic
+
+Examples:
+
+Authentication
+
+Authorization
+
+Validation
+
+Logging
+
+Error Handling
+
+Rate Limiting
+
+---
+
+# Validation
+
+Validation should occur before business logic executes.
+
+Validate:
+
+- Required fields
+- Data types
+- Length
+- Formats
+- Business rules
+
+Backend validation is mandatory.
+
+Frontend validation exists only for user experience.
+
+---
+
+# Error Messages
+
+Error messages should be:
+
+- Clear
+- Actionable
+- User-friendly
+
+Example
+
+Good
+
+```
+Email address is already registered.
+```
+
+Bad
+
+```
+Database Error 1062
+```
+
+Never expose internal implementation details.
+
+---
+
+# API Responses
+
+Always use the standard response structure.
+
+Success
+
+```json
+{
+    "success": true,
+    "message": "",
+    "data": {}
+}
+```
+
+Failure
+
+```json
+{
+    "success": false,
+    "message": "",
+    "errors": []
+}
+```
+
+---
+
+# Comments
+
+Only add comments when they improve understanding.
+
+Avoid commenting obvious code.
+
+Good
+
+```javascript
+// Generate JWT containing only public user claims.
+```
+
+Bad
+
+```javascript
+// Increment i.
+i++;
+```
+
+Code should explain itself whenever possible.
+
+---
+
+# Async Programming
+
+Use async/await consistently.
+
+Avoid deeply nested Promise chains.
+
+Always handle asynchronous errors.
+
+---
+
+# Logging
+
+Log:
+
+- Authentication events
+- Critical actions
+- Server errors
+
+Do not log:
+
+- Passwords
+- Tokens
+- Secrets
+- Sensitive personal information
+
+---
+
+# Flutter Widget Conventions
+
+Prefer small widgets.
+
+Extract repeated UI into reusable widgets.
+
+Avoid deeply nested widget trees.
+
+Business logic should remain outside widgets.
+
+---
+
+# Theme Usage
+
+Never hardcode colors.
+
+Never hardcode font sizes.
+
+Always use the centralized theme.
+
+---
+
+# Reusability
+
+Before creating a new component, check whether an existing one can be reused.
+
+Avoid duplicate implementations.
+
+---
+
+# Security
+
+Never trust client input.
+
+Never expose sensitive information.
+
+Always validate requests.
+
+Always use parameterized SQL queries.
+
+Always verify permissions.
+
+---
+
+# Git Commits
+
+Use Conventional Commits.
+
+Examples
+
+```
+feat: implement conference creation
+
+fix: correct JWT verification
+
+docs: update authentication flow
+
+refactor: simplify registration service
+
+test: add authentication integration tests
+```
+
+---
+
+# Documentation
+
+Whenever introducing:
+
+- API
+- Database table
+- Architecture change
+- Feature
+
+Update the corresponding documentation.
+
+Documentation should evolve with the codebase.
+
+---
+
+# Future Features
+
+Future modules should follow the same conventions without introducing inconsistent patterns.
+
+Consistency should always outweigh individual coding preferences.
+
+---
+
+# Guiding Principle
+
+When adding new code, ask:
+
+"If another developer opens this file six months from now, will it immediately feel like it belongs in MUN Buddy?"
+
+If the answer is yes, the conventions have been followed successfully.

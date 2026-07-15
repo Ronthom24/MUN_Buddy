@@ -1,0 +1,526 @@
+# MUN Buddy - Database Design
+
+## Purpose
+
+This document describes the database architecture of the MUN Buddy platform.
+
+It serves as the single source of truth for how data should be structured, how entities relate to one another, and the principles that govern database design.
+
+The database should always prioritize:
+
+- Data integrity
+- Normalization
+- Scalability
+- Maintainability
+- Performance
+
+The backend uses MySQL as its relational database management system.
+
+---
+
+# Database Design Philosophy
+
+The database follows a normalized relational model.
+
+The goals are:
+
+- Avoid duplicate data.
+- Maintain referential integrity.
+- Enforce business rules using constraints.
+- Keep relationships explicit.
+- Make future expansion easy.
+
+Every entity should have a clearly defined purpose.
+
+---
+
+# Primary Entities
+
+The platform revolves around the following core entities.
+
+## Users
+
+Represents every authenticated user.
+
+Possible roles include:
+
+- Organizer
+- Staff
+- Delegate
+
+Responsibilities:
+
+- Authentication
+- Authorization
+- Profile information
+
+A user may participate in multiple conferences.
+
+---
+
+## Conferences
+
+Represents a Model United Nations conference.
+
+A conference acts as the parent entity for most of the system.
+
+Contains information such as:
+
+- Name
+- Description
+- Venue
+- Dates
+- Registration period
+- Status
+- Organizer
+
+One organizer may create multiple conferences.
+
+---
+
+## Staff
+
+Represents staff members associated with a conference.
+
+Staff permissions may vary depending on future requirements.
+
+Each staff member belongs to exactly one conference.
+
+---
+
+## Registrations
+
+Represents a delegate's application to a conference.
+
+Each registration belongs to:
+
+- One delegate
+- One conference
+
+Registration status determines whether the delegate is:
+
+- Pending
+- Approved
+- Waitlisted
+- Rejected
+
+---
+
+## Committees
+
+Represents a committee within a conference.
+
+Examples:
+
+- UNSC
+- UNHRC
+- DISEC
+- ECOSOC
+
+Every committee belongs to exactly one conference.
+
+---
+
+## Portfolios
+
+Represents countries or positions available inside a committee.
+
+Examples:
+
+- India
+- USA
+- France
+- Russia
+
+Every portfolio belongs to one committee.
+
+---
+
+## Assignments
+
+Represents the allocation of delegates to portfolios.
+
+Each assignment links:
+
+Delegate
+
+↓
+
+Conference
+
+↓
+
+Committee
+
+↓
+
+Portfolio
+
+Assignments should always remain unique.
+
+No portfolio may have more than one active delegate.
+
+---
+
+## Resources
+
+Represents uploaded conference material.
+
+Examples:
+
+- Background Guides
+- Study Guides
+- Rulebooks
+- Schedules
+
+Resources belong either to:
+
+- Conference
+- Committee
+
+---
+
+## Announcements
+
+Represents notifications published by organizers.
+
+Announcements may target:
+
+- Entire conference
+- Individual committees
+
+---
+
+## Certificates
+
+Represents generated participation certificates.
+
+Each certificate belongs to:
+
+- One delegate
+- One conference
+
+---
+
+## Payments (Future)
+
+Represents registration payments.
+
+Stores:
+
+- Amount
+- Status
+- Transaction reference
+- Verification details
+
+---
+
+# Entity Relationships
+
+High-level relationship diagram:
+
+User
+
+↓
+
+Conference (Organizer)
+
+↓
+
+Committee
+
+↓
+
+Portfolio
+
+↓
+
+Assignment
+
+↓
+
+Delegate
+
+Additional relationships:
+
+Conference
+
+↓
+
+Registrations
+
+Conference
+
+↓
+
+Resources
+
+Conference
+
+↓
+
+Announcements
+
+Conference
+
+↓
+
+Certificates
+
+---
+
+# Relationship Rules
+
+One User
+
+↓
+
+Many Conferences
+
+---
+
+One Conference
+
+↓
+
+Many Committees
+
+---
+
+One Conference
+
+↓
+
+Many Registrations
+
+---
+
+One Committee
+
+↓
+
+Many Portfolios
+
+---
+
+One Portfolio
+
+↓
+
+One Active Assignment
+
+---
+
+One Delegate
+
+↓
+
+Many Registrations
+
+(one per conference)
+
+---
+
+One Conference
+
+↓
+
+Many Resources
+
+---
+
+One Conference
+
+↓
+
+Many Announcements
+
+---
+
+# Primary Keys
+
+Every table should have:
+
+id
+
+Auto Increment
+
+Primary Key
+
+UUIDs may be introduced in future versions if external identifiers become necessary.
+
+---
+
+# Foreign Keys
+
+Every relationship should use foreign key constraints.
+
+Examples:
+
+conference_id
+
+committee_id
+
+portfolio_id
+
+delegate_id
+
+organizer_id
+
+registration_id
+
+Foreign keys should enforce referential integrity.
+
+---
+
+# Naming Conventions
+
+Tables
+
+- plural
+- snake_case
+
+Examples
+
+users
+
+conferences
+
+committees
+
+portfolios
+
+registrations
+
+assignments
+
+resources
+
+Columns
+
+snake_case
+
+Examples
+
+created_at
+
+updated_at
+
+conference_id
+
+portfolio_id
+
+password_hash
+
+---
+
+# Timestamps
+
+Every major table should include:
+
+created_at
+
+updated_at
+
+Soft delete support may be introduced where appropriate.
+
+---
+
+# Data Integrity Rules
+
+The database must enforce:
+
+- Unique email addresses
+- Valid foreign keys
+- Unique portfolio assignments
+- Valid conference ownership
+- One active registration per delegate per conference
+- Required fields using NOT NULL constraints
+
+---
+
+# Transactions
+
+Database transactions should be used whenever multiple related operations occur.
+
+Examples:
+
+Approving a delegate
+
+Assigning a portfolio
+
+Creating conference with default settings
+
+Generating certificates
+
+Transactions prevent partial updates.
+
+---
+
+# Indexing Strategy
+
+Indexes should be created on frequently queried columns.
+
+Examples:
+
+email
+
+conference_id
+
+committee_id
+
+portfolio_id
+
+registration_status
+
+Foreign keys
+
+Proper indexing should improve query performance without excessive redundancy.
+
+---
+
+# Scalability Considerations
+
+The schema should support:
+
+- Thousands of delegates
+- Hundreds of conferences
+- Multiple organizers
+- Future modules
+
+Future additions should integrate without major schema redesign.
+
+---
+
+# Future Tables
+
+Likely future entities include:
+
+- Notifications
+- Audit Logs
+- Messages
+- Attendance
+- QR Check-ins
+- Votes
+- Crisis Updates
+- Feedback
+- Sponsors
+- Judge Scores
+
+The current architecture should remain flexible enough to accommodate these additions.
+
+---
+
+# Guiding Principle
+
+The database is the foundation of the application.
+
+Every schema change should preserve:
+
+- Data integrity
+- Consistency
+- Performance
+- Scalability
+- Ease of maintenance
+
+Business rules should always be enforced at both the application layer and, where appropriate, the database layer.

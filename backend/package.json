@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "db:migrate": "node scripts/runSchema.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -15,6 +16,7 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "multer": "^2.2.0",
     "mysql2": "^3.6.0"
   },
   "devDependencies": {

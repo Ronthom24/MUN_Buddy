@@ -1,0 +1,441 @@
+# MUN Buddy - Development Rules
+
+## Purpose
+
+This document defines the development standards, workflow, coding philosophy, and architectural principles that must be followed throughout the MUN Buddy project.
+
+These rules apply to every feature, module, API, database change, and code contribution.
+
+The objective is to maintain a production-grade codebase that is scalable, maintainable, secure, and easy to understand.
+
+---
+
+# 1. General Principles
+
+## 1.1 Production-Ready Code
+
+Every piece of generated code must be production-ready.
+
+Do not generate:
+- Prototype code
+- Placeholder implementations
+- Mock logic
+- Temporary fixes
+- Incomplete features
+
+Every implementation should be complete and suitable for deployment after testing.
+
+---
+
+## 1.2 Maintainability First
+
+Always prioritize:
+
+- Readability
+- Simplicity
+- Reusability
+- Scalability
+
+Never choose a shortcut that makes the code harder to maintain.
+
+---
+
+## 1.3 One Feature at a Time
+
+Only work on one feature during each development cycle.
+
+Never begin implementing future features unless explicitly instructed.
+
+Complete the current feature before moving to the next.
+
+---
+
+## 1.4 Respect Existing Architecture
+
+Do not redesign or restructure the project unless specifically requested.
+
+All new code must integrate cleanly with the existing architecture.
+
+---
+
+# 2. Development Workflow
+
+For every requested feature, follow this workflow.
+
+## Step 1
+
+Explain what is being built.
+
+## Step 2
+
+Explain why it is needed.
+
+## Step 3
+
+List every file that will be:
+
+- Created
+- Modified
+- Deleted (if applicable)
+
+## Step 4
+
+Explain any required database changes.
+
+## Step 5
+
+Generate the implementation.
+
+## Step 6
+
+Explain how to test the feature.
+
+## Step 7
+
+Wait for confirmation before proceeding to another feature.
+
+---
+
+# 3. Code Quality Standards
+
+All code should be:
+
+- Clean
+- Modular
+- Well organized
+- Easy to understand
+- Consistently formatted
+
+Avoid unnecessary complexity.
+
+Follow the Single Responsibility Principle whenever practical.
+
+---
+
+# 4. Naming Conventions
+
+Use meaningful names.
+
+Examples:
+
+Variables
+- camelCase
+
+Functions
+- camelCase
+
+Classes
+- PascalCase
+
+Files
+- lowercase when appropriate
+- descriptive names
+
+Database tables
+- plural
+- snake_case
+
+Database columns
+- snake_case
+
+Constants
+- UPPER_SNAKE_CASE
+
+Avoid abbreviations unless they are universally understood.
+
+---
+
+# 5. Backend Standards
+
+The backend follows a layered architecture.
+
+Controllers
+
+- Receive requests
+- Validate input when appropriate
+- Call services
+- Return responses
+
+Controllers should NOT contain business logic.
+
+---
+
+Services
+
+Services contain:
+
+- Business logic
+- Application rules
+- Data processing
+
+Services should remain reusable.
+
+---
+
+Routes
+
+Routes should only map endpoints to controllers.
+
+No business logic.
+
+---
+
+Middleware
+
+Middleware handles:
+
+- Authentication
+- Authorization
+- Validation
+- Error handling
+- Logging
+
+---
+
+Utilities
+
+Utility functions should contain reusable helper logic.
+
+---
+
+# 6. API Design Standards
+
+Follow RESTful principles.
+
+Use:
+
+GET
+
+POST
+
+PUT
+
+PATCH
+
+DELETE
+
+appropriately.
+
+Resource names should be plural.
+
+Examples:
+
+/users
+
+/conferences
+
+/registrations
+
+Avoid verbs in endpoint names whenever possible.
+
+---
+
+# 7. Request Validation
+
+Validate every incoming request.
+
+Never trust client input.
+
+Validate:
+
+- Required fields
+- Data types
+- Length
+- Formats
+- Business rules
+
+Return meaningful validation errors.
+
+---
+
+# 8. Error Handling
+
+Never expose internal errors.
+
+Return structured error responses.
+
+Log unexpected errors.
+
+Handle:
+
+- Validation errors
+- Authentication errors
+- Authorization errors
+- Database errors
+- Server errors
+
+Gracefully.
+
+---
+
+# 9. Authentication
+
+Use JWT authentication.
+
+Passwords must always be hashed.
+
+Never store plaintext passwords.
+
+Protect private routes.
+
+Use middleware for authentication.
+
+---
+
+# 10. Authorization
+
+Role-based access control should be enforced.
+
+Only authorized users should access protected resources.
+
+Never rely solely on frontend restrictions.
+
+---
+
+# 11. Database Standards
+
+Database design should be:
+
+- Normalized
+- Consistent
+- Scalable
+
+Every relationship should use appropriate foreign keys.
+
+Avoid duplicate data whenever possible.
+
+Maintain referential integrity.
+
+---
+
+# 12. SQL Standards
+
+Always use parameterized queries.
+
+Never concatenate SQL strings.
+
+Prevent:
+
+- SQL Injection
+- Invalid input
+
+Use transactions when multiple related operations must succeed together.
+
+---
+
+# 13. Security Standards
+
+Always consider security.
+
+Protect against:
+
+- SQL Injection
+- XSS
+- CSRF (where applicable)
+- Unauthorized access
+- Sensitive data exposure
+
+Never expose secrets.
+
+Never commit credentials.
+
+---
+
+# 14. Logging
+
+Log important server events.
+
+Examples:
+
+- Login
+- Registration
+- Critical failures
+- Unexpected exceptions
+
+Avoid logging sensitive information.
+
+---
+
+# 15. Documentation
+
+Whenever creating:
+
+- API endpoints
+- Database tables
+- Complex logic
+
+Explain:
+
+- Purpose
+- Inputs
+- Outputs
+- Design decisions
+
+Keep documentation synchronized with implementation.
+
+---
+
+# 16. Testing
+
+Every completed feature should include:
+
+- Manual testing steps
+- Expected results
+- Edge cases
+- Validation checks
+
+Do not proceed until testing instructions are provided.
+
+---
+
+# 17. File Modifications
+
+Do not modify unrelated files.
+
+Only change files necessary for the requested feature.
+
+If refactoring is recommended, explain why before making changes.
+
+---
+
+# 18. Assumptions
+
+Do not make assumptions about business rules.
+
+If information is missing:
+
+Ask for clarification.
+
+Do not invent requirements.
+
+---
+
+# 19. Communication
+
+Before generating code:
+
+Explain the implementation plan.
+
+After generating code:
+
+Explain what was implemented.
+
+Explain how to verify it.
+
+Highlight any important architectural decisions.
+
+---
+
+# 20. Long-Term Goal
+
+The objective is to build MUN Buddy as an enterprise-quality conference management platform capable of supporting multiple conferences, organizers, staff members, and delegates.
+
+Every implementation should prioritize:
+
+- Scalability
+- Reliability
+- Security
+- Maintainability
+- Extensibility
+
+Code quality is always more important than development speed.

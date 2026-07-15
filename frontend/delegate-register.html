@@ -256,7 +256,10 @@ personalized delegate dashboard.
 
 <div class="container">
 
-<form action="dashboard.html">
+<form id="delegateRegisterForm">
+
+<div id="registerError" class="alert alert-danger" style="display:none;"></div>
+<div id="registerSuccess" class="alert alert-success" style="display:none;"></div>
 
 <!-- DELEGATE DETAILS -->
 
@@ -280,7 +283,10 @@ Full Name *
 
 <input
 type="text"
-class="form-control">
+id="fullName"
+name="fullName"
+class="form-control"
+required>
 
 </div>
 
@@ -294,7 +300,10 @@ Email Address *
 
 <input
 type="email"
-class="form-control">
+id="email"
+name="email"
+class="form-control"
+required>
 
 </div>
 
@@ -308,7 +317,10 @@ Phone Number *
 
 <input
 type="text"
-class="form-control">
+id="phone"
+name="phone"
+class="form-control"
+required>
 
 </div>
 
@@ -322,7 +334,10 @@ School / Institution *
 
 <input
 type="text"
-class="form-control">
+id="school"
+name="school"
+class="form-control"
+required>
 
 </div>
 
@@ -336,7 +351,10 @@ Grade / Year *
 
 <input
 type="text"
-class="form-control">
+id="grade"
+name="grade"
+class="form-control"
+required>
 
 </div>
 
@@ -348,27 +366,27 @@ Previous MUN Experience
 
 </label>
 
-<select class="form-select">
+<select id="munExperience" name="munExperience" class="form-select">
 
-<option>
+<option value="beginner">
 
 Beginner
 
 </option>
 
-<option>
+<option value="1-3">
 
 1 - 3 Conferences
 
 </option>
 
-<option>
+<option value="4-10">
 
 4 - 10 Conferences
 
 </option>
 
-<option>
+<option value="10+">
 
 10+ Conferences
 
@@ -388,7 +406,11 @@ Password *
 
 <input
 type="password"
-class="form-control">
+id="password"
+name="password"
+class="form-control"
+minlength="6"
+required>
 
 </div>
 
@@ -402,7 +424,11 @@ Confirm Password *
 
 <input
 type="password"
-class="form-control">
+id="confirmPassword"
+name="confirmPassword"
+class="form-control"
+minlength="6"
+required>
 
 </div>
 
@@ -444,31 +470,9 @@ Conference *
 
 </label>
 
-<select class="form-select">
+<select id="conferenceId" name="conferenceId" class="form-select" required>
 
-<option>
-
-RITMUN 2026
-
-</option>
-
-<option>
-
-NPSMUN 2026
-
-</option>
-
-<option>
-
-DPSMUN 2026
-
-</option>
-
-<option>
-
-PESMUN 2026
-
-</option>
+<option value="">Loading conferences...</option>
 
 </select>
 
@@ -508,6 +512,8 @@ Brief Delegate Profile
 </label>
 
 <textarea
+id="profileText"
+name="profileText"
 class="form-control"
 placeholder="Tell us about your interests, MUN experience, strengths and areas of interest..."></textarea>
 
@@ -546,23 +552,9 @@ Committee Preference 1 *
 
 </label>
 
-<select class="form-select">
+<select id="committeePref1" name="committeePref1" class="form-select committee-pref" required>
 
-<option>UNSC</option>
-
-<option>UNGA</option>
-
-<option>UNHRC</option>
-
-<option>DISEC</option>
-
-<option>ECOSOC</option>
-
-<option>WHO</option>
-
-<option>UN Women</option>
-
-<option>Crisis Committee</option>
+<option value="">Select a conference first</option>
 
 </select>
 
@@ -576,23 +568,9 @@ Committee Preference 2
 
 </label>
 
-<select class="form-select">
+<select id="committeePref2" name="committeePref2" class="form-select committee-pref">
 
-<option>UNSC</option>
-
-<option>UNGA</option>
-
-<option>UNHRC</option>
-
-<option>DISEC</option>
-
-<option>ECOSOC</option>
-
-<option>WHO</option>
-
-<option>UN Women</option>
-
-<option>Crisis Committee</option>
+<option value="">Select a conference first</option>
 
 </select>
 
@@ -606,23 +584,9 @@ Committee Preference 3
 
 </label>
 
-<select class="form-select">
+<select id="committeePref3" name="committeePref3" class="form-select committee-pref">
 
-<option>UNSC</option>
-
-<option>UNGA</option>
-
-<option>UNHRC</option>
-
-<option>DISEC</option>
-
-<option>ECOSOC</option>
-
-<option>WHO</option>
-
-<option>UN Women</option>
-
-<option>Crisis Committee</option>
+<option value="">Select a conference first</option>
 
 </select>
 
@@ -667,6 +631,8 @@ Country Preference 1
 
 <input
 type="text"
+id="countryPref1"
+name="countryPref1"
 class="form-control"
 placeholder="France">
 
@@ -682,6 +648,8 @@ Country Preference 2
 
 <input
 type="text"
+id="countryPref2"
+name="countryPref2"
 class="form-control"
 placeholder="Japan">
 
@@ -697,6 +665,8 @@ Country Preference 3
 
 <input
 type="text"
+id="countryPref3"
+name="countryPref3"
 class="form-control"
 placeholder="Brazil">
 
@@ -735,6 +705,8 @@ Special Requirements / Notes
 </label>
 
 <textarea
+id="specialNotes"
+name="specialNotes"
 class="form-control"
 placeholder="Optional information for conference organizers..."></textarea>
 
@@ -907,15 +879,16 @@ Ready
 class="text-center"
 style="margin-top:40px;">
 
-<a
-href="delegate/dashboard.html"
-class="btn-primary-custom text-decoration-none">
+<button
+type="submit"
+id="submitBtn"
+class="btn-primary-custom">
 
 <i class="fa-solid fa-file-signature me-2"></i>
 
 Submit Registration
 
-</a>
+</button>
 
 <p
 style="
@@ -938,6 +911,121 @@ Once approved and assigned, you will receive access to your delegate dashboard.
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/api.js"></script>
+
+<script>
+
+const conferenceSelect = document.getElementById('conferenceId');
+const committeePrefSelects = document.querySelectorAll('.committee-pref');
+
+async function loadConferences() {
+  try {
+    const { conferences } = await MunBuddyAPI.request('/conferences/open');
+
+    if (!conferences.length) {
+      conferenceSelect.innerHTML = '<option value="">No conferences currently open for registration</option>';
+      return;
+    }
+
+    conferenceSelect.innerHTML = conferences
+      .map(c => `<option value="${c.id}">${c.name}${c.acronym ? ' (' + c.acronym + ')' : ''}</option>`)
+      .join('');
+
+    loadCommittees(conferenceSelect.value);
+  } catch (err) {
+    conferenceSelect.innerHTML = '<option value="">Unable to load conferences</option>';
+  }
+}
+
+async function loadCommittees(conferenceId) {
+  if (!conferenceId) return;
+
+  try {
+    const { committees } = await MunBuddyAPI.request(`/conferences/${conferenceId}/committees`);
+    const options = '<option value="">No preference</option>' +
+      committees.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+    committeePrefSelects.forEach(select => { select.innerHTML = options; });
+  } catch (err) {
+    committeePrefSelects.forEach(select => {
+      select.innerHTML = '<option value="">Unable to load committees</option>';
+    });
+  }
+}
+
+conferenceSelect.addEventListener('change', () => loadCommittees(conferenceSelect.value));
+loadConferences();
+
+const form = document.getElementById('delegateRegisterForm');
+const registerError = document.getElementById('registerError');
+const registerSuccess = document.getElementById('registerSuccess');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  registerError.style.display = 'none';
+  registerSuccess.style.display = 'none';
+
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (password !== confirmPassword) {
+    registerError.textContent = 'Password and Confirm Password must match.';
+    registerError.style.display = 'block';
+    return;
+  }
+
+  const committeePreferences = [];
+  ['committeePref1', 'committeePref2', 'committeePref3'].forEach((id, index) => {
+    const value = document.getElementById(id).value;
+    if (value) committeePreferences.push({ committeeId: Number(value), rank: index + 1 });
+  });
+
+  const countryPreferences = [];
+  ['countryPref1', 'countryPref2', 'countryPref3'].forEach((id, index) => {
+    const value = document.getElementById(id).value.trim();
+    if (value) countryPreferences.push({ countryName: value, rank: index + 1 });
+  });
+
+  const payload = {
+    fullName: document.getElementById('fullName').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    school: document.getElementById('school').value,
+    grade: document.getElementById('grade').value,
+    munExperience: document.getElementById('munExperience').value,
+    password,
+    confirmPassword,
+    conferenceId: Number(conferenceSelect.value),
+    profileText: document.getElementById('profileText').value,
+    specialNotes: document.getElementById('specialNotes').value,
+    committeePreferences,
+    countryPreferences
+  };
+
+  submitBtn.disabled = true;
+
+  try {
+    const result = await MunBuddyAPI.request('/auth/delegate/register', {
+      method: 'POST',
+      body: payload
+    });
+
+    MunBuddyAPI.setSession({ token: result.token, role: 'delegate' });
+    registerSuccess.textContent = 'Registration submitted! Your application is pending organizer approval. Redirecting to your dashboard...';
+    registerSuccess.style.display = 'block';
+
+    setTimeout(() => { window.location.href = 'delegate/dashboard.html'; }, 2000);
+  } catch (err) {
+    const details = Array.isArray(err.details) ? err.details.join(' ') : '';
+    registerError.textContent = `${err.message}${details ? ': ' + details : ''}`;
+    registerError.style.display = 'block';
+    submitBtn.disabled = false;
+  }
+});
+
+</script>
 
 </body>
 

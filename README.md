@@ -1,181 +1,157 @@
 # MUN Buddy
 
-![Project Status](https://img.shields.io/badge/status-phase%201-brightgreen?style=flat-square)
-![Frontend](https://img.shields.io/badge/frontend-static-blue?style=flat-square)
-![Backend](https://img.shields.io/badge/backend-planned-orange?style=flat-square)
+![Project Status](https://img.shields.io/badge/status-frontend%2Fbackend%20scaffold-yellow?style=flat-square)
+![Frontend](https://img.shields.io/badge/frontend-static%20prototype-blue?style=flat-square)
+![Backend](https://img.shields.io/badge/backend-node%2Fexpress-orange?style=flat-square)
 
-MUN Buddy is a Model United Nations conference management platform built as a frontend prototype with a planned backend integration. It is designed to support conference organizers and delegates by centralizing event management, committee coordination, delegate assignments, resources, announcements, and agendas.
+MUN Buddy is a web-based platform for managing Model United Nations conferences. It is designed to help organizers run events smoothly while giving delegates a central place to access their committee information, assignments, notes, and conference resources.
 
-## Project Overview
+## What the app is
 
-MUN Buddy aims to provide a polished conference workflow for:
+MUN Buddy brings the main parts of a conference experience into one digital workspace:
 
-- **Organizers**: build conferences, manage committees, approve delegates, publish announcements, and configure event settings.
-- **Delegates**: register, view assignments, access committee information, and stay up to date with conference announcements.
+- Conference organizers can manage committees, agendas, announcements, resources, and delegate information.
+- Delegates can view their assigned committee, country portfolio, agenda details, resolutions, and notes.
+- The system is structured to support the flow of a real MUN event from planning to participation.
 
-The current workspace contains a complete static frontend prototype and an initial backend application structure.
+## How it works
 
-## Features
+The application is split into two main experiences:
 
-### Organizer Portal
+### 1. Organizer experience
+Organizers use the dashboard-style pages to:
+- create and manage conference-related content
+- oversee committees and countries
+- manage delegate assignments and portfolios
+- publish announcements and resources
+- organize agendas and conference settings
 
-- Dashboard overview with conference metrics
-- Delegate management and approval workflow
-- Committee administration and capacity monitoring
-- Portfolio/country assignment and tracking
-- Resource library and announcement publishing
-- Agenda management and event coordination
-- Conference settings and registration controls
+### 2. Delegate experience
+Delegates use the delegate portal to:
+- access their conference dashboard
+- view committee and country information
+- review resolutions, notes, and conference guidance
+- stay updated with announcements and materials
 
-### Delegate Portal
+The frontend is built as a polished static prototype, while the backend is being structured as a real service that can eventually power authentication, persistence, and API-driven data.
 
-- Delegate dashboard with assignment summaries
-- Committee and country portfolio pages
-- Announcement feed
-- Static current affairs and writing center placeholders
+## Actual technology stack
 
-### Public Pages
+The project currently uses the following technologies:
 
-- Landing page
-- Login page
-- Organizer registration
-- Delegate registration
+### Frontend
+- HTML5 for page structure
+- CSS3 for styling
+- JavaScript for interactivity
+- Bootstrap 5 for layout and components
+- Font Awesome icons
+- Custom JavaScript modules under the frontend assets folder
 
-## Folder Structure
+### Backend
+- Node.js
+- Express.js
+- MySQL database support via mysql2
+- CORS, Helmet, Morgan, and dotenv for API and security setup
+- JSON Web Token support for future authentication flows
+- bcrypt for password hashing
 
+### Project structure
 ```text
 backend/
-  app/
-  migrations/
-  tests/
-  run.py
-  requirements.txt
-  docker-compose.yml
-  Dockerfile
+  src/
+    app.js
+    server.js
+    config/
+    controllers/
+    middleware/
+    models/
+    routes/
+    services/
+    utils/
+    validations/
 frontend/
   index.html
   login.html
+  register.html
   delegate/
-    dashboard.html
-    country.html
-    committee.html
-    resolutions.html
-    notes.html
   organizer/
-    dashboard.html
-    delegates.html
-    countries.html
-    committees.html
-    agendas.html
-    announcements.html
-    assignments.html
-    resources.html
-    settings.html
   assets/
     css/
     js/
-    images/
 ```
 
-## Current Status
+## Current status
 
-- **Phase 1: Frontend Development** — substantially complete
-- **Frontend**: full static prototype with placeholder content
-- **Backend**: structural setup exists, dynamic business logic not implemented
-- **Authentication**: not yet built
-- **Database**: not yet connected
-- **AI features**: planned for future phases
+This repository currently contains:
+- a complete static frontend prototype for organizer and delegate workflows
+- a Node.js/Express backend scaffold with MySQL connection setup
+- initial route and application structure for future API development
+
+What is not fully implemented yet:
+- full authentication and user sessions
+- persistent database-backed features end-to-end
+- live file management and real data storage for all modules
+
+## Running the project locally
+
+### Prerequisites
+- Node.js 18 or newer
+- npm
+- MySQL server (for the backend database connection)
+
+### 1. Install dependencies
+From the repository root:
+```bash
+npm install
+```
+
+Then install backend dependencies:
+```bash
+cd backend
+npm install
+```
+
+### 2. Configure environment variables
+Create a `.env` file inside the backend folder with values similar to:
+```env
+PORT=5000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=mun_buddy
+```
+
+### 3. Start the backend
+```bash
+cd backend
+npm run dev
+```
+
+### 4. Open the frontend
+You can open the HTML files directly in the browser, or serve the frontend locally with a simple static server such as:
+```bash
+cd frontend
+python -m http.server 8000
+```
+Then visit:
+```text
+http://localhost:8000
+```
+
+## Development notes
+
+- Keep frontend pages and shared scripts organized under the frontend folders.
+- Backend logic should stay modular under the backend src structure.
+- New features should be added incrementally and tested before integrating with the database.
 
 ## Roadmap
 
-| Phase | Focus | Status |
-| --- | --- | --- |
-| Phase 1 | Frontend prototype and UX design | ✅ Complete |
-| Phase 2 | Requirements audit and feature refinement | 🟡 In progress |
-| Phase 3 | Database modeling and schema design | 🔜 Planned |
-| Phase 4 | Authentication and access control | 🔜 Planned |
-| Phase 5 | Backend integration and form processing | 🔜 Planned |
-| Phase 6 | AI research and writing assistant features | 🔜 Planned |
+- complete authentication for organizers and delegates
+- connect the frontend to real backend APIs
+- implement database-backed conference and delegate management
+- add resource uploads and announcement workflows
+- expand analytics and AI-assisted conference features
 
-## Technology Stack
+## License
 
-- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5, Font Awesome
-- **Backend (planned)**: PHP, MySQL
-- **Database design tool**: MySQL Workbench
-- **Development**: Visual Studio Code
-- **Version control**: Git, GitHub
-
-## Installation
-
-### Prerequisites
-
-- Python 3.8+ (for backend environment)
-- Node/npm if frontend tooling is added later
-- Git
-
-### Local Setup
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/deadman415/MUN_Buddy.git
-cd MUN_Buddy
-```
-
-2. Create and activate a Python virtual environment:
-
-```bash
-python -m venv venv
-venv\Scripts\Activate.ps1
-```
-
-3. Install backend dependencies:
-
-```bash
-cd backend
-pip install -r requirements.txt
-```
-
-4. Start the backend server (placeholder, backend implementation pending):
-
-```bash
-python run.py
-```
-
-5. Open the frontend pages directly from the `frontend/` directory or serve them with a local web server.
-
-### Optional Local Frontend Server
-
-Use Python built-in HTTP server from the `frontend/` directory:
-
-```bash
-python -m http.server 8000
-```
-
-Then open `http://localhost:8000`.
-
-## Development Workflow
-
-1. Create a feature branch from `main`.
-2. Make incremental frontend or backend updates.
-3. Test UI changes by opening pages in `frontend/`.
-4. Keep backend work modular under `backend/app/`.
-5. Commit with descriptive messages and push for review.
-
-## Future Plans
-
-- Dynamic backend integration with MySQL
-- Authentication for organizers and delegates
-- Real file uploads and downloads for resources
-- Real-time announcements and notifications
-- AI-powered research assistant, speech writer, and resolution builder
-- Conference analytics and delegate performance tracking
-- Delegate resources page and conference document repository
-
-## Notes
-
-This repository currently represents the frontend prototype phase. Many pages show static placeholder data and are designed to demonstrate the final intended user experience.
-
----
-
-If you want, I can also add a `CONTRIBUTING.md` and a more detailed API design outline for the backend phase.
+This project is licensed under the ISC license in the root repository files.

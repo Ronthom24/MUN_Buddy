@@ -58,7 +58,14 @@ Key pieces:
    purely-cosmetic risk not worth taking under the "ASAP" constraint. New capability tables
    (`permissions`/`role_permissions`/`organizer_access_permission_overrides`) deliver the spec's
    actual modular-RBAC requirement independent of the label question.
-2. Registration Management + Delegate Assignment. *(next up)*
+2. **Done.** Registration Management + Delegate Assignment. Verified end-to-end via API and
+   browser: bulk approve/waitlist/reject, assignment with capacity/conflict validation, history
+   logging, org isolation still holds. Known verification gap: shadcn/Base UI `Select` dropdowns
+   couldn't be click-tested in the sandboxed browser preview because Base UI's Select defers
+   opening through `requestAnimationFrame`, which never fires in that preview tab (likely
+   visibility/background throttling) — confirmed via source-level tracing, not an app bug. Worth
+   a manual click-check in a real browser tab when convenient.
+3. Committee Center + Delegate Workspace wiring. *(next up)*
 3. Committee Center + Delegate Workspace wiring.
 4. Payments & Finance.
 5. Results & Certificates + Attendance/QR.

@@ -11,6 +11,74 @@ The full product specification lives at the user's
 `# PRODUCT_SPECIFICATION__MUN_BUDDY.md`. This document is the engineering plan for delivering
 that spec's Version 1 (§25.4) against the real codebase.
 
+## Getting started / session handoff
+
+**Where things stand right now**: Phases 0–3 of the Version 1 build (see roadmap below) are done,
+committed, and verified. Phase 4 (Payments & Finance) is next and hasn't been started.
+
+### Running the app
+
+Backend (Express + MySQL), from `backend/`:
+```bash
+npm install   # if needed
+npm run dev   # nodemon, http://localhost:5000, health check at /health
+```
+If port 5000 is already in use from a previous session, find and stop the stray process
+(`netstat -ano | grep :5000` then stop that PID) before starting a fresh one — do this rather than
+assuming the old one is still the current code.
+
+Frontend (Next.js), from `frontend-next/`:
+```bash
+npm install   # if needed
+npm run dev   # Turbopack dev server, http://localhost:3000
+```
+`backend/.env` and `frontend-next/.env.local` already exist locally (both gitignored, not in the
+repo) with working MySQL credentials and `NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api`
+respectively — no setup needed on this machine.
+
+There's also a global launch config at `C:\Users\Ronni\.claude\launch.json` (outside the repo, at
+the Claude Code session root) with a `mun-buddy-frontend` entry that runs the Next.js dev server on
+port 3000 via `preview_start` — use that if driving the app through the Browser pane tool.
+
+### Test accounts (already in the dev database)
+
+| Role | Email | Password | Notes |
+|---|---|---|---|
+| Organizer | `dana.testdirector@example.com` | `password123` | Owns "Dana Test MUN 2027" (conference id 7, org id 5). Has a DISEC committee (id 8) with Brazil/Germany portfolios, a schedule day with 2 events, 1 published announcement, 1 published resource. |
+| Delegate | `henry.delegate@example.com` | `password123` | Approved, assigned to DISEC/Brazil, assignment published. Has a note, a draft position paper, and a submitted resolution — good account for walking the full Delegate Workspace. |
+| Delegate | `ivy.delegate@example.com` | `password123` | Approved but unassigned — good for testing the assignment flow / unassigned states. |
+| Organizer | `alice.orgowner@example.com` | `password123` | Owns a separate organization (id 3) with 2 conferences (ids 4, 6) and an invited admin member (`carol.eb@example.com`) — used to verify multi-conference-per-org and multi-tenant isolation. |
+| Organizer | `bob.otherowner@example.com` | `password123` | Owns another separate organization (id 4) with 1 conference (id 5) — the isolation counterpart to Alice's org. |
+
+### Known environment quirk (not an app bug)
+
+The sandboxed browser preview used for verification throttles `requestAnimationFrame`. Two Base
+UI/shadcn components rely on rAF internally: `Select` (opens via a `useClick` interaction gated on
+`event: 'mousedown'` + an rAF-scheduled state update) and `Dialog` (unmounts its overlay after an
+rAF-driven exit-animation callback). In that specific preview tab, Select dropdowns don't open on
+synthetic clicks and closed dialogs can leave an invisible click-blocking backdrop behind — both
+traced to source, confirmed via direct DOM/event dispatch, and specific to that rAF-starved tab.
+Everything else (buttons, checkboxes, tabs, forms, links) verified working normally. This should not
+affect a real, foregrounded browser tab, but is worth a quick manual click-check next time a human
+looks at it, particularly the `Select` components (organization switcher, committee/portfolio
+pickers, conference role dropdowns).
+
+### Git status
+
+Working tree is clean; all Phase 0–3 work is committed to `main` (10 commits, from the initial
+checkpoint through "docs: mark Phase 3 complete"). **Local `main` is ahead of `origin/main` by 9
+commits and has not been pushed** — push was never requested. Note also that `app.py`'s leaked
+MySQL credential was purged via `git filter-branch` + a force-push earlier in this project (see
+Security notes below) — if this repo has been cloned anywhere else, those clones still have the old
+history and should be re-cloned or manually rebased.
+
+### Full plan file
+
+The original phase-by-phase implementation plan (schema designs, reuse guidance per phase) is at
+`C:\Users\Ronni\.claude\plans\zany-watching-aurora.md` if more detail than this doc is needed on the
+original Phase 4–8 intentions. This `docs/Architecture.md` file is the actively-maintained,
+authoritative status tracker, though — update it, not just the plan file, as phases complete.
+
 ## Stack
 
 - **Backend**: Node.js + Express 4.18, MySQL via `mysql2/promise` (hand-written SQL, no ORM),

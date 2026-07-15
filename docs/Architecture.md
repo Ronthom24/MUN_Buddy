@@ -47,10 +47,18 @@ Key pieces:
 
 ## Build phases (Version 1)
 
-0. Housekeeping — commit checkpoint, remove vestigial root manifest, purge leaked credential,
-   consolidate docs, scaffold `frontend-next/`. *(this file)*
-1. Organization tier + core auth rework.
-2. Registration Management + Delegate Assignment.
+0. **Done.** Housekeeping — commit checkpoint, remove vestigial root manifest, purge leaked
+   credential, consolidate docs, scaffold `frontend-next/`.
+1. **Done.** Organization tier + core auth rework. Backend and UI (register/login/dashboard)
+   verified end-to-end in a real browser session against the live backend. One pragmatic
+   deviation from the original plan: `organizer_access.role` enum values were **kept as-is**
+   (`owner`/`conference_manager`/`organizer`/`committee_director`) rather than renamed to
+   `main_organizer`/`executive_board`/etc. — they already map 1:1 onto the spec's hierarchy
+   behaviorally, and renaming an enum referenced by role-array checks across ~11 files was a wide,
+   purely-cosmetic risk not worth taking under the "ASAP" constraint. New capability tables
+   (`permissions`/`role_permissions`/`organizer_access_permission_overrides`) deliver the spec's
+   actual modular-RBAC requirement independent of the label question.
+2. Registration Management + Delegate Assignment. *(next up)*
 3. Committee Center + Delegate Workspace wiring.
 4. Payments & Finance.
 5. Results & Certificates + Attendance/QR.

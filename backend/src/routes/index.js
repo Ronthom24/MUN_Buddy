@@ -1,6 +1,7 @@
 const express = require("express");
 
 const authRoutes = require("./auth.routes");
+const organizationRoutes = require("./organization.routes");
 const conferenceRoutes = require("./conference.routes");
 const committeeRoutes = require("./committee.routes");
 const agendaRoutes = require("./agenda.routes");
@@ -31,6 +32,7 @@ router.get("/health", (req, res) => {
 });
 
 router.use("/api/auth", authRoutes);
+router.use("/api/organizations", organizationRoutes);
 router.use("/api/conferences", conferenceRoutes);
 router.use("/api/committees", committeeRoutes);
 router.use("/api/agendas", agendaRoutes);

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "db:migrate": "node scripts/runSchema.js"
+    "db:migrate": "node scripts/runSchema.js",
+    "db:migrate:orgs": "node scripts/migrateOrganizersToOrganizations.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

@@ -4,6 +4,7 @@ const pool = require("../config/database");
 const ApiError = require("../utils/ApiError");
 const { signToken } = require("../utils/jwt");
 const { generateConferenceCode } = require("../utils/conferenceCode");
+const { uniqueSlug } = require("../utils/slug");
 
 const organizerModel = require("../models/organizerModel");
 const conferenceModel = require("../models/conferenceModel");
@@ -11,6 +12,8 @@ const organizerAccessModel = require("../models/organizerAccessModel");
 const committeeModel = require("../models/committeeModel");
 const delegateModel = require("../models/delegateModel");
 const passwordResetTokenModel = require("../models/passwordResetTokenModel");
+const organizationModel = require("../models/organizationModel");
+const organizationMemberModel = require("../models/organizationMemberModel");
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
@@ -39,8 +42,22 @@ async function organizerRegister(body) {
             passwordHash
         }, connection);
 
+        const organizationName = (body.organizationName && body.organizationName.trim())
+            || `${body.fullName}'s Organization`;
+        const slug = await uniqueSlug(connection, organizationName);
+        const organizationId = await organizationModel.create({
+            name: organizationName,
+            slug,
+            contactEmail: body.email
+        }, connection);
+
+        await organizationMemberModel.create({
+            organizationId, email: body.email, fullName: body.fullName, orgRole: "owner", status: "active"
+        }, connection);
+
         const conferenceId = await conferenceModel.create({
             organizerId,
+            organizationId,
             name: body.conferenceName,
             acronym: body.conferenceAcronym,
             institution: body.institution,
@@ -74,17 +91,76 @@ async function organizerRegister(body) {
 
         const organizer = await organizerModel.findById(organizerId);
         const conference = await conferenceModel.findById(conferenceId);
+        const organization = await organizationModel.findById(organizationId);
         const token = signToken({ id: organizerId, role: "organizer", email: organizer.email });
 
         return {
             token,
             organizer: { id: organizer.id, fullName: organizer.full_name, email: organizer.email },
+            organization,
             conference
         };
     } catch (err) {
         await connection.rollback();
         if (err.code === "ER_DUP_ENTRY") {
             throw new ApiError(409, "That email or conference code is already in use");
+        }
+        throw err;
+    } finally {
+        connection.release();
+    }
+}
+
+/**
+ * Adds a 2nd+ conference to an existing organization. Unlike
+ * organizerRegister (which creates a brand new organizer+organization+
+ * conference all at once), this assumes the organization and the
+ * requesting organizer's membership already exist -- it's the path that,
+ * before the Organization tier, simply didn't exist at all.
+ */
+async function createConferenceForOrganization(organizationId, body, requestingEmail) {
+    const connection = await pool.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        const organizer = await organizerModel.findByEmail(requestingEmail);
+        if (!organizer) {
+            throw new ApiError(400, "Only a registered organizer account can create a conference");
+        }
+
+        const conferenceId = await conferenceModel.create({
+            organizerId: organizer.id,
+            organizationId,
+            name: body.conferenceName,
+            acronym: body.conferenceAcronym,
+            institution: body.institution,
+            location: body.location,
+            description: body.description,
+            startDate: body.startDate,
+            endDate: body.endDate,
+            registrationDeadline: body.registrationDeadline,
+            maxDelegates: body.maxDelegates,
+            conferenceCode: generateConferenceCode(body.conferenceName, body.conferenceAcronym),
+            registrationStatus: body.registrationStatus === "open" ? "open" : "closed"
+        }, connection);
+
+        await organizerAccessModel.create({
+            conferenceId, email: requestingEmail, role: "owner"
+        }, connection);
+
+        for (const name of Array.isArray(body.committees) ? body.committees : []) {
+            if (name && name.trim()) {
+                await committeeModel.create({ conferenceId, name: name.trim() }, connection);
+            }
+        }
+
+        await connection.commit();
+        return conferenceModel.findById(conferenceId);
+    } catch (err) {
+        await connection.rollback();
+        if (err.code === "ER_DUP_ENTRY") {
+            throw new ApiError(409, "That conference code is already in use");
         }
         throw err;
     } finally {
@@ -264,5 +340,5 @@ async function confirmPasswordReset({ token, newPassword }) {
 
 module.exports = {
     organizerRegister, organizerLogin, organizerAccessClaim, delegateRegister, delegateLogin,
-    requestPasswordReset, confirmPasswordReset
+    requestPasswordReset, confirmPasswordReset, createConferenceForOrganization
 };

@@ -3,12 +3,13 @@ const pool = require("../config/database");
 async function create(data, db = pool) {
     const [result] = await db.execute(
         `INSERT INTO conferences
-            (organizer_id, name, acronym, short_name, institution, location, website, description,
+            (organizer_id, organization_id, name, acronym, short_name, institution, location, website, description,
              start_date, end_date, registration_deadline, max_delegates, conference_code,
              status, registration_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             data.organizerId,
+            data.organizationId,
             data.name,
             data.acronym || null,
             data.shortName || null,
@@ -43,12 +44,29 @@ async function listByOrganizer(organizerId, db = pool) {
 
 async function listByAccessEmail(email, db = pool) {
     const [rows] = await db.query(
-        `SELECT c.*, oa.role AS access_role, oa.committee_id AS access_committee_id
+        `SELECT c.*, oa.role AS access_role, oa.committee_id AS access_committee_id, FALSE AS via_organization
          FROM organizer_access oa
          INNER JOIN conferences c ON c.id = oa.conference_id
          WHERE oa.email = ?
-         ORDER BY c.created_at DESC`,
-        [email]
+
+         UNION
+
+         SELECT c.*, 'owner' AS access_role, NULL AS access_committee_id, TRUE AS via_organization
+         FROM organization_members om
+         INNER JOIN conferences c ON c.organization_id = om.organization_id
+         WHERE om.email = ? AND om.status = 'active' AND om.org_role IN ('owner', 'admin')
+           AND c.id NOT IN (SELECT conference_id FROM organizer_access WHERE email = ?)
+
+         ORDER BY created_at DESC`,
+        [email, email, email]
+    );
+    return rows;
+}
+
+async function listByOrganization(organizationId, db = pool) {
+    const [rows] = await db.execute(
+        `SELECT * FROM conferences WHERE organization_id = ? ORDER BY created_at DESC`,
+        [organizationId]
     );
     return rows;
 }
@@ -171,6 +189,6 @@ async function getAnalytics(conferenceId, db = pool) {
 }
 
 module.exports = {
-    create, findById, listByOrganizer, listByAccessEmail, listOpenForRegistration, update, remove,
+    create, findById, listByOrganizer, listByAccessEmail, listByOrganization, listOpenForRegistration, update, remove,
     getStats, getAnalytics
 };

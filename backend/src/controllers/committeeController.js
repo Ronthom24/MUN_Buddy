@@ -28,4 +28,9 @@ const remove = asyncHandler(async (req, res) => {
     res.status(204).send();
 });
 
-module.exports = { listForConference, create, getOne, update, remove };
+const stats = asyncHandler(async (req, res) => {
+    const data = await committeeModel.getStats(Number(req.params.id));
+    res.status(200).json({ success: true, stats: data });
+});
+
+module.exports = { listForConference, create, getOne, update, remove, stats };

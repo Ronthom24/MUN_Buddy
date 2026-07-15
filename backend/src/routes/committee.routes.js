@@ -13,6 +13,7 @@ const MANAGE_STRUCTURE = ["owner", "conference_manager"];
 const MANAGE_COMMITTEE_CONTENT = ["owner", "conference_manager", "committee_director"];
 
 router.get("/:id", committeeController.getOne);
+router.get("/:id/stats", committeeController.stats);
 router.put(
     "/:id", ...asOrganizer, requireCommitteeAccess(...MANAGE_COMMITTEE_CONTENT),
     validateBody(entityValidation.committeeUpdate), committeeController.update

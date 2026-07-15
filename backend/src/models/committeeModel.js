@@ -49,4 +49,27 @@ async function remove(id, db = pool) {
     await db.execute(`DELETE FROM committees WHERE id = ?`, [id]);
 }
 
-module.exports = { create, findById, listByConference, update, remove };
+async function getStats(committeeId, db = pool) {
+    const [[assignedCounts]] = await db.query(
+        `SELECT COUNT(*) AS assigned_count FROM assignments WHERE committee_id = ? AND status = 'assigned'`,
+        [committeeId]
+    );
+    const [[portfolioCounts]] = await db.query(
+        `SELECT COUNT(*) AS total_portfolios, SUM(status = 'available') AS available_portfolios
+         FROM portfolios WHERE committee_id = ?`,
+        [committeeId]
+    );
+    const [preferenceRows] = await db.query(
+        `SELECT COUNT(*) AS preference_count FROM delegate_committee_preferences WHERE committee_id = ?`,
+        [committeeId]
+    );
+
+    return {
+        assignedCount: Number(assignedCounts.assigned_count) || 0,
+        totalPortfolios: Number(portfolioCounts.total_portfolios) || 0,
+        availablePortfolios: Number(portfolioCounts.available_portfolios) || 0,
+        preferenceCount: Number(preferenceRows[0]?.preference_count) || 0
+    };
+}
+
+module.exports = { create, findById, listByConference, update, remove, getStats };

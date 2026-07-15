@@ -9,6 +9,7 @@ const resolutionController = require("../controllers/resolutionController");
 const feedbackController = require("../controllers/feedbackController");
 const organizerAccessController = require("../controllers/organizerAccessController");
 const registrationFormController = require("../controllers/registrationFormController");
+const scheduleController = require("../controllers/scheduleController");
 const { authenticate, requireRole, requireConferenceAccess, requirePermission } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const entityValidation = require("../validations/entityValidation");
@@ -82,6 +83,28 @@ router.post(
 router.post(
     "/:id/assignments/publish", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
     assignmentController.publish
+);
+
+router.get("/:id/schedule", scheduleController.listForConference);
+router.post(
+    "/:id/schedule/days", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_schedules"),
+    validateBody(entityValidation.scheduleDay), scheduleController.createDay
+);
+router.delete(
+    "/:id/schedule/days/:dayId", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_schedules"),
+    scheduleController.removeDay
+);
+router.post(
+    "/:id/schedule/days/:dayId/events", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_schedules"),
+    validateBody(entityValidation.scheduleEvent), scheduleController.createEvent
+);
+router.put(
+    "/:id/schedule/events/:eventId", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_schedules"),
+    scheduleController.updateEvent
+);
+router.delete(
+    "/:id/schedule/events/:eventId", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_schedules"),
+    scheduleController.removeEvent
 );
 
 router.get("/:id/resources", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), resourceController.listForConference);

@@ -3,6 +3,8 @@ const delegateModel = require("../models/delegateModel");
 const delegateService = require("../services/delegateService");
 const resourceModel = require("../models/resourceModel");
 const assignmentModel = require("../models/assignmentModel");
+const announcementModel = require("../models/announcementModel");
+const scheduleModel = require("../models/scheduleModel");
 
 const listForConference = asyncHandler(async (req, res) => {
     const { status, munExperience, search } = req.query;
@@ -43,6 +45,17 @@ const myResources = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, resources });
 });
 
+const myAnnouncements = asyncHandler(async (req, res) => {
+    const announcements = await announcementModel.listVisibleToDelegate(req.user.conferenceId);
+    res.status(200).json({ success: true, announcements });
+});
+
+const mySchedule = asyncHandler(async (req, res) => {
+    const days = await scheduleModel.listForConference(req.user.conferenceId);
+    res.status(200).json({ success: true, days });
+});
+
 module.exports = {
-    listForConference, updateStatus, bulkUpdateStatus, registrationAnalytics, reapply, me, myResources
+    listForConference, updateStatus, bulkUpdateStatus, registrationAnalytics, reapply, me, myResources,
+    myAnnouncements, mySchedule
 };

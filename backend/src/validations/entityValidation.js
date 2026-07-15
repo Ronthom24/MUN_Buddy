@@ -135,8 +135,24 @@ function registrationForm(body) {
     return errors;
 }
 
+function scheduleDay(body) {
+    const errors = [];
+    required(body.dayDate, "dayDate", errors);
+    return errors;
+}
+
+function scheduleEvent(body) {
+    const errors = [];
+    required(body.title, "title", errors);
+    required(body.startTime, "startTime", errors);
+    required(body.endTime, "endTime", errors);
+    isOneOf(body.type, "type", ["committee_session", "general_event", "ceremony"], errors);
+    isOneOf(body.status, "status", ["scheduled", "updated", "cancelled"], errors);
+    return errors;
+}
+
 module.exports = {
     committee, committeeUpdate, agenda, agendaUpdate, portfolio, portfolioUpdate,
     resource, resourceUpdate, announcement, announcementUpdate, delegateStatus, bulkDelegateStatus,
-    assignment, bulkAssignment, registrationForm
+    assignment, bulkAssignment, registrationForm, scheduleDay, scheduleEvent
 };

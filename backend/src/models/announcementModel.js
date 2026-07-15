@@ -56,4 +56,14 @@ async function remove(id, db = pool) {
     await db.execute(`DELETE FROM announcements WHERE id = ?`, [id]);
 }
 
-module.exports = { create, findById, listByConference, update, remove };
+async function listVisibleToDelegate(conferenceId, db = pool) {
+    const [rows] = await db.query(
+        `SELECT * FROM announcements
+         WHERE conference_id = ? AND status = 'published' AND target_audience IN ('all', 'delegates')
+         ORDER BY COALESCE(publish_date, created_at) DESC`,
+        [conferenceId]
+    );
+    return rows;
+}
+
+module.exports = { create, findById, listByConference, update, remove, listVisibleToDelegate };

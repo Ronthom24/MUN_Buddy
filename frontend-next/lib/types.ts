@@ -98,6 +98,45 @@ export interface Portfolio {
   name: string;
   type: "country" | "position" | "observer";
   status: "available" | "assigned";
+  description?: string | null;
+}
+
+export interface Agenda {
+  id: number;
+  committee_id: number;
+  title: string;
+  description: string | null;
+  background_notes: string | null;
+  status: "draft" | "published" | "archived";
+  publication_date: string | null;
+}
+
+export interface CommitteeStats {
+  assignedCount: number;
+  totalPortfolios: number;
+  availablePortfolios: number;
+  preferenceCount: number;
+}
+
+export interface ScheduleEvent {
+  id: number;
+  schedule_day_id: number;
+  committee_id: number | null;
+  committee_name: string | null;
+  title: string;
+  type: "committee_session" | "general_event" | "ceremony";
+  location: string | null;
+  start_time: string;
+  end_time: string;
+  status: "scheduled" | "updated" | "cancelled";
+}
+
+export interface ScheduleDay {
+  id: number;
+  conference_id: number;
+  day_date: string;
+  label: string | null;
+  events: ScheduleEvent[];
 }
 
 export interface AssignmentRow {

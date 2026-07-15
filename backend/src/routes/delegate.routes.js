@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get("/me", authenticate, requireRole("delegate"), delegateController.me);
 router.get("/me/resources", authenticate, requireRole("delegate"), delegateController.myResources);
+router.get("/me/announcements", authenticate, requireRole("delegate"), delegateController.myAnnouncements);
+router.get("/me/schedule", authenticate, requireRole("delegate"), delegateController.mySchedule);
 router.post("/me/reapply", authenticate, requireRole("delegate"), delegateController.reapply);
 router.patch(
     "/:id/status", authenticate, requireRole("organizer"), requireDelegateOwnership,

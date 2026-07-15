@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { ArrowLeft, ClipboardList, LayoutDashboard, Users2 } from "lucide-react";
+import { ArrowLeft, CalendarClock, ClipboardList, Gavel, LayoutDashboard, Users2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { api, ApiRequestError } from "@/lib/api";
@@ -13,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 const NAV_ITEMS = [
   { href: "registrations", label: "Registrations", icon: ClipboardList },
   { href: "assignments", label: "Assignments", icon: Users2 },
+  { href: "committees", label: "Committees", icon: Gavel },
+  { href: "schedule", label: "Schedule", icon: CalendarClock },
 ];
 
 export default function ConferenceLayout({ children }: { children: React.ReactNode }) {

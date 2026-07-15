@@ -13,14 +13,17 @@ export default function Home() {
           Manage, organize, and experience Model United Nations conferences from one platform.
         </p>
       </div>
-      <div className="flex gap-3">
+      <div className="flex flex-wrap justify-center gap-3">
         <Button render={<Link href="/register" />} nativeButton={false} size="lg">
           Create an organization
         </Button>
         <Button render={<Link href="/login" />} nativeButton={false} size="lg" variant="outline">
-          Sign in
+          Organizer sign in
         </Button>
       </div>
+      <Link href="/delegate/login" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+        I'm a delegate — sign in to my workspace
+      </Link>
     </div>
   );
 }

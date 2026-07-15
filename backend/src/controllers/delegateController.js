@@ -37,6 +37,16 @@ const me = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, ...profile });
 });
 
+const updateMe = asyncHandler(async (req, res) => {
+    const delegate = await delegateService.updateOwnProfile(req.user.id, req.body);
+    res.status(200).json({ success: true, delegate });
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+    await delegateService.changeOwnPassword(req.user.id, req.body.currentPassword, req.body.newPassword);
+    res.status(200).json({ success: true, message: "Password updated" });
+});
+
 const myResources = asyncHandler(async (req, res) => {
     const assignment = await assignmentModel.findByDelegateId(req.user.id);
     const isAssignedAndPublished = Boolean(assignment && assignment.published);
@@ -56,6 +66,6 @@ const mySchedule = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-    listForConference, updateStatus, bulkUpdateStatus, registrationAnalytics, reapply, me, myResources,
-    myAnnouncements, mySchedule
+    listForConference, updateStatus, bulkUpdateStatus, registrationAnalytics, reapply, me, updateMe,
+    changePassword, myResources, myAnnouncements, mySchedule
 };

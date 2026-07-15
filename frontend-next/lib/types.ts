@@ -139,6 +139,95 @@ export interface ScheduleDay {
   events: ScheduleEvent[];
 }
 
+export interface DelegateSelf {
+  id: number;
+  fullName: string;
+  email: string;
+  school?: string | null;
+  grade?: string | null;
+  munExperience?: string;
+  status: DelegateStatus;
+}
+
+export interface DelegateProfile {
+  delegate: DelegateSelf;
+  conference: { id: number; name: string; acronym: string | null } | null;
+  committeePreferences: { preference_rank: number; committee_id: number; committee_name: string }[];
+  countryPreferences: { preference_rank: number; country_name: string }[];
+  assignment: {
+    published: boolean;
+    committeeId?: number | null;
+    committee?: string | null;
+    portfolioId?: number | null;
+    portfolio?: string | null;
+    portfolioType?: string | null;
+  };
+}
+
+export interface Announcement {
+  id: number;
+  conference_id: number;
+  title: string;
+  category: string;
+  target_audience: string;
+  priority: "normal" | "important" | "urgent";
+  content: string;
+  publish_date: string | null;
+  status: string;
+  created_at: string;
+}
+
+export interface Resource {
+  id: number;
+  conference_id: number;
+  committee_id: number | null;
+  title: string;
+  category: string;
+  description: string | null;
+  file_path: string | null;
+  visibility: string;
+  status: string;
+  download_count: number;
+  created_at: string;
+}
+
+export interface Note {
+  id: number;
+  delegate_id: number;
+  title: string;
+  content: string | null;
+  tags: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DelegateDocument {
+  id: number;
+  delegate_id: number;
+  committee_id: number | null;
+  agenda_id: number | null;
+  type: "position_paper" | "speech";
+  title: string;
+  content: string | null;
+  status: "draft" | "final";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Resolution {
+  id: number;
+  conference_id: number;
+  committee_id: number;
+  agenda_id: number | null;
+  delegate_id: number;
+  title: string;
+  body: string;
+  status: "draft" | "submitted" | "under_review" | "passed" | "failed";
+  organizer_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AssignmentRow {
   id: number | null;
   delegate_id: number;

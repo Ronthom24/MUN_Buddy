@@ -1,7 +1,29 @@
+const bcrypt = require("bcrypt");
 const ApiError = require("../utils/ApiError");
 const delegateModel = require("../models/delegateModel");
 const assignmentModel = require("../models/assignmentModel");
 const conferenceModel = require("../models/conferenceModel");
+
+const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
+
+async function updateOwnProfile(delegateId, data) {
+    const updated = await delegateModel.updateOwnProfile(delegateId, data);
+    return {
+        id: updated.id, fullName: updated.full_name, email: updated.email,
+        phone: updated.phone, school: updated.school, grade: updated.grade
+    };
+}
+
+async function changeOwnPassword(delegateId, currentPassword, newPassword) {
+    const delegate = await delegateModel.findById(delegateId);
+    if (!delegate) throw new ApiError(404, "Delegate not found");
+
+    const matches = await bcrypt.compare(currentPassword, delegate.password_hash);
+    if (!matches) throw new ApiError(401, "Current password is incorrect");
+
+    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    await delegateModel.updatePasswordHash(delegateId, passwordHash);
+}
 
 async function listForConference(conferenceId, filters) {
     const [delegates, duplicateIds] = await Promise.all([
@@ -86,7 +108,9 @@ async function getOwnProfile(delegateId) {
         assignment: publishedAssignment
             ? {
                 published: true,
+                committeeId: publishedAssignment.committee_id,
                 committee: publishedAssignment.committee_name,
+                portfolioId: publishedAssignment.portfolio_id,
                 portfolio: publishedAssignment.portfolio_name,
                 portfolioType: publishedAssignment.portfolio_type
             }
@@ -94,4 +118,6 @@ async function getOwnProfile(delegateId) {
     };
 }
 
-module.exports = { getOwnProfile, listForConference, reapply, getRegistrationAnalytics };
+module.exports = {
+    getOwnProfile, listForConference, reapply, getRegistrationAnalytics, updateOwnProfile, changeOwnPassword
+};

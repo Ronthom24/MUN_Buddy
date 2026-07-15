@@ -1,4 +1,4 @@
-const { required, isOneOf } = require("./rules");
+const { required, isOneOf, minLength } = require("./rules");
 
 function committee(body) {
     const errors = [];
@@ -141,6 +141,23 @@ function scheduleDay(body) {
     return errors;
 }
 
+function delegateProfileUpdate(body) {
+    const errors = [];
+    if (body.phone === undefined && body.school === undefined && body.grade === undefined) {
+        errors.push("At least one of phone, school, or grade is required");
+    }
+    return errors;
+}
+
+function changePassword(body) {
+    const errors = [];
+    required(body.currentPassword, "currentPassword", errors);
+    if (required(body.newPassword, "newPassword", errors)) {
+        minLength(body.newPassword, "newPassword", 6, errors);
+    }
+    return errors;
+}
+
 function scheduleEvent(body) {
     const errors = [];
     required(body.title, "title", errors);
@@ -154,5 +171,6 @@ function scheduleEvent(body) {
 module.exports = {
     committee, committeeUpdate, agenda, agendaUpdate, portfolio, portfolioUpdate,
     resource, resourceUpdate, announcement, announcementUpdate, delegateStatus, bulkDelegateStatus,
-    assignment, bulkAssignment, registrationForm, scheduleDay, scheduleEvent
+    assignment, bulkAssignment, registrationForm, scheduleDay, scheduleEvent,
+    delegateProfileUpdate, changePassword
 };

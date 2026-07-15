@@ -1,0 +1,117 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { FileText, Flag, Gavel, Users } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api, ApiRequestError } from "@/lib/api";
+import type { Agenda, Committee, DelegateProfile, Portfolio } from "@/lib/types";
+
+export default function DelegateCommitteePage() {
+  const [profile, setProfile] = useState<DelegateProfile | null>(null);
+  const [committee, setCommittee] = useState<Committee | null>(null);
+  const [agendas, setAgendas] = useState<Agenda[]>([]);
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const profileRes = await api.get<{ success: true } & DelegateProfile>("/delegates/me");
+        setProfile(profileRes);
+
+        const committeeId = profileRes.assignment.committeeId;
+        if (committeeId) {
+          const [committeeRes, agendaRes, portfoliosRes] = await Promise.all([
+            api.get<{ success: true; committee: Committee }>(`/committees/${committeeId}`),
+            api.get<{ success: true; agendas: Agenda[] }>(`/committees/${committeeId}/agenda`),
+            api.get<{ success: true; portfolios: Portfolio[] }>(`/committees/${committeeId}/portfolios`),
+          ]);
+          setCommittee(committeeRes.committee);
+          setAgendas(agendaRes.agendas);
+          setPortfolio(portfoliosRes.portfolios.find((p) => p.id === profileRes.assignment.portfolioId) ?? null);
+        }
+      } catch (err) {
+        const message = err instanceof ApiRequestError ? err.message : "Failed to load your committee";
+        toast.error(message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-48 w-full" />
+      </div>
+    );
+  }
+
+  if (!profile?.assignment.published || !committee) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center gap-2 py-16 text-center">
+          <Gavel className="h-8 w-8 text-muted-foreground" />
+          <p className="font-medium">No committee assigned yet</p>
+          <p className="max-w-sm text-sm text-muted-foreground">
+            Once the organizing team assigns and publishes your committee and portfolio, they'll appear here.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardContent className="flex flex-wrap items-center justify-between gap-4 p-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold">{committee.name}</h1>
+              <Badge variant={committee.type === "crisis" ? "destructive" : "secondary"}>{committee.type}</Badge>
+            </div>
+            <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
+              <Flag className="h-3.5 w-3.5" /> Representing <span className="font-medium text-foreground">{portfolio?.name ?? profile.assignment.portfolio}</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Users className="h-4 w-4" />
+            Chair: {committee.chair || "TBA"}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <FileText className="h-4 w-4" /> Agenda
+          </CardTitle>
+          <CardDescription>Topics under discussion in this committee.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {agendas.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No agenda items published yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {agendas.map((agenda, i) => (
+                <div key={agenda.id}>
+                  {i > 0 && <Separator className="mb-4" />}
+                  <p className="font-medium">{agenda.title}</p>
+                  {agenda.description && <p className="mt-1 text-sm text-muted-foreground">{agenda.description}</p>}
+                  {agenda.background_notes && (
+                    <p className="mt-2 text-sm text-muted-foreground whitespace-pre-wrap">{agenda.background_notes}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -64,6 +64,26 @@ async function updateStatus(id, status, db = pool) {
     return findById(id, db);
 }
 
+const SELF_UPDATABLE_FIELDS = { phone: "phone", school: "school", grade: "grade" };
+
+async function updateOwnProfile(id, data, db = pool) {
+    const setClauses = [];
+    const params = [];
+
+    for (const [key, column] of Object.entries(SELF_UPDATABLE_FIELDS)) {
+        if (data[key] !== undefined) {
+            setClauses.push(`${column} = ?`);
+            params.push(data[key]);
+        }
+    }
+
+    if (setClauses.length === 0) return findById(id, db);
+
+    params.push(id);
+    await db.execute(`UPDATE delegates SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    return findById(id, db);
+}
+
 async function bulkUpdateStatus(ids, status, db = pool) {
     if (!ids.length) return [];
     await db.query(`UPDATE delegates SET status = ? WHERE id IN (?)`, [status, ids]);
@@ -144,6 +164,6 @@ async function getCountryPreferences(delegateId, db = pool) {
 
 module.exports = {
     create, findById, findByEmail, findLatestByEmail, listByConference, updateStatus, bulkUpdateStatus,
-    updatePasswordHash, addCommitteePreferences, addCountryPreferences, getCommitteePreferences,
-    getCountryPreferences, findPossibleDuplicateIds
+    updateOwnProfile, updatePasswordHash, addCommitteePreferences, addCountryPreferences,
+    getCommitteePreferences, getCountryPreferences, findPossibleDuplicateIds
 };

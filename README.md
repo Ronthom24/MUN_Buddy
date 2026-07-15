@@ -1,8 +1,11 @@
 # MUN Buddy
 
-![Project Status](https://img.shields.io/badge/status-frontend%2Fbackend%20scaffold-yellow?style=flat-square)
-![Frontend](https://img.shields.io/badge/frontend-static%20prototype-blue?style=flat-square)
-![Backend](https://img.shields.io/badge/backend-node%2Fexpress-orange?style=flat-square)
+![Project Status](https://img.shields.io/badge/status-building%20V1-brightgreen?style=flat-square)
+![Frontend](https://img.shields.io/badge/frontend-migrating%20to%20Next.js-blue?style=flat-square)
+![Backend](https://img.shields.io/badge/backend-node%2Fexpress%2Fmysql-orange?style=flat-square)
+
+> See [`docs/Architecture.md`](docs/Architecture.md) for the current, accurate architecture and
+> build roadmap. Other files under `docs/` are historical/superseded planning notes.
 
 MUN Buddy is a web-based platform for managing Model United Nations conferences. It is designed to help organizers run events smoothly while giving delegates a central place to access their committee information, assignments, notes, and conference resources.
 
@@ -83,14 +86,18 @@ frontend/
 ## Current status
 
 This repository currently contains:
-- a complete static frontend prototype for organizer and delegate workflows
-- a Node.js/Express backend scaffold with MySQL connection setup
-- initial route and application structure for future API development
+- a working Node.js/Express + MySQL backend with JWT auth, role-based access control, and full
+  CRUD for conferences, committees, agendas, portfolios, delegates, assignments, resources,
+  announcements, resolutions, notes, feedback, and documents
+- a static Bootstrap/vanilla-JS frontend prototype (being migrated to Next.js — see
+  `docs/Architecture.md`)
 
-What is not fully implemented yet:
-- full authentication and user sessions
-- persistent database-backed features end-to-end
-- live file management and real data storage for all modules
+What is being actively built toward full Version 1 (per the product spec):
+- an Organization tier above Conference (multi-tenant, currently missing entirely)
+- Payments & Finance, Results & Certificates, Attendance/QR
+- Communication Center (FAQs, notifications, email broadcasts; announcements/resources exist and
+  are being extended)
+- Team Center, real Analytics & exports, audit logs, soft deletes, rate limiting
 
 ## Running the project locally
 
@@ -100,12 +107,6 @@ What is not fully implemented yet:
 - MySQL server (for the backend database connection)
 
 ### 1. Install dependencies
-From the repository root:
-```bash
-npm install
-```
-
-Then install backend dependencies:
 ```bash
 cd backend
 npm install

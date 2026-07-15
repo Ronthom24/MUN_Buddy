@@ -1,3 +1,8 @@
+> SUPERSEDED (2026-07-15): This file describes login as mock/no-auth and the backend as
+> Flask/SQLAlchemy/Alembic - neither reflects the real project (Node/Express/MySQL backend with
+> working JWT auth already exists). See docs/Architecture.md for current, accurate status.
+> Kept here only as a historical note.
+
 # MUN Buddy – Project Status & Master Context
 
 ## Project Vision

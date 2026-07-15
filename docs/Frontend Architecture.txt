@@ -1,3 +1,8 @@
+> **SUPERSEDED (2026-07-15):** This document describes a Flutter frontend that was never built.
+> The actual/planned frontend is Next.js + TypeScript + Tailwind + shadcn/ui. See
+> `docs/Architecture.md` for the current, accurate architecture. Kept here only as a historical
+> note.
+
 # MUN Buddy - Frontend Architecture
 
 ## Purpose

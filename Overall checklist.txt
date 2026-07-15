@@ -1,3 +1,7 @@
+> SUPERSEDED (2026-07-15): This checklist undercounts real progress (backend auth/RBAC/CRUD for
+> most modules already exists) and predates the Organization tier. See docs/Architecture.md for
+> the current, accurate phased build plan. Kept here only as a historical note.
+
 # MUN Buddy – Remaining Project Roadmap
 
 ## PHASE 1 — Frontend Foundation

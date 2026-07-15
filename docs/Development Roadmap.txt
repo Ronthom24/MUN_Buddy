@@ -1,3 +1,8 @@
+> **SUPERSEDED (2026-07-15):** This roadmap predates the Organization tier and undercounts what's
+> actually built (auth/RBAC/conferences/committees/portfolios/delegates/assignments/resources/
+> announcements exist in the backend already). See `docs/Architecture.md` for the current,
+> accurate phased build plan. Kept here only as a historical note.
+
 # MUN Buddy - Development Roadmap
 
 ## Purpose

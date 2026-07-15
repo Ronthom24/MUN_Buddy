@@ -63,3 +63,74 @@ export interface OrganizationStats {
   totalDelegates: number;
   totalMembers: number;
 }
+
+export type DelegateStatus = "pending" | "approved" | "rejected" | "waitlisted" | "withdrawn";
+
+export interface Delegate {
+  id: number;
+  conference_id: number;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  school: string | null;
+  grade: string | null;
+  mun_experience: "beginner" | "1-3" | "4-10" | "10+";
+  status: DelegateStatus;
+  created_at: string;
+  updated_at: string;
+  possibleDuplicate?: boolean;
+}
+
+export interface Committee {
+  id: number;
+  conference_id: number;
+  name: string;
+  chair: string | null;
+  vice_chair: string | null;
+  capacity: number | null;
+  type: "standard" | "crisis";
+  status: "open" | "closed";
+}
+
+export interface Portfolio {
+  id: number;
+  committee_id: number;
+  name: string;
+  type: "country" | "position" | "observer";
+  status: "available" | "assigned";
+}
+
+export interface AssignmentRow {
+  id: number | null;
+  delegate_id: number;
+  delegate_name: string;
+  delegate_school: string | null;
+  committee_id: number | null;
+  committee_name: string | null;
+  portfolio_id: number | null;
+  portfolio_name: string | null;
+  status: "unassigned" | "assigned" | null;
+  published: 0 | 1 | null;
+}
+
+export interface RegistrationAnalytics {
+  totalApplications: number;
+  byStatus: Record<DelegateStatus, number>;
+  approvalRate: number;
+  institutionDistribution: { school: string; count: number }[];
+  experienceDistribution: { experience: string; count: number }[];
+  registrationsByDay: { day: string; count: number }[];
+}
+
+export interface AssignmentAnalytics {
+  totalApproved: number;
+  assignedCount: number;
+  unassignedCount: number;
+  committeeFillRate: {
+    committeeId: number;
+    committeeName: string;
+    capacity: number | null;
+    assigned: number;
+    fillRate: number | null;
+  }[];
+}

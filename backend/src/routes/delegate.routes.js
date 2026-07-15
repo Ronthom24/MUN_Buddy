@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get("/me", authenticate, requireRole("delegate"), delegateController.me);
 router.get("/me/resources", authenticate, requireRole("delegate"), delegateController.myResources);
+router.post("/me/reapply", authenticate, requireRole("delegate"), delegateController.reapply);
 router.patch(
     "/:id/status", authenticate, requireRole("organizer"), requireDelegateOwnership,
     validateBody(entityValidation.delegateStatus), delegateController.updateStatus

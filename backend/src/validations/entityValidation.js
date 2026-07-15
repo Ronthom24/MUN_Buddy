@@ -92,10 +92,22 @@ function announcementUpdate(body) {
     return errors;
 }
 
+const DELEGATE_STATUSES = ["pending", "approved", "rejected", "waitlisted", "withdrawn"];
+
 function delegateStatus(body) {
     const errors = [];
     required(body.status, "status", errors);
-    isOneOf(body.status, "status", ["pending", "approved", "rejected"], errors);
+    isOneOf(body.status, "status", DELEGATE_STATUSES, errors);
+    return errors;
+}
+
+function bulkDelegateStatus(body) {
+    const errors = [];
+    if (!Array.isArray(body.delegateIds) || body.delegateIds.length === 0) {
+        errors.push("delegateIds must be a non-empty array");
+    }
+    required(body.status, "status", errors);
+    isOneOf(body.status, "status", DELEGATE_STATUSES, errors);
     return errors;
 }
 
@@ -107,7 +119,24 @@ function assignment(body) {
     return errors;
 }
 
+function bulkAssignment(body) {
+    const errors = [];
+    if (!Array.isArray(body.assignments) || body.assignments.length === 0) {
+        errors.push("assignments must be a non-empty array");
+    }
+    return errors;
+}
+
+function registrationForm(body) {
+    const errors = [];
+    if (!Array.isArray(body.schema)) {
+        errors.push("schema must be an array of field definitions");
+    }
+    return errors;
+}
+
 module.exports = {
     committee, committeeUpdate, agenda, agendaUpdate, portfolio, portfolioUpdate,
-    resource, resourceUpdate, announcement, announcementUpdate, delegateStatus, assignment
+    resource, resourceUpdate, announcement, announcementUpdate, delegateStatus, bulkDelegateStatus,
+    assignment, bulkAssignment, registrationForm
 };

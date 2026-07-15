@@ -8,7 +8,8 @@ const announcementController = require("../controllers/announcementController");
 const resolutionController = require("../controllers/resolutionController");
 const feedbackController = require("../controllers/feedbackController");
 const organizerAccessController = require("../controllers/organizerAccessController");
-const { authenticate, requireRole, requireConferenceAccess } = require("../middleware/auth");
+const registrationFormController = require("../controllers/registrationFormController");
+const { authenticate, requireRole, requireConferenceAccess, requirePermission } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const entityValidation = require("../validations/entityValidation");
 const feedbackValidation = require("../validations/feedbackValidation");
@@ -42,11 +43,41 @@ router.post(
 );
 
 router.get("/:id/delegates", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), delegateController.listForConference);
+router.patch(
+    "/:id/delegates/bulk-status", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("approve_registrations"),
+    validateBody(entityValidation.bulkDelegateStatus), delegateController.bulkUpdateStatus
+);
+router.get(
+    "/:id/registrations/analytics", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_analytics"),
+    delegateController.registrationAnalytics
+);
+
+router.get("/:id/registration-form", registrationFormController.getForConference);
+router.put(
+    "/:id/registration-form", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("edit_registration_form"),
+    validateBody(entityValidation.registrationForm), registrationFormController.upsert
+);
 
 router.get("/:id/assignments", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), assignmentController.listForConference);
+router.get(
+    "/:id/assignments/analytics", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_analytics"),
+    assignmentController.analytics
+);
 router.put(
-    "/:id/assignments/:delegateId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    "/:id/assignments/:delegateId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("assign_delegates"),
     validateBody(entityValidation.assignment), assignmentController.assign
+);
+router.delete(
+    "/:id/assignments/:delegateId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("assign_delegates"),
+    assignmentController.unassign
+);
+router.get(
+    "/:id/assignments/:delegateId/history", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    assignmentController.history
+);
+router.post(
+    "/:id/assignments/bulk", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("assign_delegates"),
+    validateBody(entityValidation.bulkAssignment), assignmentController.bulkAssign
 );
 router.post(
     "/:id/assignments/publish", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),

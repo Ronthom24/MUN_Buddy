@@ -14,6 +14,7 @@ const delegateModel = require("../models/delegateModel");
 const passwordResetTokenModel = require("../models/passwordResetTokenModel");
 const organizationModel = require("../models/organizationModel");
 const organizationMemberModel = require("../models/organizationMemberModel");
+const registrationFormModel = require("../models/registrationFormModel");
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
@@ -242,6 +243,13 @@ async function delegateRegister(body) {
 
         await delegateModel.addCommitteePreferences(delegateId, body.committeePreferences, connection);
         await delegateModel.addCountryPreferences(delegateId, body.countryPreferences, connection);
+
+        if (body.customResponses && typeof body.customResponses === "object") {
+            const activeForm = await registrationFormModel.findActiveByConference(body.conferenceId, connection);
+            if (activeForm) {
+                await registrationFormModel.saveResponse(delegateId, activeForm.id, body.customResponses, connection);
+            }
+        }
 
         await connection.commit();
 

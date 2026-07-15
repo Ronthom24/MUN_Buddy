@@ -34,10 +34,27 @@ async function findLatestByEmail(email, db = pool) {
     return rows[0] || null;
 }
 
-async function listByConference(conferenceId, db = pool) {
+async function listByConference(conferenceId, filters = {}, db = pool) {
+    const clauses = ["conference_id = ?"];
+    const params = [conferenceId];
+
+    if (filters.status) {
+        clauses.push("status = ?");
+        params.push(filters.status);
+    }
+    if (filters.munExperience) {
+        clauses.push("mun_experience = ?");
+        params.push(filters.munExperience);
+    }
+    if (filters.search) {
+        clauses.push("(full_name LIKE ? OR email LIKE ? OR school LIKE ?)");
+        const like = `%${filters.search}%`;
+        params.push(like, like, like);
+    }
+
     const [rows] = await db.execute(
-        `SELECT * FROM delegates WHERE conference_id = ? ORDER BY created_at DESC`,
-        [conferenceId]
+        `SELECT * FROM delegates WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC`,
+        params
     );
     return rows;
 }
@@ -45,6 +62,42 @@ async function listByConference(conferenceId, db = pool) {
 async function updateStatus(id, status, db = pool) {
     await db.execute(`UPDATE delegates SET status = ? WHERE id = ?`, [status, id]);
     return findById(id, db);
+}
+
+async function bulkUpdateStatus(ids, status, db = pool) {
+    if (!ids.length) return [];
+    await db.query(`UPDATE delegates SET status = ? WHERE id IN (?)`, [status, ids]);
+    const [rows] = await db.query(`SELECT * FROM delegates WHERE id IN (?)`, [ids]);
+    return rows;
+}
+
+/**
+ * Groups delegates in a conference by normalized email/phone/name so
+ * organizers can spot likely duplicate registrations before approving them
+ * (spec 11.16). Returns a Set of delegate ids that share an email, phone, or
+ * full name with at least one other delegate in the same conference.
+ */
+async function findPossibleDuplicateIds(conferenceId, db = pool) {
+    const [rows] = await db.query(
+        `SELECT id, LOWER(TRIM(email)) AS norm_email, TRIM(phone) AS norm_phone, LOWER(TRIM(full_name)) AS norm_name
+         FROM delegates WHERE conference_id = ?`,
+        [conferenceId]
+    );
+
+    const byEmail = new Map();
+    const byPhone = new Map();
+    const byName = new Map();
+    for (const row of rows) {
+        if (row.norm_email) byEmail.set(row.norm_email, (byEmail.get(row.norm_email) || []).concat(row.id));
+        if (row.norm_phone) byPhone.set(row.norm_phone, (byPhone.get(row.norm_phone) || []).concat(row.id));
+        if (row.norm_name) byName.set(row.norm_name, (byName.get(row.norm_name) || []).concat(row.id));
+    }
+
+    const duplicateIds = new Set();
+    for (const group of [...byEmail.values(), ...byPhone.values(), ...byName.values()]) {
+        if (group.length > 1) group.forEach((id) => duplicateIds.add(id));
+    }
+    return duplicateIds;
 }
 
 async function updatePasswordHash(id, passwordHash, db = pool) {
@@ -90,6 +143,7 @@ async function getCountryPreferences(delegateId, db = pool) {
 }
 
 module.exports = {
-    create, findById, findByEmail, findLatestByEmail, listByConference, updateStatus, updatePasswordHash,
-    addCommitteePreferences, addCountryPreferences, getCommitteePreferences, getCountryPreferences
+    create, findById, findByEmail, findLatestByEmail, listByConference, updateStatus, bulkUpdateStatus,
+    updatePasswordHash, addCommitteePreferences, addCountryPreferences, getCommitteePreferences,
+    getCountryPreferences, findPossibleDuplicateIds
 };

@@ -34,19 +34,64 @@ async function assign(delegateId, { committeeId, portfolioId }, db = pool) {
     return findByDelegateId(delegateId, db);
 }
 
+/**
+ * Only approved delegates are eligible for assignment (spec 13.18: "Only
+ * approved delegates may be assigned"), so this intentionally excludes
+ * pending/rejected/waitlisted/withdrawn delegates rather than listing every
+ * delegate in the conference.
+ */
 async function listByConference(conferenceId, db = pool) {
     const [rows] = await db.query(
-        `SELECT a.*, d.full_name AS delegate_name, d.school AS delegate_school,
+        `SELECT a.*, d.full_name AS delegate_name, d.school AS delegate_school, d.status AS delegate_status,
                 c.name AS committee_name, p.name AS portfolio_name
          FROM delegates d
          LEFT JOIN assignments a ON a.delegate_id = d.id
          LEFT JOIN committees c ON c.id = a.committee_id
          LEFT JOIN portfolios p ON p.id = a.portfolio_id
-         WHERE d.conference_id = ?
+         WHERE d.conference_id = ? AND d.status = 'approved'
          ORDER BY d.full_name ASC`,
         [conferenceId]
     );
     return rows;
+}
+
+async function countAssignedInCommittee(committeeId, db = pool) {
+    const [[row]] = await db.query(
+        `SELECT COUNT(*) AS count FROM assignments WHERE committee_id = ? AND status = 'assigned'`,
+        [committeeId]
+    );
+    return Number(row.count) || 0;
+}
+
+async function logHistory({ delegateId, committeeId, portfolioId, action, changedByAccessId }, db = pool) {
+    await db.execute(
+        `INSERT INTO assignment_history (delegate_id, committee_id, portfolio_id, action, changed_by_organizer_access_id)
+         VALUES (?, ?, ?, ?, ?)`,
+        [delegateId, committeeId ?? null, portfolioId ?? null, action, changedByAccessId ?? null]
+    );
+}
+
+async function getHistoryForDelegate(delegateId, db = pool) {
+    const [rows] = await db.query(
+        `SELECT ah.*, c.name AS committee_name, p.name AS portfolio_name
+         FROM assignment_history ah
+         LEFT JOIN committees c ON c.id = ah.committee_id
+         LEFT JOIN portfolios p ON p.id = ah.portfolio_id
+         WHERE ah.delegate_id = ?
+         ORDER BY ah.created_at ASC`,
+        [delegateId]
+    );
+    return rows;
+}
+
+async function unassign(delegateId, db = pool) {
+    await ensureRow(delegateId, db);
+    await db.execute(
+        `UPDATE assignments SET committee_id = NULL, portfolio_id = NULL, status = 'unassigned', published = FALSE
+         WHERE delegate_id = ?`,
+        [delegateId]
+    );
+    return findByDelegateId(delegateId, db);
 }
 
 async function publishAll(conferenceId, db = pool) {
@@ -71,4 +116,7 @@ async function findPublishedByDelegateId(delegateId, db = pool) {
     return rows[0] || null;
 }
 
-module.exports = { findByDelegateId, ensureRow, assign, listByConference, publishAll, findPublishedByDelegateId };
+module.exports = {
+    findByDelegateId, ensureRow, assign, listByConference, publishAll, findPublishedByDelegateId,
+    countAssignedInCommittee, logHistory, getHistoryForDelegate, unassign
+};

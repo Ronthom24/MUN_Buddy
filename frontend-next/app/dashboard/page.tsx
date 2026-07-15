@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -278,7 +279,9 @@ export default function DashboardPage() {
                   {conferences.map((conference) => (
                     <TableRow key={conference.id}>
                       <TableCell className="font-medium">
-                        {conference.name}
+                        <Link href={`/conferences/${conference.id}`} className="hover:underline">
+                          {conference.name}
+                        </Link>
                         {conference.acronym && (
                           <span className="ml-2 text-xs text-muted-foreground">{conference.acronym}</span>
                         )}

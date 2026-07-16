@@ -66,14 +66,11 @@ pickers, conference role dropdowns).
 
 ### Git status
 
-Phases 0–3 are committed to `main` (10 commits, from the initial checkpoint through "docs: mark
-Phase 3 complete"). **Phase 4's work (this session) is complete and verified but sitting uncommitted
-in the working tree** — commit it in the same style as prior phases (one `feat:` commit for the
-backend+frontend work, one `docs:` commit marking the phase complete) once reviewed. **Local `main`
-is ahead of `origin/main` by 9 commits and has not been pushed** — push was never requested. Note
-also that `app.py`'s leaked MySQL credential was purged via `git filter-branch` + a force-push
-earlier in this project (see Security notes below) — if this repo has been cloned anywhere else,
-those clones still have the old history and should be re-cloned or manually rebased.
+Phases 0–4 are committed to `main` (12 commits, from the initial checkpoint through "docs: mark
+Phase 4 complete") and pushed to `origin/main`. Note that `app.py`'s leaked MySQL credential was
+purged via `git filter-branch` + a force-push earlier in this project (see Security notes below) —
+if this repo has been cloned anywhere else, those clones still have the old history and should be
+re-cloned or manually rebased.
 
 ### Full plan file
 

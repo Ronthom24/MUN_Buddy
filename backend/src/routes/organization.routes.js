@@ -1,9 +1,11 @@
 const express = require("express");
 const organizationController = require("../controllers/organizationController");
 const organizationMemberController = require("../controllers/organizationMemberController");
+const certificateController = require("../controllers/certificateController");
 const { authenticate, requireRole, requireOrganizationAccess } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const organizationValidation = require("../validations/organizationValidation");
+const certificateValidation = require("../validations/certificateValidation");
 
 const router = express.Router();
 const asOrganizer = [authenticate, requireRole("organizer")];
@@ -39,6 +41,20 @@ router.patch(
 router.delete(
     "/:id/members/:memberId", ...asOrganizer, requireOrganizationAccess(...OWNER_ONLY),
     organizationMemberController.remove
+);
+
+router.get("/:id/certificate-templates", ...asOrganizer, requireOrganizationAccess(...ANY_MEMBER), certificateController.listTemplates);
+router.post(
+    "/:id/certificate-templates", ...asOrganizer, requireOrganizationAccess(...MANAGE),
+    validateBody(certificateValidation.template), certificateController.createTemplate
+);
+router.put(
+    "/:id/certificate-templates/:templateId", ...asOrganizer, requireOrganizationAccess(...MANAGE),
+    validateBody(certificateValidation.templateUpdate), certificateController.updateTemplate
+);
+router.delete(
+    "/:id/certificate-templates/:templateId", ...asOrganizer, requireOrganizationAccess(...MANAGE),
+    certificateController.archiveTemplate
 );
 
 module.exports = router;

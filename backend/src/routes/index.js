@@ -13,6 +13,7 @@ const resolutionRoutes = require("./resolution.routes");
 const noteRoutes = require("./note.routes");
 const feedbackRoutes = require("./feedback.routes");
 const documentRoutes = require("./document.routes");
+const certificateRoutes = require("./certificate.routes");
 
 const router = express.Router();
 
@@ -44,5 +45,6 @@ router.use("/api/resolutions", resolutionRoutes);
 router.use("/api/notes", noteRoutes);
 router.use("/api/feedback", feedbackRoutes);
 router.use("/api/documents", documentRoutes);
+router.use("/api/certificates", certificateRoutes);
 
 module.exports = router;

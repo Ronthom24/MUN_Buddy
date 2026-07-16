@@ -23,6 +23,9 @@ import {
 import { api, ApiRequestError } from "@/lib/api";
 import type { DelegatePaymentSummary, DerivedPaymentStatus, PaymentMethod } from "@/lib/types";
 
+// Select.Root needs an `items` value->label map, or its closed trigger displays the raw
+// value instead of the item's rendered label (Base UI resolves the label from `items`,
+// not from the mounted-then-unmounted SelectItem children).
 const METHOD_OPTIONS: { value: PaymentMethod; label: string }[] = [
   { value: "upi", label: "UPI" },
   { value: "bank_transfer", label: "Bank transfer" },
@@ -30,6 +33,8 @@ const METHOD_OPTIONS: { value: PaymentMethod; label: string }[] = [
   { value: "cheque", label: "Cheque" },
   { value: "other", label: "Other" },
 ];
+
+const METHOD_SELECT_ITEMS = Object.fromEntries(METHOD_OPTIONS.map((m) => [m.value, m.label]));
 
 const STATUS_COPY: Record<DerivedPaymentStatus, { label: string; description: string; variant: "secondary" | "default" | "outline" | "destructive" }> = {
   not_required: { label: "Not required", description: "This conference does not require payment.", variant: "outline" },
@@ -174,7 +179,7 @@ export default function DelegatePaymentPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="method">Method</Label>
-                          <Select name="method" defaultValue="upi">
+                          <Select name="method" items={METHOD_SELECT_ITEMS} defaultValue="upi">
                             <SelectTrigger id="method" className="w-full">
                               <SelectValue />
                             </SelectTrigger>
@@ -191,7 +196,10 @@ export default function DelegatePaymentPage() {
                       {summary.feeCategories.length > 0 && (
                         <div className="space-y-2">
                           <Label htmlFor="feeCategoryId">Fee category</Label>
-                          <Select name="feeCategoryId">
+                          <Select
+                            name="feeCategoryId"
+                            items={Object.fromEntries(summary.feeCategories.map((fc) => [String(fc.id), `${fc.name} (${money(fc.amount, fc.currency)})`]))}
+                          >
                             <SelectTrigger id="feeCategoryId" className="w-full">
                               <SelectValue placeholder="No specific category" />
                             </SelectTrigger>

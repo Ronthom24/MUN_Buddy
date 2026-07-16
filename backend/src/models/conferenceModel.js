@@ -128,6 +128,11 @@ async function updatePaymentConfig(id, { paymentRequired, currency }, db = pool)
     return findById(id, db);
 }
 
+async function publishResults(id, db = pool) {
+    await db.execute(`UPDATE conferences SET results_published = TRUE, results_published_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+    return findById(id, db);
+}
+
 async function getStats(conferenceId, db = pool) {
     const [[delegateCounts]] = await db.query(
         `SELECT
@@ -210,5 +215,5 @@ async function getAnalytics(conferenceId, db = pool) {
 
 module.exports = {
     create, findById, listByOrganizer, listByAccessEmail, listByOrganization, listOpenForRegistration, update, remove,
-    updatePaymentConfig, getStats, getAnalytics
+    updatePaymentConfig, publishResults, getStats, getAnalytics
 };

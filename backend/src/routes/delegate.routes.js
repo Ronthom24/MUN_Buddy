@@ -1,6 +1,9 @@
 const express = require("express");
 const delegateController = require("../controllers/delegateController");
 const paymentController = require("../controllers/paymentController");
+const resultsController = require("../controllers/resultsController");
+const certificateController = require("../controllers/certificateController");
+const attendanceController = require("../controllers/attendanceController");
 const { authenticate, requireRole, requireDelegateOwnership } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const entityValidation = require("../validations/entityValidation");
@@ -25,6 +28,9 @@ router.post(
 router.get("/me/resources", authenticate, requireRole("delegate"), delegateController.myResources);
 router.get("/me/announcements", authenticate, requireRole("delegate"), delegateController.myAnnouncements);
 router.get("/me/schedule", authenticate, requireRole("delegate"), delegateController.mySchedule);
+router.get("/me/results", authenticate, requireRole("delegate"), resultsController.myResults);
+router.get("/me/certificates", authenticate, requireRole("delegate"), certificateController.myCertificates);
+router.get("/me/checkin-token", authenticate, requireRole("delegate"), attendanceController.myCheckinToken);
 router.post("/me/reapply", authenticate, requireRole("delegate"), delegateController.reapply);
 router.patch(
     "/:id/status", authenticate, requireRole("organizer"), requireDelegateOwnership,

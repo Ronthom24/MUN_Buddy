@@ -39,6 +39,10 @@ export interface Conference {
   registration_status: "open" | "closed" | "invite_only";
   max_delegates: number | null;
   conference_code: string;
+  payment_required: 0 | 1;
+  currency: string;
+  results_published: 0 | 1;
+  results_published_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -358,4 +362,100 @@ export interface AssignmentAnalytics {
     assigned: number;
     fillRate: number | null;
   }[];
+}
+
+export interface Award {
+  id: number;
+  conference_id: number;
+  delegate_id: number;
+  delegate_name: string;
+  committee_id: number | null;
+  committee_name: string | null;
+  portfolio_id: number | null;
+  portfolio_name: string | null;
+  category: string;
+  citation: string | null;
+  created_at: string;
+}
+
+export type CertificateType = "participation" | "award" | "workshop_participation" | "custom";
+
+export interface CertificateTemplate {
+  id: number;
+  organization_id: number;
+  name: string;
+  certificate_type: CertificateType;
+  title: string;
+  body_text: string;
+  signatory_name: string | null;
+  signatory_title: string | null;
+  accent_color: string;
+  status: "active" | "archived";
+}
+
+export interface Certificate {
+  id: number;
+  certificate_number: string;
+  conference_id: number;
+  delegate_id: number;
+  delegate_name?: string;
+  delegate_email?: string;
+  template_id: number;
+  template_name?: string;
+  template_title?: string;
+  award_id: number | null;
+  certificate_type: CertificateType;
+  issued_at: string;
+  download_count: number;
+  last_downloaded_at: string | null;
+}
+
+export interface CertificateStats {
+  totalCertificates: number;
+  downloadedCount: number;
+  totalDownloads: number;
+}
+
+export interface DelegateResults {
+  resultsPublished: boolean;
+  resultsPublishedAt: string | null;
+  ownAwards: Award[];
+  allAwards: Award[];
+}
+
+export interface CheckinToken {
+  token: string;
+  qrDataUrl: string;
+}
+
+export interface AttendanceRosterEntry {
+  delegateId: number;
+  delegateName: string;
+  checkedIn: boolean;
+  checkedInAt: string | null;
+  method: "manual" | "qr_token" | null;
+}
+
+export interface AttendanceEventAnalytics {
+  scheduleEventId: number;
+  title: string;
+  type: string;
+  startTime: string;
+  checkedInCount: number;
+  expectedCount: number;
+  attendanceRate: number;
+}
+
+export interface AttendanceAnalytics {
+  events: AttendanceEventAnalytics[];
+  overallAttendanceRate: number;
+}
+
+export interface CertificateVerification {
+  valid: boolean;
+  certificateNumber?: string;
+  delegateName?: string;
+  conferenceName?: string;
+  certificateType?: CertificateType;
+  issuedAt?: string;
 }

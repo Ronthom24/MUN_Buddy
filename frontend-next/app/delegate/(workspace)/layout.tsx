@@ -4,9 +4,11 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  Award,
   Bell,
   BookOpen,
   CalendarClock,
+  FileCheck2,
   FileText,
   Flag,
   Gavel,
@@ -30,6 +32,8 @@ const NAV_ITEMS = [
   { href: "/delegate/notes", label: "Notes", icon: NotebookPen },
   { href: "/delegate/documents", label: "Position Paper & Speech", icon: FileText },
   { href: "/delegate/resolutions", label: "Resolutions", icon: Flag },
+  { href: "/delegate/results", label: "Results", icon: Award },
+  { href: "/delegate/certificates", label: "Certificates", icon: FileCheck2 },
   { href: "/delegate/profile", label: "Profile", icon: User },
 ];
 

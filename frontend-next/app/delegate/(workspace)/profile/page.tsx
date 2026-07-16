@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { KeyRound, User } from "lucide-react";
+import { KeyRound, QrCode, User } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, ApiRequestError } from "@/lib/api";
-import type { DelegateProfile } from "@/lib/types";
+import type { CheckinToken, DelegateProfile } from "@/lib/types";
 
 export default function DelegateProfilePage() {
   const [profile, setProfile] = useState<DelegateProfile | null>(null);
+  const [checkinToken, setCheckinToken] = useState<CheckinToken | null>(null);
   const [loading, setLoading] = useState(true);
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
@@ -25,6 +26,11 @@ export default function DelegateProfilePage() {
       .then(setProfile)
       .catch((err) => toast.error(err instanceof ApiRequestError ? err.message : "Failed to load profile"))
       .finally(() => setLoading(false));
+
+    api
+      .get<{ success: true } & CheckinToken>("/delegates/me/checkin-token")
+      .then(setCheckinToken)
+      .catch(() => {});
   }, []);
 
   async function handleProfileSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -103,6 +109,25 @@ export default function DelegateProfilePage() {
           </Badge>
         </CardContent>
       </Card>
+
+      {checkinToken && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <QrCode className="h-4 w-4" /> My check-in code
+            </CardTitle>
+            <CardDescription>Show this at the door to be checked in to sessions.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap items-center gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element -- a generated data: URL, not an optimizable remote asset */}
+            <img src={checkinToken.qrDataUrl} alt="Check-in QR code" className="h-40 w-40 rounded-lg border" />
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">No scanner handy? Give the organizer this code:</p>
+              <code className="rounded bg-muted px-2 py-1 text-xs">{checkinToken.token}</code>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

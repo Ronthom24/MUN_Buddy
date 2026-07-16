@@ -113,6 +113,23 @@ export default function PaymentsPage() {
 
   const currency = config?.currency || "INR";
 
+  // Select.Root needs an `items` value->label map, or its closed trigger displays the raw
+  // value instead of the item's rendered label (Base UI resolves the label from `items`,
+  // not from the mounted-then-unmounted SelectItem children).
+  const delegateSelectItems = useMemo(
+    () => Object.fromEntries(delegates.map((d) => [String(d.id), `${d.full_name} (${d.email})`])),
+    [delegates]
+  );
+  const methodSelectItems = useMemo(() => Object.fromEntries(METHOD_OPTIONS.map((m) => [m.value, m.label])), []);
+  const feeCategorySelectItems = useMemo(
+    () => Object.fromEntries((config?.feeCategories || []).map((fc) => [String(fc.id), `${fc.name} (${money(fc.amount, fc.currency)})`])),
+    [config]
+  );
+  const discountTypeSelectItems = useMemo(
+    () => Object.fromEntries(DISCOUNT_TYPE_OPTIONS.map((t) => [t.value, t.label])),
+    []
+  );
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -453,7 +470,7 @@ export default function PaymentsPage() {
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
                         <Label htmlFor="delegateId">Delegate</Label>
-                        <Select name="delegateId">
+                        <Select name="delegateId" items={delegateSelectItems}>
                           <SelectTrigger id="delegateId" className="w-full">
                             <SelectValue placeholder="Select a delegate" />
                           </SelectTrigger>
@@ -473,7 +490,7 @@ export default function PaymentsPage() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="method">Method</Label>
-                          <Select name="method" defaultValue="cash">
+                          <Select name="method" items={methodSelectItems} defaultValue="cash">
                             <SelectTrigger id="method" className="w-full">
                               <SelectValue />
                             </SelectTrigger>
@@ -490,7 +507,7 @@ export default function PaymentsPage() {
                       {config && config.feeCategories.length > 0 && (
                         <div className="space-y-2">
                           <Label htmlFor="feeCategoryId">Fee category</Label>
-                          <Select name="feeCategoryId">
+                          <Select name="feeCategoryId" items={feeCategorySelectItems}>
                             <SelectTrigger id="feeCategoryId" className="w-full">
                               <SelectValue placeholder="No specific category" />
                             </SelectTrigger>
@@ -760,7 +777,7 @@ export default function PaymentsPage() {
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
                         <Label htmlFor="discDelegateId">Delegate</Label>
-                        <Select name="delegateId">
+                        <Select name="delegateId" items={delegateSelectItems}>
                           <SelectTrigger id="discDelegateId" className="w-full">
                             <SelectValue placeholder="Select a delegate" />
                           </SelectTrigger>
@@ -776,7 +793,7 @@ export default function PaymentsPage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="type">Type</Label>
-                          <Select name="type" defaultValue="scholarship">
+                          <Select name="type" items={discountTypeSelectItems} defaultValue="scholarship">
                             <SelectTrigger id="type" className="w-full">
                               <SelectValue />
                             </SelectTrigger>

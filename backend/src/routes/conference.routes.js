@@ -11,12 +11,18 @@ const organizerAccessController = require("../controllers/organizerAccessControl
 const registrationFormController = require("../controllers/registrationFormController");
 const scheduleController = require("../controllers/scheduleController");
 const paymentController = require("../controllers/paymentController");
+const resultsController = require("../controllers/resultsController");
+const certificateController = require("../controllers/certificateController");
+const attendanceController = require("../controllers/attendanceController");
 const { authenticate, requireRole, requireConferenceAccess, requirePermission } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const entityValidation = require("../validations/entityValidation");
 const feedbackValidation = require("../validations/feedbackValidation");
 const organizerAccessValidation = require("../validations/organizerAccessValidation");
 const paymentValidation = require("../validations/paymentValidation");
+const resultsValidation = require("../validations/resultsValidation");
+const certificateValidation = require("../validations/certificateValidation");
+const attendanceValidation = require("../validations/attendanceValidation");
 const upload = require("../middleware/upload");
 
 const router = express.Router();
@@ -191,6 +197,65 @@ router.get(
 router.post(
     "/:id/delegates/:delegateId/discounts", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_payments"),
     validateBody(paymentValidation.discount), paymentController.applyDiscount
+);
+
+router.get(
+    "/:id/awards", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    resultsController.listAwards
+);
+router.post(
+    "/:id/awards", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    validateBody(resultsValidation.award), resultsController.createAward
+);
+router.put(
+    "/:id/awards/:awardId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    validateBody(resultsValidation.awardUpdate), resultsController.updateAward
+);
+router.delete(
+    "/:id/awards/:awardId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    resultsController.removeAward
+);
+router.post(
+    "/:id/results/publish", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    resultsController.publish
+);
+
+router.get(
+    "/:id/certificate-templates", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    certificateController.listTemplatesForConference
+);
+router.get(
+    "/:id/certificates", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    certificateController.listCertificates
+);
+router.get(
+    "/:id/certificates/stats", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    certificateController.certificateStats
+);
+router.post(
+    "/:id/delegates/:delegateId/certificates", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    validateBody(certificateValidation.issue), certificateController.issueCertificate
+);
+router.post(
+    "/:id/certificates/bulk", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_certificates"),
+    validateBody(certificateValidation.bulkIssue), certificateController.bulkIssue
+);
+
+router.get(
+    "/:id/schedule/events/:eventId/attendance", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_attendance"),
+    attendanceController.getRoster
+);
+router.post(
+    "/:id/schedule/events/:eventId/attendance/check-in", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_attendance"),
+    validateBody(attendanceValidation.checkIn), attendanceController.checkIn
+);
+router.delete(
+    "/:id/schedule/events/:eventId/attendance/:delegateId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_attendance"),
+    attendanceController.undoCheckIn
+);
+router.get(
+    "/:id/attendance/analytics", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_attendance"),
+    attendanceController.analytics
 );
 
 router.get(

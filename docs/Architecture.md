@@ -13,8 +13,9 @@ that spec's Version 1 (§25.4) against the real codebase.
 
 ## Getting started / session handoff
 
-**Where things stand right now**: Phases 0–3 of the Version 1 build (see roadmap below) are done,
-committed, and verified. Phase 4 (Payments & Finance) is next and hasn't been started.
+**Where things stand right now**: Phases 0–4 of the Version 1 build (see roadmap below) are done
+and verified. Phase 5 (Results & Certificates + Attendance/QR) is next and hasn't been started.
+Phase 4's work is verified but **not yet committed** — see Git status below.
 
 ### Running the app
 
@@ -44,8 +45,8 @@ port 3000 via `preview_start` — use that if driving the app through the Browse
 
 | Role | Email | Password | Notes |
 |---|---|---|---|
-| Organizer | `dana.testdirector@example.com` | `password123` | Owns "Dana Test MUN 2027" (conference id 7, org id 5). Has a DISEC committee (id 8) with Brazil/Germany portfolios, a schedule day with 2 events, 1 published announcement, 1 published resource. |
-| Delegate | `henry.delegate@example.com` | `password123` | Approved, assigned to DISEC/Brazil, assignment published. Has a note, a draft position paper, and a submitted resolution — good account for walking the full Delegate Workspace. |
+| Organizer | `dana.testdirector@example.com` | `password123` | Owns "Dana Test MUN 2027" (conference id 7, org id 5). Has a DISEC committee (id 8) with Brazil/Germany portfolios, a schedule day with 2 events, 1 published announcement, 1 published resource. `payment_required` is now **on**, with a required "Registration Fee" (INR 50) and optional "Accommodation Fee" (INR 25) — good conference for demoing the Payments tab and the approve-requires-payment gate. |
+| Delegate | `henry.delegate@example.com` | `password123` | Approved, assigned to DISEC/Brazil, assignment published. Has a note, a draft position paper, and a submitted resolution — good account for walking the full Delegate Workspace. Payment-wise: submitted a UPI payment that was verified, given a scholarship discount, then refunded (all three states exercised on one delegate) — good account for the Payment page's history view. |
 | Delegate | `ivy.delegate@example.com` | `password123` | Approved but unassigned — good for testing the assignment flow / unassigned states. |
 | Organizer | `alice.orgowner@example.com` | `password123` | Owns a separate organization (id 3) with 2 conferences (ids 4, 6) and an invited admin member (`carol.eb@example.com`) — used to verify multi-conference-per-org and multi-tenant isolation. |
 | Organizer | `bob.otherowner@example.com` | `password123` | Owns another separate organization (id 4) with 1 conference (id 5) — the isolation counterpart to Alice's org. |
@@ -65,12 +66,14 @@ pickers, conference role dropdowns).
 
 ### Git status
 
-Working tree is clean; all Phase 0–3 work is committed to `main` (10 commits, from the initial
-checkpoint through "docs: mark Phase 3 complete"). **Local `main` is ahead of `origin/main` by 9
-commits and has not been pushed** — push was never requested. Note also that `app.py`'s leaked
-MySQL credential was purged via `git filter-branch` + a force-push earlier in this project (see
-Security notes below) — if this repo has been cloned anywhere else, those clones still have the old
-history and should be re-cloned or manually rebased.
+Phases 0–3 are committed to `main` (10 commits, from the initial checkpoint through "docs: mark
+Phase 3 complete"). **Phase 4's work (this session) is complete and verified but sitting uncommitted
+in the working tree** — commit it in the same style as prior phases (one `feat:` commit for the
+backend+frontend work, one `docs:` commit marking the phase complete) once reviewed. **Local `main`
+is ahead of `origin/main` by 9 commits and has not been pushed** — push was never requested. Note
+also that `app.py`'s leaked MySQL credential was purged via `git filter-branch` + a force-push
+earlier in this project (see Security notes below) — if this repo has been cloned anywhere else,
+those clones still have the old history and should be re-cloned or manually rebased.
 
 ### Full plan file
 
@@ -141,8 +144,24 @@ Key pieces:
    rAF-throttling issue from Phase 2 also causes closed Dialogs to leave an invisible click-blocking
    backdrop in this sandboxed preview tab (Base UI's dialog unmount is rAF-gated and the overlay has
    no `data-closed:pointer-events-none` safety net) — not expected in a normal foregrounded browser.
-4. Payments & Finance. *(next up)*
-5. Results & Certificates + Attendance/QR.
+4. **Done.** Payments & Finance — manual/offline payment recording only (cash, bank transfer, UPI,
+   cheque), per spec 18.5: online gateway integration (Razorpay et al.) is an explicit Future
+   Enhancement, not V1. New `fee_categories`/`payments`/`refunds`/`discounts` tables plus
+   `conferences.payment_required`/`currency`. Backend enforces spec 18.16's business rule
+   ("delegates may not be approved until payment verification if payment is mandatory") in
+   `delegateService.updateStatus`/`bulkUpdateStatus` — the single-delegate approve route throws a
+   400 and the bulk route partitions ids into applied vs. `skippedForPayment`, both exercised
+   end-to-end (a pending delegate stayed pending on Approve until a verified payment existed, then
+   approved cleanly after). Organizer UI: new Payments tab on the conference nav (Overview/
+   Transactions/Fee structure/Refunds & discounts, revenue trend chart via `recharts`). Delegate UI:
+   new Payment page in the Delegate Workspace (fee list, submit-payment dialog, payment history).
+   Verified end-to-end in a real browser session (organizer: toggle payment-required, add fee
+   categories via the actual dialog form, record/verify/refund a payment, apply a discount, confirm
+   dashboard math; delegate: viewed fee list, discount, and payment history for a real account) plus
+   direct API checks for the parts the sandboxed preview couldn't click-drive. Confirmed, again, that
+   this preview tab's rAF throttling (documented below) affects this page's Select/Dialog components
+   the same way it did in Phases 2–3 — not a regression, not expected in a real browser tab.
+5. Results & Certificates + Attendance/QR. *(next up)*
 6. Communication Center (announcements, resources, FAQs, notifications, email broadcasts).
 7. Team Center + Public Website / Public Conference Pages.
 8. Analytics & Intelligence Center + Security hardening (audit logs, soft deletes, rate

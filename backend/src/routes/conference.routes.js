@@ -10,11 +10,13 @@ const feedbackController = require("../controllers/feedbackController");
 const organizerAccessController = require("../controllers/organizerAccessController");
 const registrationFormController = require("../controllers/registrationFormController");
 const scheduleController = require("../controllers/scheduleController");
+const paymentController = require("../controllers/paymentController");
 const { authenticate, requireRole, requireConferenceAccess, requirePermission } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const entityValidation = require("../validations/entityValidation");
 const feedbackValidation = require("../validations/feedbackValidation");
 const organizerAccessValidation = require("../validations/organizerAccessValidation");
+const paymentValidation = require("../validations/paymentValidation");
 const upload = require("../middleware/upload");
 
 const router = express.Router();
@@ -129,6 +131,67 @@ router.post(
     validateBody(feedbackValidation.create), feedbackController.create
 );
 router.get("/:id/feedback", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), feedbackController.listForConference);
+
+router.get(
+    "/:id/payments/config", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_financials"),
+    paymentController.getConfig
+);
+router.put(
+    "/:id/payments/config", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_payments"),
+    validateBody(paymentValidation.paymentConfig), paymentController.updateConfig
+);
+
+router.post(
+    "/:id/fee-categories", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_payments"),
+    validateBody(paymentValidation.feeCategory), paymentController.createFeeCategory
+);
+router.put(
+    "/:id/fee-categories/:feeCategoryId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_payments"),
+    validateBody(paymentValidation.feeCategoryUpdate), paymentController.updateFeeCategory
+);
+router.delete(
+    "/:id/fee-categories/:feeCategoryId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_payments"),
+    paymentController.archiveFeeCategory
+);
+
+router.get(
+    "/:id/payments", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_financials"),
+    paymentController.listPayments
+);
+router.get(
+    "/:id/payments/dashboard", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_financials"),
+    paymentController.getDashboard
+);
+router.get(
+    "/:id/payments/analytics", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_financials"),
+    paymentController.getAnalytics
+);
+router.post(
+    "/:id/delegates/:delegateId/payments", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_payments"),
+    validateBody(paymentValidation.paymentRecord), paymentController.recordPayment
+);
+router.patch(
+    "/:id/payments/:paymentId/verify", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("verify_payments"),
+    validateBody(paymentValidation.paymentStatusUpdate), paymentController.verifyPayment
+);
+router.post(
+    "/:id/payments/:paymentId/refund", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_payments"),
+    validateBody(paymentValidation.refund), paymentController.refundPayment
+);
+
+router.get(
+    "/:id/refunds", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_financials"),
+    paymentController.listRefunds
+);
+
+router.get(
+    "/:id/discounts", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_financials"),
+    paymentController.listDiscounts
+);
+router.post(
+    "/:id/delegates/:delegateId/discounts", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_payments"),
+    validateBody(paymentValidation.discount), paymentController.applyDiscount
+);
 
 router.get(
     "/:id/organizer-access", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),

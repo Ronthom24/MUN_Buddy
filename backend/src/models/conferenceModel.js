@@ -108,6 +108,26 @@ async function update(id, data, db = pool) {
     return findById(id, db);
 }
 
+async function updatePaymentConfig(id, { paymentRequired, currency }, db = pool) {
+    const setClauses = [];
+    const params = [];
+
+    if (paymentRequired !== undefined) {
+        setClauses.push("payment_required = ?");
+        params.push(Boolean(paymentRequired));
+    }
+    if (currency !== undefined) {
+        setClauses.push("currency = ?");
+        params.push(currency);
+    }
+
+    if (setClauses.length === 0) return findById(id, db);
+
+    params.push(id);
+    await db.execute(`UPDATE conferences SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    return findById(id, db);
+}
+
 async function getStats(conferenceId, db = pool) {
     const [[delegateCounts]] = await db.query(
         `SELECT
@@ -190,5 +210,5 @@ async function getAnalytics(conferenceId, db = pool) {
 
 module.exports = {
     create, findById, listByOrganizer, listByAccessEmail, listByOrganization, listOpenForRegistration, update, remove,
-    getStats, getAnalytics
+    updatePaymentConfig, getStats, getAnalytics
 };

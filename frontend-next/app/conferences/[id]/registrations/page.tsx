@@ -86,8 +86,16 @@ export default function RegistrationsPage() {
     if (ids.length === 0) return;
     setBulkSubmitting(true);
     try {
-      await api.patch(`/conferences/${conferenceId}/delegates/bulk-status`, { delegateIds: ids, status });
-      toast.success(`${ids.length} delegate${ids.length > 1 ? "s" : ""} marked ${status}`);
+      const res = await api.patch<{ success: true; delegates: Delegate[]; skippedForPayment?: number[] }>(
+        `/conferences/${conferenceId}/delegates/bulk-status`,
+        { delegateIds: ids, status }
+      );
+      const skipped = res.skippedForPayment?.length ?? 0;
+      const updated = ids.length - skipped;
+      if (updated > 0) toast.success(`${updated} delegate${updated > 1 ? "s" : ""} marked ${status}`);
+      if (skipped > 0) {
+        toast.warning(`${skipped} delegate${skipped > 1 ? "s" : ""} not approved — payment not yet verified`);
+      }
       await load();
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Could not update status";

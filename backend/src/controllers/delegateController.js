@@ -1,5 +1,4 @@
 const asyncHandler = require("../utils/asyncHandler");
-const delegateModel = require("../models/delegateModel");
 const delegateService = require("../services/delegateService");
 const resourceModel = require("../models/resourceModel");
 const assignmentModel = require("../models/assignmentModel");
@@ -13,13 +12,15 @@ const listForConference = asyncHandler(async (req, res) => {
 });
 
 const updateStatus = asyncHandler(async (req, res) => {
-    const delegate = await delegateModel.updateStatus(req.delegateRecord.id, req.body.status);
+    const delegate = await delegateService.updateStatus(req.delegateRecord.id, req.body.status, req.conference);
     res.status(200).json({ success: true, delegate });
 });
 
 const bulkUpdateStatus = asyncHandler(async (req, res) => {
-    const delegates = await delegateModel.bulkUpdateStatus(req.body.delegateIds || [], req.body.status);
-    res.status(200).json({ success: true, delegates });
+    const { delegates, skippedForPayment } = await delegateService.bulkUpdateStatus(
+        req.body.delegateIds || [], req.body.status, req.conference
+    );
+    res.status(200).json({ success: true, delegates, skippedForPayment });
 });
 
 const registrationAnalytics = asyncHandler(async (req, res) => {

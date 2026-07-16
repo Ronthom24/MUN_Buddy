@@ -250,6 +250,103 @@ export interface RegistrationAnalytics {
   registrationsByDay: { day: string; count: number }[];
 }
 
+export type PaymentMethod = "cash" | "bank_transfer" | "upi" | "cheque" | "other";
+export type PaymentStatus = "submitted" | "under_verification" | "verified" | "failed" | "refunded" | "cancelled";
+export type DerivedPaymentStatus = PaymentStatus | "pending" | "not_required";
+
+export interface FeeCategory {
+  id: number;
+  conference_id: number;
+  name: string;
+  amount: string;
+  currency: string;
+  description: string | null;
+  is_required: 0 | 1;
+  status: "active" | "archived";
+}
+
+export interface PaymentConfig {
+  paymentRequired: boolean;
+  currency: string;
+  feeCategories: FeeCategory[];
+}
+
+export interface Payment {
+  id: number;
+  conference_id: number;
+  delegate_id: number;
+  delegate_name: string;
+  delegate_email?: string;
+  fee_category_id: number | null;
+  fee_category_name: string | null;
+  amount: string;
+  currency: string;
+  method: PaymentMethod;
+  transaction_reference: string | null;
+  status: PaymentStatus;
+  payment_date: string | null;
+  notes: string | null;
+  recorded_by: "delegate" | "organizer";
+  verified_at: string | null;
+  created_at: string;
+}
+
+export interface Refund {
+  id: number;
+  payment_id: number;
+  delegate_id: number;
+  delegate_name: string;
+  amount: string;
+  reason: string;
+  notes: string | null;
+  refund_date: string;
+  created_at: string;
+}
+
+export interface Discount {
+  id: number;
+  delegate_id: number;
+  delegate_name: string;
+  fee_category_id: number | null;
+  fee_category_name: string | null;
+  type: string;
+  amount: string;
+  reason: string;
+  created_at: string;
+}
+
+export interface PaymentDashboard {
+  totalRevenue: number;
+  expectedRevenue: number;
+  collectedRevenue: number;
+  outstandingPayments: number;
+  pendingVerification: number;
+  pendingVerificationCount: number;
+  refundedAmount: number;
+  refundedCount: number;
+  paymentSuccessRate: number;
+  recentTransactions: Payment[];
+  dailyRevenue: { day: string; total: number }[];
+}
+
+export interface PaymentAnalytics {
+  paymentMethodDistribution: { method: PaymentMethod; count: number; total: number }[];
+  revenueByFeeType: { feeCategoryId: number; feeCategoryName: string; total: number }[];
+  revenueByDate: { day: string; total: number }[];
+  refundTrends: { day: string; total: number }[];
+  collectionRate: number;
+  outstandingBalance: number;
+}
+
+export interface DelegatePaymentSummary {
+  paymentRequired: boolean;
+  currency: string;
+  feeCategories: FeeCategory[];
+  payments: Payment[];
+  discounts: Discount[];
+  status: DerivedPaymentStatus;
+}
+
 export interface AssignmentAnalytics {
   totalApproved: number;
   assignedCount: number;

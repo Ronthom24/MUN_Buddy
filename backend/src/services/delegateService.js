@@ -3,6 +3,7 @@ const ApiError = require("../utils/ApiError");
 const delegateModel = require("../models/delegateModel");
 const assignmentModel = require("../models/assignmentModel");
 const conferenceModel = require("../models/conferenceModel");
+const paymentModel = require("../models/paymentModel");
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 
@@ -32,6 +33,38 @@ async function listForConference(conferenceId, filters) {
     ]);
 
     return delegates.map((delegate) => ({ ...delegate, possibleDuplicate: duplicateIds.has(delegate.id) }));
+}
+
+/**
+ * Spec 18.16 business rule: "Delegates may not be approved until payment
+ * verification if payment is mandatory." Only the transition to 'approved'
+ * is gated -- reject/waitlist/withdraw always proceed regardless of payment.
+ */
+async function updateStatus(delegateId, status, conference) {
+    if (status === "approved" && conference.payment_required) {
+        const verified = await paymentModel.hasVerifiedPayment(delegateId);
+        if (!verified) {
+            throw new ApiError(400, "This delegate's payment must be verified before they can be approved");
+        }
+    }
+    return delegateModel.updateStatus(delegateId, status);
+}
+
+async function bulkUpdateStatus(delegateIds, status, conference) {
+    if (status !== "approved" || !conference.payment_required) {
+        return { delegates: await delegateModel.bulkUpdateStatus(delegateIds, status), skippedForPayment: [] };
+    }
+
+    const eligibleIds = [];
+    const skippedForPayment = [];
+    for (const id of delegateIds) {
+        const verified = await paymentModel.hasVerifiedPayment(id);
+        if (verified) eligibleIds.push(id);
+        else skippedForPayment.push(id);
+    }
+
+    const delegates = await delegateModel.bulkUpdateStatus(eligibleIds, status);
+    return { delegates, skippedForPayment };
 }
 
 async function reapply(delegateId) {
@@ -119,5 +152,6 @@ async function getOwnProfile(delegateId) {
 }
 
 module.exports = {
-    getOwnProfile, listForConference, reapply, getRegistrationAnalytics, updateOwnProfile, changeOwnPassword
+    getOwnProfile, listForConference, updateStatus, bulkUpdateStatus, reapply, getRegistrationAnalytics,
+    updateOwnProfile, changeOwnPassword
 };

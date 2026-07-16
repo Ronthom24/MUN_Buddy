@@ -14,6 +14,7 @@ import {
   LogOut,
   NotebookPen,
   User,
+  Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { href: "/delegate", label: "Overview", icon: Landmark, exact: true },
   { href: "/delegate/committee", label: "My Committee", icon: Gavel },
   { href: "/delegate/schedule", label: "Schedule", icon: CalendarClock },
+  { href: "/delegate/payment", label: "Payment", icon: Wallet },
   { href: "/delegate/resources", label: "Resources", icon: BookOpen },
   { href: "/delegate/announcements", label: "Announcements", icon: Bell },
   { href: "/delegate/notes", label: "Notes", icon: NotebookPen },

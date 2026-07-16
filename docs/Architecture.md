@@ -13,9 +13,8 @@ that spec's Version 1 (§25.4) against the real codebase.
 
 ## Getting started / session handoff
 
-**Where things stand right now**: Phases 0–4 of the Version 1 build (see roadmap below) are done
-and verified. Phase 5 (Results & Certificates + Attendance/QR) is next and hasn't been started.
-Phase 4's work is verified but **not yet committed** — see Git status below.
+**Where things stand right now**: Phases 0–5 of the Version 1 build (see roadmap below) are done,
+verified, and committed. Phase 6 (Communication Center) is next and hasn't been started.
 
 ### Running the app
 
@@ -46,8 +45,8 @@ port 3000 via `preview_start` — use that if driving the app through the Browse
 | Role | Email | Password | Notes |
 |---|---|---|---|
 | Organizer | `dana.testdirector@example.com` | `password123` | Owns "Dana Test MUN 2027" (conference id 7, org id 5). Has a DISEC committee (id 8) with Brazil/Germany portfolios, a schedule day with 2 events, 1 published announcement, 1 published resource. `payment_required` is now **on**, with a required "Registration Fee" (INR 50) and optional "Accommodation Fee" (INR 25) — good conference for demoing the Payments tab and the approve-requires-payment gate. |
-| Delegate | `henry.delegate@example.com` | `password123` | Approved, assigned to DISEC/Brazil, assignment published. Has a note, a draft position paper, and a submitted resolution — good account for walking the full Delegate Workspace. Payment-wise: submitted a UPI payment that was verified, given a scholarship discount, then refunded (all three states exercised on one delegate) — good account for the Payment page's history view. |
-| Delegate | `ivy.delegate@example.com` | `password123` | Approved but unassigned — good for testing the assignment flow / unassigned states. |
+| Delegate | `henry.delegate@example.com` | `password123` | Approved, assigned to DISEC/Brazil, assignment published. Has a note, a draft position paper, and a submitted resolution — good account for walking the full Delegate Workspace. Payment-wise: submitted a UPI payment that was verified, given a scholarship discount, then refunded (all three states exercised on one delegate) — good account for the Payment page's history view. Also has a "Best Delegate" award, two issued certificates (one participation, one award-linked), and is checked into both schedule events (one via manual check-in, DISEC Session I) — good account for Results/Certificates/attendance history. Conference results are published. |
+| Delegate | `ivy.delegate@example.com` | `password123` | Approved but unassigned — good for testing the assignment flow / unassigned states. Checked into the Opening Ceremony via QR token (not manual click) — good account for confirming `method: 'qr_token'` on an attendance record. |
 | Organizer | `alice.orgowner@example.com` | `password123` | Owns a separate organization (id 3) with 2 conferences (ids 4, 6) and an invited admin member (`carol.eb@example.com`) — used to verify multi-conference-per-org and multi-tenant isolation. |
 | Organizer | `bob.otherowner@example.com` | `password123` | Owns another separate organization (id 4) with 1 conference (id 5) — the isolation counterpart to Alice's org. |
 
@@ -64,13 +63,29 @@ affect a real, foregrounded browser tab, but is worth a quick manual click-check
 looks at it, particularly the `Select` components (organization switcher, committee/portfolio
 pickers, conference role dropdowns).
 
+A second, distinct tooling quirk showed up during Phase 5: partway through a long session in the
+same preview tab, synthetic `left_click` (coordinate- and ref-based both) stopped reaching real page
+elements, even though `getBoundingClientRect`/`elementFromPoint` confirmed the target was exactly
+where clicked. Dispatching a real `.click()` on the element via `javascript_tool` worked every time
+and confirmed the underlying app logic (form submission, button handlers) was correct — this is a
+synthetic-input-dispatch issue in the preview tooling itself, not the app. If this recurs, the
+workaround is `document.querySelector(...).click()` via the JS console rather than the click tool.
+
 ### Git status
 
-Phases 0–4 are committed to `main` (12 commits, from the initial checkpoint through "docs: mark
-Phase 4 complete") and pushed to `origin/main`. Note that `app.py`'s leaked MySQL credential was
-purged via `git filter-branch` + a force-push earlier in this project (see Security notes below) —
-if this repo has been cloned anywhere else, those clones still have the old history and should be
-re-cloned or manually rebased.
+Phases 0–5 are committed to `main` (14 commits, from the initial checkpoint through "feat: Results &
+Certificates + Attendance/QR (Phase 5)"). Note that `app.py`'s leaked MySQL credential was purged via
+`git filter-branch` + a force-push earlier in this project (see Security notes below) — if this repo
+has been cloned anywhere else, those clones still have the old history and should be re-cloned or
+manually rebased.
+
+### Also worth a follow-up
+
+The pre-existing `Select` label bug described above (raw value shown instead of label on the closed
+trigger) affects every `Select` usage that predates this session — Registrations' status filter,
+Committees, Schedule, organizer-access role pickers, etc. Only the `Select`s touched in Phases 4-5
+were fixed (Payments, Results, Attendance). Worth a dedicated pass to add `items` maps everywhere
+else, since it's a real, visible text-correctness bug across a good chunk of the app.
 
 ### Full plan file
 
@@ -158,8 +173,51 @@ Key pieces:
    direct API checks for the parts the sandboxed preview couldn't click-drive. Confirmed, again, that
    this preview tab's rAF throttling (documented below) affects this page's Select/Dialog components
    the same way it did in Phases 2–3 — not a regression, not expected in a real browser tab.
-5. Results & Certificates + Attendance/QR. *(next up)*
-6. Communication Center (announcements, resources, FAQs, notifications, email broadcasts).
+5. **Done.** Results & Certificates + Attendance/QR. Spec Ch.19 (Results, Awards & Certificate
+   Center) plus 25.4's V1 Attendance bullets (there's no dedicated Attendance chapter — earlier
+   chapters list "Attendance" only as a Future Enhancement, but 25.4's V1 checklist is what counts).
+   New tables: `awards`, `certificate_templates` (organization-scoped, reusable across that org's
+   conferences per spec 19.8), `certificates` (PDF generated on demand from the row + template,
+   never stored as a file — `certificate_number` doubles as the public verification id), `checkin_tokens`,
+   `attendance_records`. New npm deps `pdfkit` (certificate PDF layout) and `qrcode` (check-in QR
+   images) — genuinely new capability, not scope creep. New `manage_attendance` permission (owner/
+   conference_manager/organizer; no committee_director grant since attendance routes are
+   conference-scoped like schedule management, not committee-scoped, so that role could never reach
+   them). Scoping decisions: certificates are delegate-facing only in V1 (spec 19.7 also lists
+   organizer/EB/volunteer/sponsor types, which would need unifying delegate and organizer_access
+   identity — out of scope); QR check-in is a persistent per-delegate token rendered as a QR image,
+   redeemed either by clicking a name in the roster (manual) or by scanning/typing the token (what a
+   real handheld QR/barcode scanner emits is keyboard input into a text field) — no camera-based
+   scanning UI, since that needs hardware this environment can't verify. Organizer UI: new Results
+   tab (Awards/Certificate templates/Issued certificates, with bulk certificate issuance) and new
+   Attendance tab (per-session roster + check-in) on the conference nav. Delegate UI: new Results and
+   Certificates pages, plus a "My check-in code" card added to Profile. New public, unauthenticated
+   `/verify/[certificateNumber]` page (spec 19.12/25.4's "Certificate Verification Foundation").
+   Verified end-to-end in a real browser session: organizer created a certificate template and
+   issued certificates individually and in bulk through the actual dialogs, checked delegates into
+   sessions both by clicking their name and by pasting a real QR token, watched attendance rates
+   recompute live; delegate viewed their own award, downloaded their certificate PDF, and saw their
+   QR code render; the public verify page correctly confirmed a real certificate and rejected a bogus
+   number. Three real bugs found via this testing and fixed, not just the usual preview-tab quirks:
+   (1) the certificate number format was long enough to wrap in the PDF footer and collide with the
+   line below it — shortened the format and made the layout measure text height dynamically instead
+   of using a fixed line gap; (2) `components/ui/dialog.tsx`'s `DialogContent` had no `max-h`/
+   `overflow-y-auto`, so a tall form's submit button was completely unreachable on a short viewport —
+   fixed with `max-h-[85vh] overflow-y-auto` on the shared component, which benefits every dialog in
+   the app; (3) `Select` (`components/ui/select.tsx`, wrapping Base UI) needs an `items` value→label
+   map passed to `Select.Root` or its closed trigger displays the raw value instead of the label —
+   confirmed this is pre-existing and affects already-shipped Selects too (e.g. the Registrations
+   page's status filter shows `approved` not `Approved` after selection); fixed it in every `Select`
+   touched this session (Payments and Results/Attendance pages) by passing a memoized `items` map,
+   but the pre-existing ones elsewhere (Registrations, Committees, Schedule, organizer-access role
+   pickers, etc.) are still broken and worth a dedicated follow-up pass. Also hit a new tooling quirk
+   distinct from the documented rAF one: this preview tab's synthetic `left_click` (both coordinate-
+   and ref-based) stopped reaching real elements partway through the session — confirmed via
+   `getBoundingClientRect`/`elementFromPoint` that the target element was exactly where clicked, and
+   confirmed the underlying app logic was correct by dispatching a real `.click()` via
+   `javascript_tool` instead, which worked every time. Not an app bug; worth a quick manual
+   click-check like the other documented quirks.
+6. Communication Center (announcements, resources, FAQs, notifications, email broadcasts). *(next up)*
 7. Team Center + Public Website / Public Conference Pages.
 8. Analytics & Intelligence Center + Security hardening (audit logs, soft deletes, rate
    limiting, session management, file validation, exports) — final pass.

@@ -30,13 +30,13 @@ async function create(data, db = pool) {
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM conferences WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM conferences WHERE id = ? AND deleted_at IS NULL`, [id]);
     return rows[0] || null;
 }
 
 async function listByOrganizer(organizerId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM conferences WHERE organizer_id = ? ORDER BY created_at DESC`,
+        `SELECT * FROM conferences WHERE organizer_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`,
         [organizerId]
     );
     return rows;
@@ -47,7 +47,7 @@ async function listByAccessEmail(email, db = pool) {
         `SELECT c.*, oa.role AS access_role, oa.committee_id AS access_committee_id, FALSE AS via_organization
          FROM organizer_access oa
          INNER JOIN conferences c ON c.id = oa.conference_id
-         WHERE oa.email = ?
+         WHERE oa.email = ? AND c.deleted_at IS NULL
 
          UNION
 
@@ -55,6 +55,7 @@ async function listByAccessEmail(email, db = pool) {
          FROM organization_members om
          INNER JOIN conferences c ON c.organization_id = om.organization_id
          WHERE om.email = ? AND om.status = 'active' AND om.org_role IN ('owner', 'admin')
+           AND c.deleted_at IS NULL
            AND c.id NOT IN (SELECT conference_id FROM organizer_access WHERE email = ?)
 
          ORDER BY created_at DESC`,
@@ -65,14 +66,27 @@ async function listByAccessEmail(email, db = pool) {
 
 async function listByOrganization(organizationId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM conferences WHERE organization_id = ? ORDER BY created_at DESC`,
+        `SELECT * FROM conferences WHERE organization_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`,
         [organizationId]
     );
     return rows;
 }
 
 async function remove(id, db = pool) {
-    await db.execute(`DELETE FROM conferences WHERE id = ?`, [id]);
+    await db.execute(`UPDATE conferences SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+}
+
+async function restore(id, db = pool) {
+    await db.execute(`UPDATE conferences SET deleted_at = NULL WHERE id = ?`, [id]);
+    return findById(id, db);
+}
+
+async function listTrashedByOrganization(organizationId, db = pool) {
+    const [rows] = await db.query(
+        `SELECT * FROM conferences WHERE organization_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
+        [organizationId]
+    );
+    return rows;
 }
 
 async function listOpenForRegistration(db = pool) {
@@ -215,7 +229,7 @@ async function getAnalytics(conferenceId, db = pool) {
 }
 
 async function listPublic({ search, country } = {}, db = pool) {
-    const clauses = ["c.status = 'published'", "c.is_publicly_listed = TRUE", "o.is_publicly_listed = TRUE"];
+    const clauses = ["c.status = 'published'", "c.deleted_at IS NULL", "c.is_publicly_listed = TRUE", "o.is_publicly_listed = TRUE"];
     const params = [];
 
     if (search) {
@@ -245,7 +259,8 @@ async function findPublicBySlug(slug, db = pool) {
         `SELECT c.*, o.name AS organization_name, o.slug AS organization_slug, o.logo_path AS organization_logo_path
          FROM conferences c
          INNER JOIN organizations o ON o.id = c.organization_id
-         WHERE c.slug = ? AND c.status = 'published' AND c.is_publicly_listed = TRUE AND o.is_publicly_listed = TRUE`,
+         WHERE c.slug = ? AND c.status = 'published' AND c.deleted_at IS NULL
+           AND c.is_publicly_listed = TRUE AND o.is_publicly_listed = TRUE`,
         [slug]
     );
     return rows[0] || null;
@@ -253,5 +268,6 @@ async function findPublicBySlug(slug, db = pool) {
 
 module.exports = {
     create, findById, listByOrganizer, listByAccessEmail, listByOrganization, listOpenForRegistration, update, remove,
-    updatePaymentConfig, publishResults, getStats, getAnalytics, listPublic, findPublicBySlug
+    updatePaymentConfig, publishResults, getStats, getAnalytics, listPublic, findPublicBySlug,
+    restore, listTrashedByOrganization
 };

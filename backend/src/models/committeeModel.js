@@ -10,13 +10,13 @@ async function create({ conferenceId, name, chair, viceChair, capacity, type, st
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM committees WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM committees WHERE id = ? AND deleted_at IS NULL`, [id]);
     return rows[0] || null;
 }
 
 async function listByConference(conferenceId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM committees WHERE conference_id = ? ORDER BY name ASC`,
+        `SELECT * FROM committees WHERE conference_id = ? AND deleted_at IS NULL ORDER BY name ASC`,
         [conferenceId]
     );
     return rows;
@@ -46,7 +46,20 @@ async function update(id, data, db = pool) {
 }
 
 async function remove(id, db = pool) {
-    await db.execute(`DELETE FROM committees WHERE id = ?`, [id]);
+    await db.execute(`UPDATE committees SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+}
+
+async function restore(id, db = pool) {
+    await db.execute(`UPDATE committees SET deleted_at = NULL WHERE id = ?`, [id]);
+    return findById(id, db);
+}
+
+async function listTrashed(conferenceId, db = pool) {
+    const [rows] = await db.query(
+        `SELECT * FROM committees WHERE conference_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
+        [conferenceId]
+    );
+    return rows;
 }
 
 async function getStats(committeeId, db = pool) {
@@ -72,4 +85,4 @@ async function getStats(committeeId, db = pool) {
     };
 }
 
-module.exports = { create, findById, listByConference, update, remove, getStats };
+module.exports = { create, findById, listByConference, update, remove, getStats, restore, listTrashed };

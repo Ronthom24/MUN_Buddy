@@ -10,13 +10,13 @@ async function create({ committeeId, name, type, description, status }, db = poo
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM portfolios WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM portfolios WHERE id = ? AND deleted_at IS NULL`, [id]);
     return rows[0] || null;
 }
 
 async function listByCommittee(committeeId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM portfolios WHERE committee_id = ? ORDER BY name ASC`,
+        `SELECT * FROM portfolios WHERE committee_id = ? AND deleted_at IS NULL ORDER BY name ASC`,
         [committeeId]
     );
     return rows;
@@ -43,7 +43,23 @@ async function update(id, data, db = pool) {
 }
 
 async function remove(id, db = pool) {
-    await db.execute(`DELETE FROM portfolios WHERE id = ?`, [id]);
+    await db.execute(`UPDATE portfolios SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
 }
 
-module.exports = { create, findById, listByCommittee, update, remove };
+async function restore(id, db = pool) {
+    await db.execute(`UPDATE portfolios SET deleted_at = NULL WHERE id = ?`, [id]);
+    return findById(id, db);
+}
+
+async function listTrashedByConference(conferenceId, db = pool) {
+    const [rows] = await db.query(
+        `SELECT p.*, c.name AS committee_name FROM portfolios p
+         INNER JOIN committees c ON c.id = p.committee_id
+         WHERE c.conference_id = ? AND p.deleted_at IS NOT NULL
+         ORDER BY p.deleted_at DESC`,
+        [conferenceId]
+    );
+    return rows;
+}
+
+module.exports = { create, findById, listByCommittee, update, remove, restore, listTrashedByConference };

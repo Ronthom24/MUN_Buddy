@@ -18,6 +18,10 @@ const faqController = require("../controllers/faqController");
 const broadcastController = require("../controllers/broadcastController");
 const departmentController = require("../controllers/departmentController");
 const teamController = require("../controllers/teamController");
+const trashController = require("../controllers/trashController");
+const auditLogController = require("../controllers/auditLogController");
+const analyticsController = require("../controllers/analyticsController");
+const reportController = require("../controllers/reportController");
 const { authenticate, requireRole, requireConferenceAccess, requirePermission } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const entityValidation = require("../validations/entityValidation");
@@ -332,6 +336,30 @@ router.get(
 router.get(
     "/:id/team/activity", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
     teamController.activity
+);
+
+// ---- Security & Audit (Phase 8) ----
+router.get(
+    "/:id/audit-log", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_team"),
+    auditLogController.list
+);
+router.get(
+    "/:id/trash", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_team"),
+    trashController.list
+);
+router.post(
+    "/:id/trash/:type/:itemId/restore", ...asOrganizer, requireConferenceAccess(...MANAGE_STRUCTURE), requirePermission("manage_team"),
+    trashController.restore
+);
+
+// ---- Analytics & Intelligence Center (Phase 8) ----
+router.get(
+    "/:id/analytics/overview", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("view_analytics"),
+    analyticsController.overview
+);
+router.get(
+    "/:id/reports/:type/export", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("export_reports"),
+    reportController.exportReport
 );
 
 module.exports = router;

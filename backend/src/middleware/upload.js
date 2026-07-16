@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
+const ApiError = require("../utils/ApiError");
 
 const uploadDir = path.join(__dirname, "..", "uploads");
 
@@ -16,9 +17,27 @@ const storage = multer.diskStorage({
     }
 });
 
+// Spec 22.15 (File Security): reject dangerous/executable extensions and
+// only accept the document/media types resources are actually meant to
+// carry. Extension is checked (not just MIME type) since a browser-supplied
+// Content-Type is trivially spoofable.
+const ALLOWED_EXTENSIONS = new Set([
+    ".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".txt", ".csv",
+    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".zip"
+]);
+
+function fileFilter(req, file, cb) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+        return cb(new ApiError(400, `File type "${ext || "unknown"}" is not allowed`));
+    }
+    cb(null, true);
+}
+
 const upload = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 }
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter
 });
 
 module.exports = upload;

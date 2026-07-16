@@ -3,6 +3,7 @@ const ApiError = require("../utils/ApiError");
 const resourceModel = require("../models/resourceModel");
 const organizerAccessModel = require("../models/organizerAccessModel");
 const assignmentModel = require("../models/assignmentModel");
+const auditLogService = require("../services/auditLogService");
 
 const listForConference = asyncHandler(async (req, res) => {
     const { search, category, tag } = req.query;
@@ -25,11 +26,20 @@ const create = asyncHandler(async (req, res) => {
         status: req.body.status
     });
     const resource = await resourceModel.findById(resourceId);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "resource.create",
+        resourceType: "resource", resourceId: resource.id, newValue: resource
+    });
     res.status(201).json({ success: true, resource });
 });
 
 const update = asyncHandler(async (req, res) => {
+    const previous = req.resource;
     const resource = await resourceModel.update(req.resource.id, req.body);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "resource.update",
+        resourceType: "resource", resourceId: resource.id, previousValue: previous, newValue: resource
+    });
     res.status(200).json({ success: true, resource });
 });
 
@@ -47,6 +57,10 @@ const listVersions = asyncHandler(async (req, res) => {
 
 const remove = asyncHandler(async (req, res) => {
     await resourceModel.remove(req.resource.id);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "resource.remove",
+        resourceType: "resource", resourceId: req.resource.id, previousValue: req.resource
+    });
     res.status(204).send();
 });
 

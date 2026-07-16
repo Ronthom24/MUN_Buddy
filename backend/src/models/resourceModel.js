@@ -24,12 +24,12 @@ async function create(
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM resources WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM resources WHERE id = ? AND deleted_at IS NULL`, [id]);
     return rows[0] || null;
 }
 
 async function listByConference(conferenceId, { search, category, tag } = {}, db = pool) {
-    const clauses = ["r.conference_id = ?"];
+    const clauses = ["r.conference_id = ?", "r.deleted_at IS NULL"];
     const params = [conferenceId];
 
     if (search) {
@@ -102,7 +102,20 @@ async function listVersions(resourceId, db = pool) {
 }
 
 async function remove(id, db = pool) {
-    await db.execute(`DELETE FROM resources WHERE id = ?`, [id]);
+    await db.execute(`UPDATE resources SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+}
+
+async function restore(id, db = pool) {
+    await db.execute(`UPDATE resources SET deleted_at = NULL WHERE id = ?`, [id]);
+    return findById(id, db);
+}
+
+async function listTrashed(conferenceId, db = pool) {
+    const [rows] = await db.query(
+        `SELECT * FROM resources WHERE conference_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
+        [conferenceId]
+    );
+    return rows;
 }
 
 async function incrementDownloadCount(id, db = pool) {
@@ -113,7 +126,7 @@ async function listVisibleToDelegate(conferenceId, { isAssignedAndPublished, com
     const visibleValues = isAssignedAndPublished ? ["all", "assigned"] : ["all"];
     const [rows] = await db.query(
         `SELECT * FROM resources
-         WHERE conference_id = ? AND status = 'published' AND visibility IN (?)
+         WHERE conference_id = ? AND status = 'published' AND deleted_at IS NULL AND visibility IN (?)
            AND (committee_id IS NULL OR committee_id = ?)
            AND (portfolio_id IS NULL OR portfolio_id = ?)
          ORDER BY created_at DESC`,
@@ -124,5 +137,5 @@ async function listVisibleToDelegate(conferenceId, { isAssignedAndPublished, com
 
 module.exports = {
     create, findById, listByConference, update, remove, incrementDownloadCount, listVisibleToDelegate,
-    addVersion, listVersions
+    addVersion, listVersions, restore, listTrashed
 };

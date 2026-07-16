@@ -6,6 +6,7 @@ const certificateService = require("../services/certificateService");
 const conferenceModel = require("../models/conferenceModel");
 const { resolveConferenceAccess } = require("../middleware/auth");
 const notificationService = require("../services/notificationService");
+const auditLogService = require("../services/auditLogService");
 
 const listTemplates = asyncHandler(async (req, res) => {
     const templates = await certificateTemplateModel.listByOrganization(req.organization.id, { includeArchived: true });
@@ -58,6 +59,10 @@ const issueCertificate = asyncHandler(async (req, res) => {
     const delegateId = Number(req.params.delegateId);
     const certificate = await certificateService.issueCertificate(req.conference.id, delegateId, req.body, req.access.id);
     await notifyCertificateReady(req.conference.id, delegateId);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "certificate.issue",
+        resourceType: "certificate", resourceId: certificate.id, newValue: certificate
+    });
     res.status(201).json({ success: true, certificate });
 });
 
@@ -65,6 +70,12 @@ const bulkIssue = asyncHandler(async (req, res) => {
     const { delegateIds, templateId, certificateType } = req.body;
     const result = await certificateService.bulkIssue(req.conference.id, delegateIds, { templateId, certificateType }, req.access.id);
     await Promise.all((result.issued || []).map((c) => notifyCertificateReady(req.conference.id, c.delegate_id)));
+    if ((result.issued || []).length > 0) {
+        await auditLogService.log({
+            conferenceId: req.conference.id, user: req.user, action: "certificate.bulk_issue",
+            resourceType: "certificate", newValue: { count: result.issued.length, certificateIds: result.issued.map((c) => c.id) }
+        });
+    }
     res.status(201).json({ success: true, ...result });
 });
 

@@ -628,3 +628,111 @@ export interface CertificateVerification {
   certificateType?: CertificateType;
   issuedAt?: string;
 }
+
+// ---- Phase 8: Analytics & Intelligence Center + Security hardening ----
+
+export interface CommitteeAnalyticsRow {
+  committeeId: number;
+  committeeName: string;
+  capacity: number | null;
+  type: string;
+  status: string;
+  assignedCount: number;
+  remainingCapacity: number | null;
+  capacityUtilization: number | null;
+  preferenceCount: number;
+}
+
+export interface ResourceAnalytics {
+  totalResources: number;
+  totalDownloads: number;
+  unusedCount: number;
+  mostDownloaded: { id: number; title: string; downloadCount: number }[];
+  recentlyUploaded: { id: number; title: string; createdAt: string }[];
+}
+
+export interface CommunicationAnalytics {
+  announcementsPublished: number;
+  announcementAvgReadRate: number;
+  totalFaqs: number;
+  pendingFaqs: number;
+  faqAvgResolutionHours: number | null;
+  notificationsSent: number;
+  notificationsRead: number;
+  broadcastsSent: number;
+  broadcastDeliveryRate: number;
+}
+
+export interface AnalyticsOverview {
+  registration: RegistrationAnalytics;
+  committees: CommitteeAnalyticsRow[];
+  assignment: AssignmentAnalytics;
+  financial: PaymentAnalytics | null;
+  attendance: AttendanceAnalytics;
+  resources: ResourceAnalytics;
+  communication: CommunicationAnalytics;
+}
+
+export type ReportType = "registrations" | "committees" | "assignments" | "financial" | "attendance" | "certificates";
+export type ExportFormat = "pdf" | "excel" | "csv";
+
+export interface AuditLogEntry {
+  id: number;
+  conference_id: number | null;
+  actor_type: "organizer" | "delegate" | "system";
+  actor_email: string | null;
+  actor_name: string | null;
+  action: string;
+  resource_type: string;
+  resource_id: number | null;
+  previous_value: Record<string, unknown> | null;
+  new_value: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface LoginHistoryEntry {
+  id: number;
+  user_type: "organizer" | "delegate";
+  user_id: number | null;
+  email: string;
+  success: 0 | 1;
+  ip_address: string | null;
+  user_agent: string | null;
+  created_at: string;
+}
+
+export interface TrashedCommittee {
+  id: number;
+  name: string;
+  type: string;
+  status: string;
+  deleted_at: string;
+}
+
+export interface TrashedPortfolio {
+  id: number;
+  name: string;
+  committee_name: string;
+  deleted_at: string;
+}
+
+export interface TrashedResource {
+  id: number;
+  title: string;
+  category: string;
+  deleted_at: string;
+}
+
+export interface TrashedAnnouncement {
+  id: number;
+  title: string;
+  status: string;
+  deleted_at: string;
+}
+
+export interface TrashBin {
+  committees: TrashedCommittee[];
+  portfolios: TrashedPortfolio[];
+  resources: TrashedResource[];
+  announcements: TrashedAnnouncement[];
+}

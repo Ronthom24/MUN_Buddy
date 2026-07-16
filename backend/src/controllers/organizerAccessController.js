@@ -3,6 +3,7 @@ const ApiError = require("../utils/ApiError");
 const organizerAccessModel = require("../models/organizerAccessModel");
 const committeeModel = require("../models/committeeModel");
 const teamActivityService = require("../services/teamActivityService");
+const auditLogService = require("../services/auditLogService");
 
 const list = asyncHandler(async (req, res) => {
     const access = await organizerAccessModel.listByConference(req.conference.id);
@@ -46,6 +47,10 @@ const invite = asyncHandler(async (req, res) => {
 
     const access = await organizerAccessModel.findById(accessId);
     await teamActivityService.log(req.conference.id, req.user, `invited ${req.body.email} as ${req.body.role}`);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "organizer_access.invite",
+        resourceType: "organizer_access", resourceId: access.id, newValue: access
+    });
 
     res.status(201).json({ success: true, organizerAccess: access });
 });
@@ -65,6 +70,10 @@ const update = asyncHandler(async (req, res) => {
         departmentId: req.body.departmentId,
         positionTitle: req.body.positionTitle
     });
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "organizer_access.update",
+        resourceType: "organizer_access", resourceId: access.id, previousValue: access, newValue: updated
+    });
     res.status(200).json({ success: true, organizerAccess: updated });
 });
 
@@ -78,6 +87,10 @@ const remove = asyncHandler(async (req, res) => {
     }
 
     await organizerAccessModel.remove(access.id);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "organizer_access.remove",
+        resourceType: "organizer_access", resourceId: access.id, previousValue: access
+    });
     res.status(204).send();
 });
 

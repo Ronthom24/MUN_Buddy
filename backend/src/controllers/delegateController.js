@@ -6,6 +6,7 @@ const announcementModel = require("../models/announcementModel");
 const scheduleModel = require("../models/scheduleModel");
 const notificationService = require("../services/notificationService");
 const teamActivityService = require("../services/teamActivityService");
+const auditLogService = require("../services/auditLogService");
 
 const STATUS_MESSAGE = {
     approved: "Your registration has been approved",
@@ -34,9 +35,15 @@ const listForConference = asyncHandler(async (req, res) => {
 });
 
 const updateStatus = asyncHandler(async (req, res) => {
+    const previousStatus = req.delegateRecord.status;
     const delegate = await delegateService.updateStatus(req.delegateRecord.id, req.body.status, req.conference);
     await notifyStatusChange(delegate, req.conference.id);
     await teamActivityService.log(req.conference.id, req.user, `set ${delegate.full_name}'s status to ${delegate.status}`);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "registration.status_change",
+        resourceType: "delegate", resourceId: delegate.id,
+        previousValue: { status: previousStatus }, newValue: { status: delegate.status }
+    });
     res.status(200).json({ success: true, delegate });
 });
 
@@ -49,6 +56,10 @@ const bulkUpdateStatus = asyncHandler(async (req, res) => {
         await teamActivityService.log(
             req.conference.id, req.user, `set ${delegates.length} delegate(s) to ${req.body.status}`
         );
+        await auditLogService.log({
+            conferenceId: req.conference.id, user: req.user, action: "registration.bulk_status_change",
+            resourceType: "delegate", newValue: { status: req.body.status, delegateIds: delegates.map((d) => d.id) }
+        });
     }
     res.status(200).json({ success: true, delegates, skippedForPayment });
 });

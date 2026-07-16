@@ -1,5 +1,6 @@
 const asyncHandler = require("../utils/asyncHandler");
 const conferenceModel = require("../models/conferenceModel");
+const auditLogService = require("../services/auditLogService");
 
 const listOpen = asyncHandler(async (req, res) => {
     const conferences = await conferenceModel.listOpenForRegistration();
@@ -16,7 +17,12 @@ const getOne = asyncHandler(async (req, res) => {
 });
 
 const update = asyncHandler(async (req, res) => {
+    const previous = req.conference;
     const conference = await conferenceModel.update(req.conference.id, req.body);
+    await auditLogService.log({
+        conferenceId: conference.id, user: req.user, action: "conference.settings_update",
+        resourceType: "conference", resourceId: conference.id, previousValue: previous, newValue: conference
+    });
     res.status(200).json({ success: true, conference });
 });
 
@@ -32,6 +38,10 @@ const analytics = asyncHandler(async (req, res) => {
 
 const remove = asyncHandler(async (req, res) => {
     await conferenceModel.remove(req.conference.id);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "conference.remove",
+        resourceType: "conference", resourceId: req.conference.id, previousValue: req.conference
+    });
     res.status(204).send();
 });
 

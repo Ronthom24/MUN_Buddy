@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { Activity, Building2, Mail, Plus, UserCog, Users } from "lucide-react";
+import { Activity, ArrowUpFromLine, Building2, History, Mail, Plus, ShieldCheck, UserCog, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,13 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { api, ApiRequestError } from "@/lib/api";
-import type { Committee, Department, OrganizerAccessRow, TeamActivityEntry, TeamDashboard } from "@/lib/types";
+import type {
+  AuditLogEntry, Committee, Department, OrganizerAccessRow, TeamActivityEntry, TeamDashboard, TrashBin,
+} from "@/lib/types";
+
+const TRASH_ITEM_LABEL: Record<keyof TrashBin, string> = {
+  committees: "Committee", portfolios: "Portfolio", resources: "Resource", announcements: "Announcement",
+};
 
 const ROLES = [
   { value: "conference_manager", label: "Executive Board" },
@@ -39,6 +45,8 @@ export default function TeamPage() {
   const [members, setMembers] = useState<OrganizerAccessRow[]>([]);
   const [committees, setCommittees] = useState<Committee[]>([]);
   const [activity, setActivity] = useState<TeamActivityEntry[]>([]);
+  const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([]);
+  const [trash, setTrash] = useState<TrashBin | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -56,18 +64,22 @@ export default function TeamPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [dashboardRes, departmentsRes, membersRes, committeesRes, activityRes] = await Promise.all([
+      const [dashboardRes, departmentsRes, membersRes, committeesRes, activityRes, auditRes, trashRes] = await Promise.all([
         api.get<{ success: true; dashboard: TeamDashboard }>(`/conferences/${conferenceId}/team/dashboard`),
         api.get<{ success: true; departments: Department[] }>(`/conferences/${conferenceId}/departments`),
         api.get<{ success: true; organizerAccess: OrganizerAccessRow[] }>(`/conferences/${conferenceId}/organizer-access`),
         api.get<{ success: true; committees: Committee[] }>(`/conferences/${conferenceId}/committees`),
         api.get<{ success: true; activity: TeamActivityEntry[] }>(`/conferences/${conferenceId}/team/activity`),
+        api.get<{ success: true; logs: AuditLogEntry[] }>(`/conferences/${conferenceId}/audit-log`),
+        api.get<{ success: true; trash: TrashBin }>(`/conferences/${conferenceId}/trash`),
       ]);
       setDashboard(dashboardRes.dashboard);
       setDepartments(departmentsRes.departments);
       setMembers(membersRes.organizerAccess);
       setCommittees(committeesRes.committees);
       setActivity(activityRes.activity);
+      setAuditLog(auditRes.logs);
+      setTrash(trashRes.trash);
     } catch (err) {
       toast.error(err instanceof ApiRequestError ? err.message : "Failed to load team data");
     } finally {
@@ -146,6 +158,17 @@ export default function TeamPage() {
     }
   }
 
+  async function handleRestore(type: keyof TrashBin, itemId: number) {
+    const singular = type.slice(0, -1);
+    try {
+      await api.post(`/conferences/${conferenceId}/trash/${singular}/${itemId}/restore`);
+      toast.success(`${TRASH_ITEM_LABEL[type]} restored`);
+      await load();
+    } catch (err) {
+      toast.error(err instanceof ApiRequestError ? err.message : "Could not restore item");
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -165,6 +188,8 @@ export default function TeamPage() {
           <TabsTrigger value="members">Team Members</TabsTrigger>
           <TabsTrigger value="departments">Departments</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsTrigger value="audit">Audit Log</TabsTrigger>
+          <TabsTrigger value="trash">Trash</TabsTrigger>
         </TabsList>
 
         <TabsContent value="members" className="space-y-4 pt-4">
@@ -384,6 +409,89 @@ export default function TeamPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="audit" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Audit log</CardTitle>
+              <CardDescription>
+                Full compliance record of sensitive actions — who did what, and the values before and after. Immutable.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {auditLog.length === 0 ? (
+                <div className="flex flex-col items-center gap-2 py-12 text-center">
+                  <ShieldCheck className="h-8 w-8 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">No audited actions yet.</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Actor</TableHead>
+                      <TableHead>Action</TableHead>
+                      <TableHead>Resource</TableHead>
+                      <TableHead>When</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {auditLog.map((log) => (
+                      <TableRow key={log.id}>
+                        <TableCell className="text-sm">{log.actor_name || log.actor_email || "System"}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{log.action}</Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {log.resource_type}{log.resource_id ? ` #${log.resource_id}` : ""}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{new Date(log.created_at).toLocaleString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="trash" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="h-4 w-4" /> Trash
+              </CardTitle>
+              <CardDescription>Deleted committees, portfolios, resources, and announcements can be restored here.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {trash && Object.values(trash).every((list) => list.length === 0) ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">Nothing in the trash.</p>
+              ) : (
+                <div className="space-y-4">
+                  {(Object.keys(TRASH_ITEM_LABEL) as (keyof TrashBin)[]).map((type) =>
+                    trash && trash[type].length > 0 ? (
+                      <div key={type} className="space-y-2">
+                        <p className="text-xs font-medium uppercase text-muted-foreground">{TRASH_ITEM_LABEL[type]}s</p>
+                        {trash[type].map((item) => (
+                          <div key={item.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+                            <div>
+                              <p className="font-medium">{"name" in item ? item.name : item.title}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Deleted {new Date(item.deleted_at).toLocaleString()}
+                              </p>
+                            </div>
+                            <Button size="xs" variant="ghost" onClick={() => handleRestore(type, item.id)}>
+                              <ArrowUpFromLine className="mr-1 h-3.5 w-3.5" /> Restore
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null
+                  )}
                 </div>
               )}
             </CardContent>

@@ -13,10 +13,13 @@ that spec's Version 1 (§25.4) against the real codebase.
 
 ## Getting started / session handoff
 
-**Where things stand right now**: Phases 0–7 of the Version 1 build (see roadmap below) are done and
-verified end-to-end (backend + browser). Phase 6/7's work was uncommitted as of the end of this
-session — check `git status` first. Phase 8 (Analytics & Intelligence Center + Security hardening —
-audit logs, soft deletes, rate limiting, session management, file validation, exports) is next.
+**Where things stand right now**: All 9 phases of the Version 1 build (see roadmap below) are done
+and verified end-to-end (backend + browser) and committed to `main`. V1 is feature-complete per spec
+§25.4. Phase 8 (Analytics & Intelligence Center + Security hardening) was the final pass — see its
+entry below for what shipped. Nothing is queued next; the natural continuation from here is Version 2
+(spec §25.5, AI/Intelligence features) or the two known follow-ups noted below (the pre-existing
+`Select` label bug in a handful of not-yet-touched pages, and rotating the MySQL password per the
+Security notes).
 
 ### Running the app
 
@@ -78,12 +81,11 @@ workaround is `document.querySelector(...).click()` via the JS console rather th
 
 ### Git status
 
-Phases 0–5 are committed to `main` (14 commits, from the initial checkpoint through "feat: Results &
-Certificates + Attendance/QR (Phase 5)"). Phases 6–7's work (this session) is **uncommitted** as of
-handoff — verified end-to-end but not yet committed; ask the user before committing. Note that
-`app.py`'s leaked MySQL credential was purged via `git filter-branch` + a force-push earlier in this
-project (see Security notes below) — if this repo has been cloned anywhere else, those clones still
-have the old history and should be re-cloned or manually rebased.
+All phases (0–8) are committed to `main` and pushed to `origin/main`
+(github.com/Ronthom24/MUN_Buddy). Note that `app.py`'s leaked MySQL credential was purged via
+`git filter-branch` + a force-push earlier in this project (see Security notes below) — if this repo
+has been cloned anywhere else, those clones still have the old history and should be re-cloned or
+manually rebased.
 
 ### Also worth a follow-up
 
@@ -303,8 +305,58 @@ Key pieces:
    `conference_count`/`upcoming_conference_count` fields that only `listPublic`'s aggregate query
    computes — fixed by deriving both counts client-side from the conferences array the page already
    fetches, rather than duplicating the aggregate subqueries onto the single-row lookup.
-8. Analytics & Intelligence Center + Security hardening (audit logs, soft deletes, rate
-   limiting, session management, file validation, exports) — final pass.
+8. **Done.** Analytics & Intelligence Center + Security hardening — the final V1 pass. New
+   `audit_logs` table (immutable, `previous_value`/`new_value` JSON diffs, spec 22.16) distinct from
+   Phase 7's human-readable `team_activity` feed — both are written at the same call sites (a new
+   `auditLogService.log()` wired into committee/portfolio create-update-remove, registration
+   approval/bulk-approval, organizer-access invite/update/remove, payment verify/refund, conference
+   settings updates, announcement publish, certificate issue/bulk-issue, assignment, and trash
+   restores). New `login_history` table (spec 22.17) populated on every organizer/delegate login
+   attempt, success or failure — on failure the account is still looked up by email so repeated-
+   failure monitoring (spec 22.18) can attribute attempts to a real account, not just an anonymous
+   miss; a new `GET /api/auth/me/login-history` endpoint lets either role view their own history.
+   Session management itself deliberately stays short-lived-JWT-only (the Phase 1 "always-fresh
+   authorization" design) rather than adding a parallel session-store table — `login_history` is the
+   audit trail spec 22.17 actually asks for, not a session store, so this satisfies the spec bullet
+   without contradicting the existing architecture. Soft deletes rolled out to `conferences`,
+   `committees`, `portfolios`, `resources`, and `announcements` (organizations already had
+   `deleted_at` from Phase 1) — every model's `remove()` now sets `deleted_at` instead of deleting,
+   `findById`/list queries filter it out, and a new `restore()` + `listTrashed()` pair per model
+   backs a new Trash view. Deliberately excluded from soft-delete: certificates (immutable
+   verification records with no existing delete path — spec 19.17) and delegates (the existing
+   `status` enum, including `withdrawn`, already models "no longer active" without a second
+   mechanism). New `express-rate-limit` dependency: a general 600-req/15-min limiter on all `/api`
+   routes plus a stricter 20-req/15-min limiter on every auth route (login/register/claim/password-
+   reset), addressing spec 22.13. File upload hardening (spec 22.15): `middleware/upload.js` gained
+   an extension allowlist (`fileFilter`, checked against the actual filename extension rather than
+   the spoofable browser-supplied MIME type) rejecting anything outside common document/image/archive
+   types. New consolidated `analyticsService.js` (`GET /conferences/:id/analytics/overview`) filling
+   the two analytics domains that didn't already exist from earlier phases — committee
+   occupancy/capacity-utilization/popularity, and communication stats (announcement read rate,
+   resource downloads, FAQ resolution time, notification/broadcast delivery) — and folding them
+   together with the registration/assignment/financial/attendance analytics that already existed
+   per-module since Phases 2–5, so the frontend has one call instead of six. New report-export
+   pipeline (spec 17.12/17.13): a shared `utils/tableExport.js` (`toCsv`/`toExcel`/`toPdf`, the last
+   two via the already-present `pdfkit` and a new `exceljs` dependency) driven by a `reportService.js`
+   that reduces six report types (registrations/committees/assignments/financial/attendance/
+   certificates) to one common `{title, columns, rows}` shape, so the export/format code never has to
+   change per report type. Organizer UI: new Analytics tab on the conference nav (stat cards,
+   registration-trend and committee-occupancy charts, a report-type selector, and PDF/Excel/CSV export
+   buttons that trigger real file downloads via a new `downloadBlob()` helper, since the existing
+   `openBlob()` opens in a new tab rather than forcing a save — wrong behavior for an
+   `attachment`-disposition CSV/XLSX response). Team Center gained two new tabs: Audit Log (read-only
+   table of every audit entry) and Trash (per-type restore buttons, gated behind
+   `requirePermission("manage_team")` like the rest of Team Center). Verified end-to-end via both API
+   and a real browser session: created/deleted/restored a committee and confirmed all three actions
+   appear in the Audit Log with the right before/after values and the item correctly leaves/re-enters
+   the Trash list; triggered a failed login and confirmed it's recorded and attributed to the right
+   account; uploaded a disallowed file extension and confirmed a clean 400 rejection, then confirmed a
+   legitimate PDF upload still succeeds; loaded the Analytics tab and confirmed real registration/
+   committee/financial/communication numbers render, then exported and downloaded actual PDF, Excel,
+   and CSV files through the real UI buttons (not just direct API calls) and confirmed each file opens
+   correctly. No new bugs found this session beyond one cosmetic text-node spacing issue in the
+   Analytics page (a number and an adjacent Badge component rendered without a text-node gap between
+   them) fixed on sight.
 
 Each phase ends with a demoable, end-to-end increment (backend + wired UI), not a long dark
 period of backend-only work. See the session's plan file for full per-phase detail on schema,

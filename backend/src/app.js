@@ -6,11 +6,14 @@ const morgan = require("morgan");
 
 const indexRoutes = require("./routes");
 const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
+const { generalLimiter } = require("./middleware/rateLimit");
 
 const app = express();
 
 // Security
 app.use(helmet());
+app.set("trust proxy", 1);
+app.use("/api", generalLimiter);
 
 // Enable CORS
 app.use(cors());

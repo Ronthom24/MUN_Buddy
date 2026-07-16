@@ -3,6 +3,7 @@ const announcementModel = require("../models/announcementModel");
 const notificationService = require("../services/notificationService");
 const delegateModel = require("../models/delegateModel");
 const assignmentModel = require("../models/assignmentModel");
+const auditLogService = require("../services/auditLogService");
 
 const listForConference = asyncHandler(async (req, res) => {
     await announcementModel.publishDueAnnouncements(req.conference.id);
@@ -16,6 +17,10 @@ const create = asyncHandler(async (req, res) => {
 
     if (announcement.status === "published") {
         await notifyDelegates(announcement);
+        await auditLogService.log({
+            conferenceId: req.conference.id, user: req.user, action: "announcement.publish",
+            resourceType: "announcement", resourceId: announcement.id, newValue: announcement
+        });
     }
 
     res.status(201).json({ success: true, announcement });
@@ -27,6 +32,11 @@ const update = asyncHandler(async (req, res) => {
 
     if (!wasPublished && announcement.status === "published") {
         await notifyDelegates(announcement);
+        await auditLogService.log({
+            conferenceId: req.conference.id, user: req.user, action: "announcement.publish",
+            resourceType: "announcement", resourceId: announcement.id,
+            previousValue: req.announcement, newValue: announcement
+        });
     }
 
     res.status(200).json({ success: true, announcement });

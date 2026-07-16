@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import {
-  ArrowLeft, Award, CalendarClock, ClipboardList, Gavel, LayoutDashboard, Megaphone, QrCode, UserCog, Users2, Wallet,
+  ArrowLeft, Award, BarChart3, CalendarClock, ClipboardList, Gavel, LayoutDashboard, Megaphone, QrCode, UserCog, Users2, Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
@@ -23,6 +23,7 @@ const NAV_ITEMS = [
   { href: "results", label: "Results", icon: Award },
   { href: "communication", label: "Communication", icon: Megaphone },
   { href: "team", label: "Team", icon: UserCog },
+  { href: "analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export default function ConferenceLayout({ children }: { children: React.ReactNode }) {

@@ -2,6 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const assignmentModel = require("../models/assignmentModel");
 const assignmentService = require("../services/assignmentService");
 const notificationService = require("../services/notificationService");
+const auditLogService = require("../services/auditLogService");
 
 const listForConference = asyncHandler(async (req, res) => {
     const assignments = await assignmentModel.listByConference(req.conference.id);
@@ -11,6 +12,10 @@ const listForConference = asyncHandler(async (req, res) => {
 const assign = asyncHandler(async (req, res) => {
     const delegateId = Number(req.params.delegateId);
     const assignment = await assignmentService.assign(req.conference.id, delegateId, req.body, req.access.id);
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "assignment.assign",
+        resourceType: "assignment", resourceId: delegateId, newValue: assignment
+    });
     res.status(200).json({ success: true, assignment });
 });
 

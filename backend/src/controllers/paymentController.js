@@ -4,6 +4,7 @@ const paymentModel = require("../models/paymentModel");
 const refundModel = require("../models/refundModel");
 const discountModel = require("../models/discountModel");
 const notificationService = require("../services/notificationService");
+const auditLogService = require("../services/auditLogService");
 
 const getConfig = asyncHandler(async (req, res) => {
     const config = await paymentService.getConfig(req.conference.id);
@@ -60,6 +61,11 @@ const verifyPayment = asyncHandler(async (req, res) => {
         });
     }
 
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "payment.verify",
+        resourceType: "payment", resourceId: payment.id, newValue: { status: payment.status, notes: req.body.notes }
+    });
+
     res.status(200).json({ success: true, payment });
 });
 
@@ -67,6 +73,10 @@ const refundPayment = asyncHandler(async (req, res) => {
     const paymentId = Number(req.params.paymentId);
     const refund = await paymentService.refundPayment(req.conference.id, paymentId, {
         ...req.body, approvedByAccessId: req.access.id
+    });
+    await auditLogService.log({
+        conferenceId: req.conference.id, user: req.user, action: "payment.refund",
+        resourceType: "payment", resourceId: paymentId, newValue: refund
     });
     res.status(201).json({ success: true, refund });
 });

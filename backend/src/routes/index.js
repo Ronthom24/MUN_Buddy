@@ -14,6 +14,9 @@ const noteRoutes = require("./note.routes");
 const feedbackRoutes = require("./feedback.routes");
 const documentRoutes = require("./document.routes");
 const certificateRoutes = require("./certificate.routes");
+const faqRoutes = require("./faq.routes");
+const notificationRoutes = require("./notification.routes");
+const publicRoutes = require("./public.routes");
 
 const router = express.Router();
 
@@ -46,5 +49,8 @@ router.use("/api/notes", noteRoutes);
 router.use("/api/feedback", feedbackRoutes);
 router.use("/api/documents", documentRoutes);
 router.use("/api/certificates", certificateRoutes);
+router.use("/api/faqs", faqRoutes);
+router.use("/api/notifications", notificationRoutes);
+router.use("/api/public", publicRoutes);
 
 module.exports = router;

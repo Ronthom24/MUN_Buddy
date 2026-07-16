@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { ArrowLeft, Award, CalendarClock, ClipboardList, Gavel, LayoutDashboard, QrCode, Users2, Wallet } from "lucide-react";
+import {
+  ArrowLeft, Award, CalendarClock, ClipboardList, Gavel, LayoutDashboard, Megaphone, QrCode, UserCog, Users2, Wallet,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { api, ApiRequestError } from "@/lib/api";
 import type { Conference } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NotificationBell } from "@/components/notification-bell";
 
 const NAV_ITEMS = [
   { href: "registrations", label: "Registrations", icon: ClipboardList },
@@ -18,6 +21,8 @@ const NAV_ITEMS = [
   { href: "payments", label: "Payments", icon: Wallet },
   { href: "attendance", label: "Attendance", icon: QrCode },
   { href: "results", label: "Results", icon: Award },
+  { href: "communication", label: "Communication", icon: Megaphone },
+  { href: "team", label: "Team", icon: UserCog },
 ];
 
 export default function ConferenceLayout({ children }: { children: React.ReactNode }) {
@@ -49,9 +54,12 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
     <div className="min-h-screen">
       <header className="border-b bg-background">
         <div className="mx-auto max-w-6xl px-6 py-4">
-          <Link href="/dashboard" className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to organization
-          </Link>
+          <div className="flex items-center justify-between">
+            <Link href="/dashboard" className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to organization
+            </Link>
+            <NotificationBell />
+          </div>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <LayoutDashboard className="h-4 w-4" />

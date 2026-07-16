@@ -13,8 +13,10 @@ that spec's Version 1 (§25.4) against the real codebase.
 
 ## Getting started / session handoff
 
-**Where things stand right now**: Phases 0–5 of the Version 1 build (see roadmap below) are done,
-verified, and committed. Phase 6 (Communication Center) is next and hasn't been started.
+**Where things stand right now**: Phases 0–7 of the Version 1 build (see roadmap below) are done and
+verified end-to-end (backend + browser). Phase 6/7's work was uncommitted as of the end of this
+session — check `git status` first. Phase 8 (Analytics & Intelligence Center + Security hardening —
+audit logs, soft deletes, rate limiting, session management, file validation, exports) is next.
 
 ### Running the app
 
@@ -34,7 +36,10 @@ npm run dev   # Turbopack dev server, http://localhost:3000
 ```
 `backend/.env` and `frontend-next/.env.local` already exist locally (both gitignored, not in the
 repo) with working MySQL credentials and `NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api`
-respectively — no setup needed on this machine.
+respectively — no setup needed on this machine. Phase 6 added optional `SMTP_HOST`/`SMTP_PORT`/
+`SMTP_SECURE`/`SMTP_USER`/`SMTP_PASS`/`SMTP_FROM` vars (see `backend/.env.example`) for real email
+broadcast delivery; none are set locally, so `emailService` runs in log-only mode (every "send" is
+logged and recorded as delivered without a real network call) — this is expected, not a bug.
 
 There's also a global launch config at `C:\Users\Ronni\.claude\launch.json` (outside the repo, at
 the Claude Code session root) with a `mun-buddy-frontend` entry that runs the Next.js dev server on
@@ -44,7 +49,7 @@ port 3000 via `preview_start` — use that if driving the app through the Browse
 
 | Role | Email | Password | Notes |
 |---|---|---|---|
-| Organizer | `dana.testdirector@example.com` | `password123` | Owns "Dana Test MUN 2027" (conference id 7, org id 5). Has a DISEC committee (id 8) with Brazil/Germany portfolios, a schedule day with 2 events, 1 published announcement, 1 published resource. `payment_required` is now **on**, with a required "Registration Fee" (INR 50) and optional "Accommodation Fee" (INR 25) — good conference for demoing the Payments tab and the approve-requires-payment gate. |
+| Organizer | `dana.testdirector@example.com` | `password123` | Owns "Dana Test MUN 2027" (conference id 7, org id 5, now **published** and publicly listed — visible at `/discover` and `/discover/dana-test-mun-2027-g07ro`). Has a DISEC committee (id 8) with Brazil/Germany portfolios, a schedule day with 2 events, 2 published announcements (one urgent, untargeted), 1 published resource with 1 version. `payment_required` is on (INR 50 required + INR 25 optional fee) — good for the Payments tab / approve-requires-payment gate. Also has: 1 published FAQ (asked by Henry, answered by Dana), 1 sent email broadcast + 1 draft committee-scoped broadcast, 1 "Logistics" department, and a second (unclaimed) invited team member in that department — good conference for demoing Communication and Team tabs end to end. |
 | Delegate | `henry.delegate@example.com` | `password123` | Approved, assigned to DISEC/Brazil, assignment published. Has a note, a draft position paper, and a submitted resolution — good account for walking the full Delegate Workspace. Payment-wise: submitted a UPI payment that was verified, given a scholarship discount, then refunded (all three states exercised on one delegate) — good account for the Payment page's history view. Also has a "Best Delegate" award, two issued certificates (one participation, one award-linked), and is checked into both schedule events (one via manual check-in, DISEC Session I) — good account for Results/Certificates/attendance history. Conference results are published. |
 | Delegate | `ivy.delegate@example.com` | `password123` | Approved but unassigned — good for testing the assignment flow / unassigned states. Checked into the Opening Ceremony via QR token (not manual click) — good account for confirming `method: 'qr_token'` on an attendance record. |
 | Organizer | `alice.orgowner@example.com` | `password123` | Owns a separate organization (id 3) with 2 conferences (ids 4, 6) and an invited admin member (`carol.eb@example.com`) — used to verify multi-conference-per-org and multi-tenant isolation. |
@@ -74,18 +79,30 @@ workaround is `document.querySelector(...).click()` via the JS console rather th
 ### Git status
 
 Phases 0–5 are committed to `main` (14 commits, from the initial checkpoint through "feat: Results &
-Certificates + Attendance/QR (Phase 5)"). Note that `app.py`'s leaked MySQL credential was purged via
-`git filter-branch` + a force-push earlier in this project (see Security notes below) — if this repo
-has been cloned anywhere else, those clones still have the old history and should be re-cloned or
-manually rebased.
+Certificates + Attendance/QR (Phase 5)"). Phases 6–7's work (this session) is **uncommitted** as of
+handoff — verified end-to-end but not yet committed; ask the user before committing. Note that
+`app.py`'s leaked MySQL credential was purged via `git filter-branch` + a force-push earlier in this
+project (see Security notes below) — if this repo has been cloned anywhere else, those clones still
+have the old history and should be re-cloned or manually rebased.
 
 ### Also worth a follow-up
 
 The pre-existing `Select` label bug described above (raw value shown instead of label on the closed
-trigger) affects every `Select` usage that predates this session — Registrations' status filter,
-Committees, Schedule, organizer-access role pickers, etc. Only the `Select`s touched in Phases 4-5
-were fixed (Payments, Results, Attendance). Worth a dedicated pass to add `items` maps everywhere
-else, since it's a real, visible text-correctness bug across a good chunk of the app.
+trigger) affects every `Select` usage that predates the Phase 4 fix — Registrations' status filter,
+Committees, Schedule, organizer-access role pickers, etc. Only the `Select`s touched in Phases 4-7
+were fixed (Payments, Results, Attendance, Communication, Team). Worth a dedicated pass to add
+`items` maps everywhere else, since it's a real, visible text-correctness bug across a good chunk of
+the app.
+
+A real, pre-existing data-model quirk surfaced and was worked around in Phase 7 rather than fixed at
+the root: a conference owner's own `organizer_access` row never gets a `password_hash` (their login
+credential lives in the separate `organizers` table set at registration) — only invited staff rows
+are "claimed" via `password_hash`. Anything that treats `password_hash IS NOT NULL` as "this
+organizer_access row can act" would silently exclude every conference owner. Fixed for the Team
+dashboard's member/invitation counts and for organizer-side notification recipient resolution (added
+`organizerAccessModel.listByEmail`, which is claim-status-agnostic, alongside the older
+`listClaimedByEmail`) — but any *other* future code that filters organizer_access by `password_hash`
+should use the same pattern instead of re-deriving "is this a real member" from claim status.
 
 ### Full plan file
 
@@ -217,8 +234,75 @@ Key pieces:
    confirmed the underlying app logic was correct by dispatching a real `.click()` via
    `javascript_tool` instead, which worked every time. Not an app bug; worth a quick manual
    click-check like the other documented quirks.
-6. Communication Center (announcements, resources, FAQs, notifications, email broadcasts). *(next up)*
-7. Team Center + Public Website / Public Conference Pages.
+6. **Done.** Communication Center. Extended the existing Announcements (added committee/portfolio-
+   level targeting on top of the coarse `target_audience` enum, lazy scheduled-auto-publish via
+   `publishDueAnnouncements` — no cron worker in this stack, so it flips due `scheduled` rows to
+   `published` the next time a conference's announcements are read — and per-delegate read tracking
+   via a new `announcement_reads` table) and Resources (portfolio scoping alongside the existing
+   committee scoping, `tags`, search/category/tag query params, and real version history via a new
+   `resource_versions` table + `POST /resources/:id/versions` upload endpoint) modules, both of which
+   already existed from earlier phases but had no organizer-facing management UI at all before this
+   session. Built three entirely new modules: FAQs (`faqs` table — delegate ask, organizer
+   answer/pin/publish/archive, category filtering, a public/unauthenticated "published" list reused by
+   both the delegate workspace and the public conference page), in-app Notifications (`notifications` +
+   `notification_preferences` tables, a `notificationService.notify()`/`notifyMany()` helper wired into
+   registration approval/rejection, payment verification, certificate issuance, assignment publishing,
+   announcement publishing, and FAQ answers — both delegate- and organizer-facing, with a shared
+   `NotificationBell` popover component mounted in both the organizer conference layout and delegate
+   workspace layout), and Email Broadcasts (`email_broadcasts`/`email_broadcast_recipients` tables,
+   `email_templates` organization-scoped reusable templates, a new `backend/src/services/emailService.js`
+   built on `nodemailer` that sends real mail only if `SMTP_HOST` is configured in `.env` and otherwise
+   logs a "would send" line and marks delivery as sent — the same pragmatic manual/offline-first
+   precedent Phase 4 set for payments, since no real SMTP credentials exist in this environment).
+   New `answer_faqs`/`send_broadcasts` permission keys layered onto the existing RBAC tables. Organizer
+   UI: new Communication tab on the conference nav (Announcements/Resources/FAQs/Email Broadcasts
+   sub-tabs). Delegate UI: new FAQs page, read-tracking wired into the existing Announcements page.
+   Verified end-to-end in a real browser session: created/edited a targeted, prioritized announcement
+   and confirmed delegate-side read-count incremented on view; uploaded a resource, tagged it, uploaded
+   a second version; asked a question as a delegate, saw the organizer get notified, answered and
+   published it, confirmed it appeared on both the delegate FAQ page and the public conference page;
+   created and sent an email broadcast (log-only mode, delivery tracking recorded as sent per
+   recipient); confirmed the notification bell renders and "mark all read" works for both an organizer
+   and a delegate account. One real bug found and fixed: `resourceModel.listByConference`'s new
+   `LEFT JOIN`s to committees/portfolios made the existing `conference_id` column reference ambiguous,
+   500ing the endpoint — qualified every column in that query with the `r.` alias.
+7. **Done.** Team Center + Public Website / Public Conference Pages. Team Center: new `departments`
+   table (conference-scoped) plus `organizer_access.department_id`/`position_title` columns wired into
+   the existing invite-then-claim flow; a lightweight `team_activity` table + `teamActivityService.log()`
+   helper called from committee creation, registration status changes, department CRUD, and
+   member invites (explicitly *not* the full compliance audit log from spec 16.12/22.16 — that's
+   Phase 8's `audit_logs` with before/after value diffs across every model; this is just the
+   team-visible activity feed from spec 16.11). Upgraded the existing organizer-access
+   list/invite/update/remove routes from a hardcoded `OWNER_ONLY` role gate to
+   `OPERATIONAL + requirePermission("manage_team")`, since `manage_team` already existed as a
+   permission key from Phase 1 and already defaults to owner+conference_manager — a real accuracy
+   improvement (Executive Board can now manage the team, not just the Main Organizer) with no
+   behavior change for existing accounts. Public Website: new `is_publicly_listed` boolean on both
+   `organizations` and `conferences` (opt-out, defaults true) and a new `slug` column on `conferences`
+   (organizations already had one from Phase 1) for pretty public URLs, backfilled from
+   `conference_code` for existing rows. New unauthenticated `/api/public/*` routes (organizations
+   directory + detail, conferences directory + detail, and a public resource-download endpoint distinct
+   from the authenticated one, since a true visitor has no `req.user` at all) that only ever surface
+   `status='published'` conferences under publicly-listed organizations. Frontend: new Team tab on the
+   conference nav (members/departments/activity, mirroring the Communication tab's structure); reworked
+   the previously-bare homepage (`app/page.tsx`) into a real public homepage (hero, upcoming
+   conferences, featured organizations, shared `PublicNav`/`PublicFooter`); new `/organizations`,
+   `/organizations/[slug]`, `/discover`, and `/discover/[slug]` public routes — deliberately *not*
+   `/conferences` for the public directory, since `/conferences/[id]` is already the auth-gated
+   organizer workspace route (numeric id) and a slug-based public route can't share that same dynamic
+   segment. Verified end-to-end in a real browser session: published a conference via the existing
+   conference-settings PUT, confirmed it appeared on the public homepage, `/discover`, and its own
+   `/discover/[slug]` landing page (committees, public resources, published FAQ all rendered
+   correctly); confirmed `/organizations` and `/organizations/[slug]` list and aggregate conference
+   counts correctly; created a department and invited a member with a department/position assignment
+   and confirmed both showed up correctly in the Team tab and the team activity feed. Two real bugs
+   found and fixed: (1) the conference-owner `organizer_access.password_hash` quirk described above,
+   which double-counted owners as "pending invitations" on the Team dashboard and mislabeled them
+   "Invited" in the member table; (2) the public organization detail page showed blank conference
+   counts because `organizationModel.findPublicBySlug` (a plain lookup) doesn't carry the aggregate
+   `conference_count`/`upcoming_conference_count` fields that only `listPublic`'s aggregate query
+   computes — fixed by deriving both counts client-side from the conferences array the page already
+   fetches, rather than duplicating the aggregate subqueries onto the single-row lookup.
 8. Analytics & Intelligence Center + Security hardening (audit logs, soft deletes, rate
    limiting, session management, file validation, exports) — final pass.
 

@@ -3,6 +3,7 @@ const paymentService = require("../services/paymentService");
 const paymentModel = require("../models/paymentModel");
 const refundModel = require("../models/refundModel");
 const discountModel = require("../models/discountModel");
+const notificationService = require("../services/notificationService");
 
 const getConfig = asyncHandler(async (req, res) => {
     const config = await paymentService.getConfig(req.conference.id);
@@ -46,6 +47,19 @@ const verifyPayment = asyncHandler(async (req, res) => {
     const payment = await paymentService.verifyPayment(req.conference.id, paymentId, req.body.status, {
         verifiedByAccessId: req.access.id, notes: req.body.notes
     });
+
+    if (payment.status === "verified") {
+        await notificationService.notify({
+            conferenceId: req.conference.id,
+            recipientType: "delegate",
+            recipientId: payment.delegate_id,
+            type: "success",
+            title: "Payment verified",
+            message: "Your payment has been verified.",
+            link: "/delegate/payment"
+        });
+    }
+
     res.status(200).json({ success: true, payment });
 });
 

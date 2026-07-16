@@ -1,5 +1,6 @@
 const asyncHandler = require("../utils/asyncHandler");
 const committeeModel = require("../models/committeeModel");
+const teamActivityService = require("../services/teamActivityService");
 
 const listForConference = asyncHandler(async (req, res) => {
     const conferenceId = Number(req.params.conferenceId || req.params.id);
@@ -10,6 +11,7 @@ const listForConference = asyncHandler(async (req, res) => {
 const create = asyncHandler(async (req, res) => {
     const committeeId = await committeeModel.create({ conferenceId: req.conference.id, ...req.body });
     const committee = await committeeModel.findById(committeeId);
+    await teamActivityService.log(req.conference.id, req.user, `created the "${committee.name}" committee`);
     res.status(201).json({ success: true, committee });
 });
 

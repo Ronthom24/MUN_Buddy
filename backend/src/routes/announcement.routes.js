@@ -13,5 +13,6 @@ router.put(
 router.delete(
     "/:id", authenticate, requireRole("organizer"), requireAnnouncementOwnership, announcementController.remove
 );
+router.post("/:id/read", authenticate, requireRole("delegate"), announcementController.markRead);
 
 module.exports = router;

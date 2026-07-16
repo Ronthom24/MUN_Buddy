@@ -1,9 +1,9 @@
 const pool = require("../config/database");
 
-async function create({ conferenceId, email, role, committeeId }, db = pool) {
+async function create({ conferenceId, email, role, committeeId, departmentId, positionTitle }, db = pool) {
     const [result] = await db.execute(
-        `INSERT INTO organizer_access (conference_id, email, role, committee_id) VALUES (?, ?, ?, ?)`,
-        [conferenceId, email, role || "organizer", committeeId || null]
+        `INSERT INTO organizer_access (conference_id, email, role, committee_id, department_id, position_title) VALUES (?, ?, ?, ?, ?, ?)`,
+        [conferenceId, email, role || "organizer", committeeId || null, departmentId || null, positionTitle || null]
     );
     return result.insertId;
 }
@@ -37,6 +37,18 @@ async function listClaimedByEmail(email, db = pool) {
     return rows;
 }
 
+/**
+ * Every organizer_access row for this email, claimed or not -- the conference
+ * owner's own row never carries a password_hash (their credential lives in
+ * `organizers`), so notification/recipient lookups that need "every access
+ * row this person can act through" must use this instead of
+ * listClaimedByEmail, which would silently exclude every owner.
+ */
+async function listByEmail(email, db = pool) {
+    const [rows] = await db.execute(`SELECT * FROM organizer_access WHERE email = ?`, [email]);
+    return rows;
+}
+
 async function setPassword(id, { passwordHash, fullName }, db = pool) {
     await db.execute(
         `UPDATE organizer_access SET password_hash = ?, full_name = ? WHERE id = ?`,
@@ -49,7 +61,9 @@ async function updatePasswordHash(id, passwordHash, db = pool) {
     await db.execute(`UPDATE organizer_access SET password_hash = ? WHERE id = ?`, [passwordHash, id]);
 }
 
-const UPDATABLE_FIELDS = { role: "role", committeeId: "committee_id" };
+const UPDATABLE_FIELDS = {
+    role: "role", committeeId: "committee_id", departmentId: "department_id", positionTitle: "position_title"
+};
 
 async function update(id, data, db = pool) {
     const setClauses = [];
@@ -74,6 +88,6 @@ async function remove(id, db = pool) {
 }
 
 module.exports = {
-    create, findById, listByConference, findByConferenceAndEmail, listClaimedByEmail,
+    create, findById, listByConference, findByConferenceAndEmail, listClaimedByEmail, listByEmail,
     setPassword, updatePasswordHash, update, remove
 };

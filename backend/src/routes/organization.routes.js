@@ -2,10 +2,12 @@ const express = require("express");
 const organizationController = require("../controllers/organizationController");
 const organizationMemberController = require("../controllers/organizationMemberController");
 const certificateController = require("../controllers/certificateController");
+const broadcastController = require("../controllers/broadcastController");
 const { authenticate, requireRole, requireOrganizationAccess } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const organizationValidation = require("../validations/organizationValidation");
 const certificateValidation = require("../validations/certificateValidation");
+const broadcastValidation = require("../validations/broadcastValidation");
 
 const router = express.Router();
 const asOrganizer = [authenticate, requireRole("organizer")];
@@ -55,6 +57,20 @@ router.put(
 router.delete(
     "/:id/certificate-templates/:templateId", ...asOrganizer, requireOrganizationAccess(...MANAGE),
     certificateController.archiveTemplate
+);
+
+router.get("/:id/email-templates", ...asOrganizer, requireOrganizationAccess(...ANY_MEMBER), broadcastController.listTemplates);
+router.post(
+    "/:id/email-templates", ...asOrganizer, requireOrganizationAccess(...MANAGE),
+    validateBody(broadcastValidation.template), broadcastController.createTemplate
+);
+router.put(
+    "/:id/email-templates/:templateId", ...asOrganizer, requireOrganizationAccess(...MANAGE),
+    validateBody(broadcastValidation.template), broadcastController.updateTemplate
+);
+router.delete(
+    "/:id/email-templates/:templateId", ...asOrganizer, requireOrganizationAccess(...MANAGE),
+    broadcastController.removeTemplate
 );
 
 module.exports = router;

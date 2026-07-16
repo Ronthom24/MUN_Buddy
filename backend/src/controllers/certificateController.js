@@ -5,6 +5,7 @@ const certificateTemplateModel = require("../models/certificateTemplateModel");
 const certificateService = require("../services/certificateService");
 const conferenceModel = require("../models/conferenceModel");
 const { resolveConferenceAccess } = require("../middleware/auth");
+const notificationService = require("../services/notificationService");
 
 const listTemplates = asyncHandler(async (req, res) => {
     const templates = await certificateTemplateModel.listByOrganization(req.organization.id, { includeArchived: true });
@@ -41,15 +42,29 @@ const certificateStats = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, stats });
 });
 
+async function notifyCertificateReady(conferenceId, delegateId) {
+    await notificationService.notify({
+        conferenceId,
+        recipientType: "delegate",
+        recipientId: delegateId,
+        type: "success",
+        title: "Certificate ready",
+        message: "A certificate has been issued for you and is ready to download.",
+        link: "/delegate/certificates"
+    });
+}
+
 const issueCertificate = asyncHandler(async (req, res) => {
     const delegateId = Number(req.params.delegateId);
     const certificate = await certificateService.issueCertificate(req.conference.id, delegateId, req.body, req.access.id);
+    await notifyCertificateReady(req.conference.id, delegateId);
     res.status(201).json({ success: true, certificate });
 });
 
 const bulkIssue = asyncHandler(async (req, res) => {
     const { delegateIds, templateId, certificateType } = req.body;
     const result = await certificateService.bulkIssue(req.conference.id, delegateIds, { templateId, certificateType }, req.access.id);
+    await Promise.all((result.issued || []).map((c) => notifyCertificateReady(req.conference.id, c.delegate_id)));
     res.status(201).json({ success: true, ...result });
 });
 

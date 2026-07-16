@@ -16,7 +16,12 @@ export default function DelegateAnnouncementsPage() {
   useEffect(() => {
     api
       .get<{ success: true; announcements: Announcement[] }>("/delegates/me/announcements")
-      .then((res) => setAnnouncements(res.announcements))
+      .then((res) => {
+        setAnnouncements(res.announcements);
+        res.announcements
+          .filter((a) => !a.is_read)
+          .forEach((a) => api.post(`/announcements/${a.id}/read`).catch(() => {}));
+      })
       .catch((err) => toast.error(err instanceof ApiRequestError ? err.message : "Failed to load announcements"))
       .finally(() => setLoading(false));
   }, []);
@@ -46,6 +51,7 @@ export default function DelegateAnnouncementsPage() {
               {announcements.map((a) => (
                 <div key={a.id} className="p-5">
                   <div className="flex items-center gap-2">
+                    {!a.is_read && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />}
                     <p className="font-medium">{a.title}</p>
                     {a.priority !== "normal" && (
                       <Badge variant={a.priority === "urgent" ? "destructive" : "outline"}>{a.priority}</Badge>

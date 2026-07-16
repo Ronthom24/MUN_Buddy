@@ -12,6 +12,7 @@ import {
   FileText,
   Flag,
   Gavel,
+  HelpCircle,
   Landmark,
   LogOut,
   NotebookPen,
@@ -21,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDelegateAuth } from "@/lib/delegate-auth-context";
+import { NotificationBell } from "@/components/notification-bell";
 
 const NAV_ITEMS = [
   { href: "/delegate", label: "Overview", icon: Landmark, exact: true },
@@ -29,6 +31,7 @@ const NAV_ITEMS = [
   { href: "/delegate/payment", label: "Payment", icon: Wallet },
   { href: "/delegate/resources", label: "Resources", icon: BookOpen },
   { href: "/delegate/announcements", label: "Announcements", icon: Bell },
+  { href: "/delegate/faqs", label: "FAQs", icon: HelpCircle },
   { href: "/delegate/notes", label: "Notes", icon: NotebookPen },
   { href: "/delegate/documents", label: "Position Paper & Speech", icon: FileText },
   { href: "/delegate/resolutions", label: "Resolutions", icon: Flag },
@@ -105,10 +108,16 @@ function DelegateShell({ children }: { children: React.ReactNode }) {
             </div>
             <p className="text-sm font-semibold">Delegate Workspace</p>
           </div>
-          <button onClick={logout} className="text-muted-foreground">
-            <LogOut className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <button onClick={logout} className="p-2 text-muted-foreground">
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </header>
+        <div className="hidden justify-end border-b bg-background px-6 py-2 md:flex">
+          <NotificationBell />
+        </div>
         <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
       </div>
     </div>

@@ -171,6 +171,10 @@ export interface DelegateProfile {
 export interface Announcement {
   id: number;
   conference_id: number;
+  committee_id: number | null;
+  portfolio_id: number | null;
+  committee_name?: string | null;
+  portfolio_name?: string | null;
   title: string;
   category: string;
   target_audience: string;
@@ -179,20 +183,185 @@ export interface Announcement {
   publish_date: string | null;
   status: string;
   created_at: string;
+  read_count?: number;
+  is_read?: number;
 }
 
 export interface Resource {
   id: number;
   conference_id: number;
   committee_id: number | null;
+  portfolio_id: number | null;
+  committee_name?: string | null;
+  portfolio_name?: string | null;
   title: string;
   category: string;
+  tags: string | null;
   description: string | null;
   file_path: string | null;
+  version: number;
   visibility: string;
   status: string;
   download_count: number;
   created_at: string;
+}
+
+export interface ResourceVersion {
+  id: number;
+  resource_id: number;
+  version: number;
+  file_path: string;
+  uploaded_by: string | null;
+  created_at: string;
+}
+
+export type FaqCategory =
+  | "registration" | "committees" | "venue" | "accommodation"
+  | "certificates" | "payments" | "schedule" | "resources" | "general";
+export type FaqStatus = "pending" | "answered" | "published" | "archived";
+
+export interface Faq {
+  id: number;
+  conference_id: number;
+  category: FaqCategory;
+  question: string;
+  answer: string | null;
+  asked_by_delegate_id: number | null;
+  asked_by_name?: string | null;
+  status: FaqStatus;
+  is_pinned: 0 | 1;
+  answered_by_access_id: number | null;
+  answered_at: string | null;
+  created_at: string;
+}
+
+export type NotificationType = "info" | "reminder" | "warning" | "success" | "critical";
+
+export interface AppNotification {
+  id: number;
+  conference_id: number | null;
+  recipient_type: "organizer" | "delegate";
+  recipient_id: number;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface NotificationPreferences {
+  recipient_type: "organizer" | "delegate";
+  recipient_id: number;
+  email_enabled: 0 | 1 | boolean;
+  in_app_enabled: 0 | 1 | boolean;
+  digest_enabled: 0 | 1 | boolean;
+}
+
+export interface EmailTemplate {
+  id: number;
+  organization_id: number;
+  name: string;
+  subject: string;
+  body: string;
+  created_at: string;
+}
+
+export type BroadcastAudience = "all" | "approved" | "committee" | "waitlisted" | "rejected";
+export type BroadcastStatus = "draft" | "scheduled" | "sending" | "sent" | "failed";
+
+export interface EmailBroadcast {
+  id: number;
+  conference_id: number;
+  subject: string;
+  body: string;
+  audience: BroadcastAudience;
+  committee_id: number | null;
+  status: BroadcastStatus;
+  scheduled_at: string | null;
+  sent_at: string | null;
+  created_at: string;
+  recipient_count: number;
+  sent_count: number;
+  failed_count: number;
+}
+
+export interface BroadcastRecipient {
+  id: number;
+  broadcast_id: number;
+  delegate_id: number;
+  email: string;
+  status: "pending" | "sent" | "failed";
+  sent_at: string | null;
+  error_message: string | null;
+}
+
+export interface Department {
+  id: number;
+  conference_id: number;
+  name: string;
+  description: string | null;
+  created_at: string;
+  member_count: number;
+}
+
+export interface OrganizerAccessRow {
+  id: number;
+  email: string;
+  role: "owner" | "conference_manager" | "organizer" | "committee_director";
+  committeeId: number | null;
+  departmentId: number | null;
+  positionTitle: string | null;
+  fullName: string | null;
+  claimed: boolean;
+  createdAt: string;
+}
+
+export interface TeamActivityEntry {
+  id: number;
+  conference_id: number;
+  actor_email: string;
+  actor_name: string | null;
+  action: string;
+  created_at: string;
+}
+
+export interface TeamDashboard {
+  totalMembers: number;
+  pendingInvitations: number;
+  departmentCount: number;
+  byRole: Record<string, number>;
+  recentActivity: TeamActivityEntry[];
+}
+
+export interface PublicOrganization {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  logo_path: string | null;
+  banner_path: string | null;
+  website: string | null;
+  conference_count: number;
+  upcoming_conference_count: number;
+}
+
+export interface PublicConference {
+  id: number;
+  organization_id: number;
+  organization_name: string;
+  organization_slug: string;
+  organization_logo_path: string | null;
+  name: string;
+  acronym: string | null;
+  slug: string;
+  location: string | null;
+  description: string | null;
+  start_date: string;
+  end_date: string;
+  registration_deadline: string;
+  registration_status: "open" | "closed" | "invite_only";
+  committee_count: number;
 }
 
 export interface Note {

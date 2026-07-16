@@ -41,7 +41,8 @@ const UPDATABLE_FIELDS = {
     contactEmail: "contact_email",
     website: "website",
     logoPath: "logo_path",
-    bannerPath: "banner_path"
+    bannerPath: "banner_path",
+    isPubliclyListed: "is_publicly_listed"
 };
 
 async function update(id, data, db = pool) {
@@ -98,6 +99,34 @@ async function getStats(organizationId, db = pool) {
     };
 }
 
+async function listPublic({ search } = {}, db = pool) {
+    const clauses = ["status = 'active'", "is_publicly_listed = TRUE", "deleted_at IS NULL"];
+    const params = [];
+    if (search) {
+        clauses.push("name LIKE ?");
+        params.push(`%${search}%`);
+    }
+
+    const [rows] = await db.query(
+        `SELECT o.*,
+                (SELECT COUNT(*) FROM conferences c WHERE c.organization_id = o.id AND c.status = 'published') AS conference_count,
+                (SELECT COUNT(*) FROM conferences c WHERE c.organization_id = o.id AND c.status = 'published'
+                    AND c.start_date >= CURDATE()) AS upcoming_conference_count
+         FROM organizations o WHERE ${clauses.join(" AND ")} ORDER BY o.name ASC`,
+        params
+    );
+    return rows;
+}
+
+async function findPublicBySlug(slug, db = pool) {
+    const [rows] = await db.execute(
+        `SELECT * FROM organizations WHERE slug = ? AND status = 'active' AND is_publicly_listed = TRUE AND deleted_at IS NULL`,
+        [slug]
+    );
+    return rows[0] || null;
+}
+
 module.exports = {
-    create, findById, findBySlug, slugExists, listByMemberEmail, update, softDelete, getStats
+    create, findById, findBySlug, slugExists, listByMemberEmail, update, softDelete, getStats,
+    listPublic, findPublicBySlug
 };

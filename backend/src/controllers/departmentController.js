@@ -1,0 +1,38 @@
+const asyncHandler = require("../utils/asyncHandler");
+const ApiError = require("../utils/ApiError");
+const departmentModel = require("../models/departmentModel");
+const teamActivityService = require("../services/teamActivityService");
+
+const listForConference = asyncHandler(async (req, res) => {
+    const departments = await departmentModel.listByConference(req.conference.id);
+    res.status(200).json({ success: true, departments });
+});
+
+const create = asyncHandler(async (req, res) => {
+    const departmentId = await departmentModel.create({ conferenceId: req.conference.id, ...req.body });
+    const department = await departmentModel.findById(departmentId);
+
+    await teamActivityService.log(req.conference.id, req.user, `created the "${department.name}" department`);
+
+    res.status(201).json({ success: true, department });
+});
+
+const update = asyncHandler(async (req, res) => {
+    const department = await departmentModel.findById(req.params.departmentId);
+    if (!department || department.conference_id !== req.conference.id) throw new ApiError(404, "Department not found");
+
+    const updated = await departmentModel.update(department.id, req.body);
+    res.status(200).json({ success: true, department: updated });
+});
+
+const remove = asyncHandler(async (req, res) => {
+    const department = await departmentModel.findById(req.params.departmentId);
+    if (!department || department.conference_id !== req.conference.id) throw new ApiError(404, "Department not found");
+
+    await departmentModel.remove(department.id);
+    await teamActivityService.log(req.conference.id, req.user, `removed the "${department.name}" department`);
+
+    res.status(204).send();
+});
+
+module.exports = { listForConference, create, update, remove };

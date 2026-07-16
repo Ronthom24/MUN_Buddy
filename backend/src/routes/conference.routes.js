@@ -14,6 +14,10 @@ const paymentController = require("../controllers/paymentController");
 const resultsController = require("../controllers/resultsController");
 const certificateController = require("../controllers/certificateController");
 const attendanceController = require("../controllers/attendanceController");
+const faqController = require("../controllers/faqController");
+const broadcastController = require("../controllers/broadcastController");
+const departmentController = require("../controllers/departmentController");
+const teamController = require("../controllers/teamController");
 const { authenticate, requireRole, requireConferenceAccess, requirePermission } = require("../middleware/auth");
 const validateBody = require("../middleware/validate");
 const entityValidation = require("../validations/entityValidation");
@@ -23,6 +27,9 @@ const paymentValidation = require("../validations/paymentValidation");
 const resultsValidation = require("../validations/resultsValidation");
 const certificateValidation = require("../validations/certificateValidation");
 const attendanceValidation = require("../validations/attendanceValidation");
+const faqValidation = require("../validations/faqValidation");
+const broadcastValidation = require("../validations/broadcastValidation");
+const departmentValidation = require("../validations/departmentValidation");
 const upload = require("../middleware/upload");
 
 const router = express.Router();
@@ -259,20 +266,72 @@ router.get(
 );
 
 router.get(
-    "/:id/organizer-access", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    "/:id/organizer-access", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_team"),
     organizerAccessController.list
 );
 router.post(
-    "/:id/organizer-access", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    "/:id/organizer-access", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_team"),
     validateBody(organizerAccessValidation.invite), organizerAccessController.invite
 );
 router.patch(
-    "/:id/organizer-access/:accessId", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    "/:id/organizer-access/:accessId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_team"),
     validateBody(organizerAccessValidation.update), organizerAccessController.update
 );
 router.delete(
-    "/:id/organizer-access/:accessId", ...asOrganizer, requireConferenceAccess(...OWNER_ONLY),
+    "/:id/organizer-access/:accessId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_team"),
     organizerAccessController.remove
+);
+
+// ---- Communication Center: FAQs ----
+router.get("/:id/faqs", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), faqController.listForConference);
+router.get(
+    "/:id/faqs/published", faqController.listPublished
+);
+
+// ---- Communication Center: Email Broadcasts ----
+router.get(
+    "/:id/broadcasts", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("send_broadcasts"),
+    broadcastController.listForConference
+);
+router.post(
+    "/:id/broadcasts", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("send_broadcasts"),
+    validateBody(broadcastValidation.create), broadcastController.create
+);
+router.post(
+    "/:id/broadcasts/:broadcastId/send", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("send_broadcasts"),
+    broadcastController.send
+);
+router.get(
+    "/:id/broadcasts/:broadcastId/recipients", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("send_broadcasts"),
+    broadcastController.recipients
+);
+
+// ---- Team Center: Departments ----
+router.get(
+    "/:id/departments", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    departmentController.listForConference
+);
+router.post(
+    "/:id/departments", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_team"),
+    validateBody(departmentValidation.create), departmentController.create
+);
+router.put(
+    "/:id/departments/:departmentId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_team"),
+    validateBody(departmentValidation.update), departmentController.update
+);
+router.delete(
+    "/:id/departments/:departmentId", ...asOrganizer, requireConferenceAccess(...OPERATIONAL), requirePermission("manage_team"),
+    departmentController.remove
+);
+
+// ---- Team Center: dashboard + activity feed ----
+router.get(
+    "/:id/team/dashboard", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    teamController.dashboard
+);
+router.get(
+    "/:id/team/activity", ...asOrganizer, requireConferenceAccess(...OPERATIONAL),
+    teamController.activity
 );
 
 module.exports = router;

@@ -4,6 +4,28 @@ const resourceModel = require("../models/resourceModel");
 const assignmentModel = require("../models/assignmentModel");
 const announcementModel = require("../models/announcementModel");
 const scheduleModel = require("../models/scheduleModel");
+const notificationService = require("../services/notificationService");
+const teamActivityService = require("../services/teamActivityService");
+
+const STATUS_MESSAGE = {
+    approved: "Your registration has been approved",
+    rejected: "Your registration was not approved",
+    waitlisted: "You have been placed on the waitlist"
+};
+
+async function notifyStatusChange(delegate, conferenceId) {
+    const message = STATUS_MESSAGE[delegate.status];
+    if (!message) return;
+    await notificationService.notify({
+        conferenceId,
+        recipientType: "delegate",
+        recipientId: delegate.id,
+        type: delegate.status === "approved" ? "success" : "warning",
+        title: message,
+        message: `Status: ${delegate.status}`,
+        link: "/delegate"
+    });
+}
 
 const listForConference = asyncHandler(async (req, res) => {
     const { status, munExperience, search } = req.query;
@@ -13,6 +35,8 @@ const listForConference = asyncHandler(async (req, res) => {
 
 const updateStatus = asyncHandler(async (req, res) => {
     const delegate = await delegateService.updateStatus(req.delegateRecord.id, req.body.status, req.conference);
+    await notifyStatusChange(delegate, req.conference.id);
+    await teamActivityService.log(req.conference.id, req.user, `set ${delegate.full_name}'s status to ${delegate.status}`);
     res.status(200).json({ success: true, delegate });
 });
 
@@ -20,6 +44,12 @@ const bulkUpdateStatus = asyncHandler(async (req, res) => {
     const { delegates, skippedForPayment } = await delegateService.bulkUpdateStatus(
         req.body.delegateIds || [], req.body.status, req.conference
     );
+    await Promise.all(delegates.map((d) => notifyStatusChange(d, req.conference.id)));
+    if (delegates.length > 0) {
+        await teamActivityService.log(
+            req.conference.id, req.user, `set ${delegates.length} delegate(s) to ${req.body.status}`
+        );
+    }
     res.status(200).json({ success: true, delegates, skippedForPayment });
 });
 
@@ -52,12 +82,21 @@ const myResources = asyncHandler(async (req, res) => {
     const assignment = await assignmentModel.findByDelegateId(req.user.id);
     const isAssignedAndPublished = Boolean(assignment && assignment.published);
 
-    const resources = await resourceModel.listVisibleToDelegate(req.user.conferenceId, { isAssignedAndPublished });
+    const resources = await resourceModel.listVisibleToDelegate(req.user.conferenceId, {
+        isAssignedAndPublished,
+        committeeId: assignment?.committee_id,
+        portfolioId: assignment?.portfolio_id
+    });
     res.status(200).json({ success: true, resources });
 });
 
 const myAnnouncements = asyncHandler(async (req, res) => {
-    const announcements = await announcementModel.listVisibleToDelegate(req.user.conferenceId);
+    const assignment = await assignmentModel.findByDelegateId(req.user.id);
+    const announcements = await announcementModel.listVisibleToDelegate(req.user.conferenceId, {
+        delegateId: req.user.id,
+        committeeId: assignment?.published ? assignment.committee_id : undefined,
+        portfolioId: assignment?.published ? assignment.portfolio_id : undefined
+    });
     res.status(200).json({ success: true, announcements });
 });
 

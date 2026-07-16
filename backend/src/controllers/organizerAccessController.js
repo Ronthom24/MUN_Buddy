@@ -2,6 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const organizerAccessModel = require("../models/organizerAccessModel");
 const committeeModel = require("../models/committeeModel");
+const teamActivityService = require("../services/teamActivityService");
 
 const list = asyncHandler(async (req, res) => {
     const access = await organizerAccessModel.listByConference(req.conference.id);
@@ -12,6 +13,8 @@ const list = asyncHandler(async (req, res) => {
             email: row.email,
             role: row.role,
             committeeId: row.committee_id,
+            departmentId: row.department_id,
+            positionTitle: row.position_title,
             fullName: row.full_name,
             claimed: Boolean(row.password_hash),
             createdAt: row.created_at
@@ -36,10 +39,14 @@ const invite = asyncHandler(async (req, res) => {
         conferenceId: req.conference.id,
         email: req.body.email,
         role: req.body.role,
-        committeeId: req.body.committeeId
+        committeeId: req.body.committeeId,
+        departmentId: req.body.departmentId,
+        positionTitle: req.body.positionTitle
     });
 
     const access = await organizerAccessModel.findById(accessId);
+    await teamActivityService.log(req.conference.id, req.user, `invited ${req.body.email} as ${req.body.role}`);
+
     res.status(201).json({ success: true, organizerAccess: access });
 });
 
@@ -54,7 +61,9 @@ const update = asyncHandler(async (req, res) => {
 
     const updated = await organizerAccessModel.update(access.id, {
         role: req.body.role,
-        committeeId: req.body.committeeId
+        committeeId: req.body.committeeId,
+        departmentId: req.body.departmentId,
+        positionTitle: req.body.positionTitle
     });
     res.status(200).json({ success: true, organizerAccess: updated });
 });

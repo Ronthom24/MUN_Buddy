@@ -87,7 +87,8 @@ const UPDATABLE_FIELDS = {
     name: "name", acronym: "acronym", shortName: "short_name", institution: "institution",
     location: "location", website: "website", description: "description",
     startDate: "start_date", endDate: "end_date", registrationDeadline: "registration_deadline",
-    maxDelegates: "max_delegates", status: "status", registrationStatus: "registration_status"
+    maxDelegates: "max_delegates", status: "status", registrationStatus: "registration_status",
+    isPubliclyListed: "is_publicly_listed"
 };
 
 async function update(id, data, db = pool) {
@@ -213,7 +214,44 @@ async function getAnalytics(conferenceId, db = pool) {
     };
 }
 
+async function listPublic({ search, country } = {}, db = pool) {
+    const clauses = ["c.status = 'published'", "c.is_publicly_listed = TRUE", "o.is_publicly_listed = TRUE"];
+    const params = [];
+
+    if (search) {
+        clauses.push("(c.name LIKE ? OR c.acronym LIKE ? OR o.name LIKE ?)");
+        const like = `%${search}%`;
+        params.push(like, like, like);
+    }
+    if (country) {
+        clauses.push("c.location LIKE ?");
+        params.push(`%${country}%`);
+    }
+
+    const [rows] = await db.query(
+        `SELECT c.*, o.name AS organization_name, o.slug AS organization_slug, o.logo_path AS organization_logo_path,
+                (SELECT COUNT(*) FROM committees WHERE conference_id = c.id) AS committee_count
+         FROM conferences c
+         INNER JOIN organizations o ON o.id = c.organization_id
+         WHERE ${clauses.join(" AND ")}
+         ORDER BY c.start_date ASC`,
+        params
+    );
+    return rows;
+}
+
+async function findPublicBySlug(slug, db = pool) {
+    const [rows] = await db.query(
+        `SELECT c.*, o.name AS organization_name, o.slug AS organization_slug, o.logo_path AS organization_logo_path
+         FROM conferences c
+         INNER JOIN organizations o ON o.id = c.organization_id
+         WHERE c.slug = ? AND c.status = 'published' AND c.is_publicly_listed = TRUE AND o.is_publicly_listed = TRUE`,
+        [slug]
+    );
+    return rows[0] || null;
+}
+
 module.exports = {
     create, findById, listByOrganizer, listByAccessEmail, listByOrganization, listOpenForRegistration, update, remove,
-    updatePaymentConfig, publishResults, getStats, getAnalytics
+    updatePaymentConfig, publishResults, getStats, getAnalytics, listPublic, findPublicBySlug
 };

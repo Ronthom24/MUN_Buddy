@@ -44,6 +44,20 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return body as T;
 }
 
+async function postForm<T>(path: string, formData: FormData, method: "POST" | "PUT" = "POST"): Promise<T> {
+  const token = getToken();
+  const headers = new Headers();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  const res = await fetch(`${API_BASE_URL}${path}`, { method, headers, body: formData });
+  const body = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new ApiRequestError(res.status, body.message || "Request failed", body.errors);
+  }
+  return body as T;
+}
+
 async function getBlob(path: string): Promise<Blob> {
   const token = getToken();
   const headers = new Headers();
@@ -67,4 +81,5 @@ export const api = {
     request<T>(path, { method: "PATCH", body: data ? JSON.stringify(data) : undefined }),
   delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
   getBlob,
+  postForm,
 };

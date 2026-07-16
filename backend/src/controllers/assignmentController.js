@@ -1,6 +1,7 @@
 const asyncHandler = require("../utils/asyncHandler");
 const assignmentModel = require("../models/assignmentModel");
 const assignmentService = require("../services/assignmentService");
+const notificationService = require("../services/notificationService");
 
 const listForConference = asyncHandler(async (req, res) => {
     const assignments = await assignmentModel.listByConference(req.conference.id);
@@ -32,6 +33,17 @@ const history = asyncHandler(async (req, res) => {
 
 const publish = asyncHandler(async (req, res) => {
     const assignments = await assignmentService.publish(req.conference.id);
+    await notificationService.notifyMany(
+        assignments.filter((a) => a.status === "assigned").map((a) => ({
+            conferenceId: req.conference.id,
+            recipientType: "delegate",
+            recipientId: a.delegate_id,
+            type: "success",
+            title: "Your committee assignment is ready",
+            message: "Your committee/portfolio assignment has been published.",
+            link: "/delegate"
+        }))
+    );
     res.status(200).json({ success: true, assignments });
 });
 

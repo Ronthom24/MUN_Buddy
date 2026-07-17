@@ -249,11 +249,16 @@ async function organizerLogin({ email, password }) {
     for (const row of staffRows) {
         const matches = await bcrypt.compare(password, row.password_hash);
         if (matches) {
-            // Deliberately no `tv` claim here: row.id is an organizer_access id, not an
-            // organizers.id, so it can't be checked against organizers.token_version.
-            // Force-logout/suspend (Platform Administration) covers organizers + delegates
-            // only -- see services/platformUserService.js.
-            const token = signToken({ id: row.id, role: "organizer", email: row.email });
+            await assertOwningOrganizerNotSuspended(row.conference_id);
+            // `staffAccess: true` + `tv` let checkTokenVersion (auth.js) validate
+            // this against organizer_access.token_version instead of
+            // organizers.token_version -- row.id is an organizer_access id, not
+            // an organizers.id. See organizerAccessModel.bumpTokenVersionForOwner,
+            // called from platformUserService.suspendUser/forceLogout so
+            // suspending/force-logging-out an organizer revokes their staff too.
+            const token = signToken({
+                id: row.id, role: "organizer", email: row.email, tv: row.token_version, staffAccess: true
+            });
             return {
                 token,
                 organizer: { id: row.id, fullName: row.full_name, email: row.email },
@@ -266,17 +271,28 @@ async function organizerLogin({ email, password }) {
     throw new ApiError(401, "Invalid email or password");
 }
 
+async function assertOwningOrganizerNotSuspended(conferenceId) {
+    const conference = await conferenceModel.findById(conferenceId);
+    const owner = conference ? await organizerModel.findById(conference.organizer_id) : null;
+    if (owner && owner.status === "suspended") {
+        throw new ApiError(403, "This conference's organizer account has been suspended.");
+    }
+}
+
 async function organizerAccessClaim({ conferenceId, email, password, fullName }) {
     const access = await organizerAccessModel.findByConferenceAndEmail(conferenceId, email);
     if (!access) throw new ApiError(404, "No invitation found for this email on this conference");
     if (access.password_hash) {
         throw new ApiError(409, "This invitation has already been claimed. Please log in instead.");
     }
+    await assertOwningOrganizerNotSuspended(conferenceId);
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     const updated = await organizerAccessModel.setPassword(access.id, { passwordHash, fullName });
 
-    const token = signToken({ id: updated.id, role: "organizer", email: updated.email });
+    const token = signToken({
+        id: updated.id, role: "organizer", email: updated.email, tv: updated.token_version, staffAccess: true
+    });
     return {
         token,
         organizer: { id: updated.id, fullName: updated.full_name, email: updated.email },

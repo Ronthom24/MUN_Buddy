@@ -29,6 +29,10 @@ const permissionModel = require("../models/permissionModel");
 async function checkTokenVersion(user) {
     if (user.tv === undefined || user.adminView) return true;
 
+    if (user.role === "organizer" && user.staffAccess) {
+        const access = await organizerAccessModel.findById(user.id);
+        return !!access && access.token_version === user.tv;
+    }
     if (user.role === "organizer") {
         const organizer = await organizerModel.findById(user.id);
         return !!organizer && organizer.token_version === user.tv;

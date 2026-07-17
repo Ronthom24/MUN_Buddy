@@ -1,5 +1,6 @@
 const pool = require("../config/database");
 const ApiError = require("../utils/ApiError");
+const organizerAccessModel = require("../models/organizerAccessModel");
 
 /**
  * "Users" (spec ch.10) unions organizers + delegates only. organizer_access
@@ -60,6 +61,9 @@ async function suspendUser(userType, id, reason, db = pool) {
             [reason || null, id]
         );
         if (result.affectedRows === 0) throw new ApiError(404, "Organizer not found");
+        // Suspending the owner must also revoke every staff member they invited
+        // (organizer_access) -- see checkTokenVersion (middleware/auth.js).
+        await organizerAccessModel.bumpTokenVersionForOwner(id, db);
     } else if (userType === "delegate") {
         const [result] = await db.execute(
             `UPDATE delegates SET account_status = 'suspended', suspended_at = NOW(),
@@ -95,6 +99,7 @@ async function forceLogout(userType, id, db = pool) {
     if (userType === "organizer") {
         const [result] = await db.execute(`UPDATE organizers SET token_version = token_version + 1 WHERE id = ?`, [id]);
         if (result.affectedRows === 0) throw new ApiError(404, "Organizer not found");
+        await organizerAccessModel.bumpTokenVersionForOwner(id, db);
     } else if (userType === "delegate") {
         const [result] = await db.execute(`UPDATE delegates SET token_version = token_version + 1 WHERE id = ?`, [id]);
         if (result.affectedRows === 0) throw new ApiError(404, "Delegate not found");

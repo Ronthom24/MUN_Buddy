@@ -87,7 +87,23 @@ async function remove(id, db = pool) {
     await db.execute(`DELETE FROM organizer_access WHERE id = ?`, [id]);
 }
 
+/**
+ * Revokes every staff session under this organizer's conferences (force-
+ * logout/suspend cascade -- see platformUserService.suspendUser/forceLogout).
+ * Staff JWTs carry a `tv` claim checked against this column, same pattern as
+ * organizers.token_version/delegates.token_version.
+ */
+async function bumpTokenVersionForOwner(organizerId, db = pool) {
+    await db.execute(
+        `UPDATE organizer_access oa
+         JOIN conferences c ON c.id = oa.conference_id
+         SET oa.token_version = oa.token_version + 1
+         WHERE c.organizer_id = ?`,
+        [organizerId]
+    );
+}
+
 module.exports = {
     create, findById, listByConference, findByConferenceAndEmail, listClaimedByEmail, listByEmail,
-    setPassword, updatePasswordHash, update, remove
+    setPassword, updatePasswordHash, update, remove, bumpTokenVersionForOwner
 };

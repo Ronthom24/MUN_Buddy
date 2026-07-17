@@ -22,6 +22,7 @@ const organizerRegister = asyncHandler(async (req, res) => {
 });
 
 const organizerLogin = asyncHandler(async (req, res) => {
+    await loginHistoryService.assertNotLocked(req.body.email);
     try {
         const result = await authService.organizerLogin(req.body);
         await recordLogin(req, { userType: "organizer", userId: result.organizer.id, email: req.body.email, success: true });
@@ -39,6 +40,7 @@ const delegateRegister = asyncHandler(async (req, res) => {
 });
 
 const delegateLogin = asyncHandler(async (req, res) => {
+    await loginHistoryService.assertNotLocked(req.body.email);
     try {
         const result = await authService.delegateLogin(req.body);
         await recordLogin(req, { userType: "delegate", userId: result.delegate.id, email: req.body.email, success: true });

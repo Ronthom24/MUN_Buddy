@@ -47,4 +47,14 @@ async function listSuspiciousEmails({ windowMinutes = 15, threshold = 5 } = {}, 
     return rows;
 }
 
-module.exports = { create, listForUser, listRecent, listSuspiciousEmails };
+/** Failed-attempt count for one email in the trailing window -- the basis for login lockout enforcement. */
+async function countRecentFailures(email, { windowMinutes = 15 } = {}, db = pool) {
+    const [rows] = await db.query(
+        `SELECT COUNT(*) AS count FROM login_history
+         WHERE email = ? AND success = 0 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)`,
+        [email, windowMinutes]
+    );
+    return rows[0].count;
+}
+
+module.exports = { create, listForUser, listRecent, listSuspiciousEmails, countRecentFailures };

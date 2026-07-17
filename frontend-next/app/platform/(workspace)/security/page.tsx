@@ -51,7 +51,10 @@ export default function PlatformSecurityPage() {
             {suspicious.map((s) => (
               <div key={s.email} className="flex items-center justify-between rounded-md border border-destructive/20 bg-background p-3 text-sm">
                 <span className="font-medium">{s.email}</span>
-                <Badge variant="destructive">{s.failed_attempts} failed attempts</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="destructive">{s.failed_attempts} failed attempts</Badge>
+                  <Badge variant="outline">Login locked</Badge>
+                </div>
               </div>
             ))}
           </CardContent>
@@ -99,7 +102,10 @@ export default function PlatformSecurityPage() {
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Active session listing and automatic account lockout are not yet implemented — see docs/Architecture.md.
+        Accounts with 5+ failed attempts in the last 15 minutes are automatically locked out of login until the
+        window clears — no manual unlock needed. Active session listing isn't available: sessions are stateless
+        JWTs with no per-device record, so individual sessions can't be listed or revoked one at a time (use
+        force-logout on the Users page to revoke every session for an account at once).
       </p>
     </div>
   );

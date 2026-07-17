@@ -11,6 +11,7 @@ async function recordLogin(req, { userId, email, success }) {
 }
 
 const login = asyncHandler(async (req, res) => {
+    await loginHistoryService.assertNotLocked(req.body.email);
     try {
         const result = await platformAuthService.login(req.body);
         await recordLogin(req, { userId: result.admin.id, email: req.body.email, success: true });

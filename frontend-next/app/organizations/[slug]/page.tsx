@@ -37,20 +37,29 @@ export default function OrganizationDetailPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <PublicNav />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
-        {loading ? (
+      {loading ? (
+        <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
           <Skeleton className="h-40 w-full" />
-        ) : organization ? (
-          <>
-            <div className="mb-8">
-              <h1 className="text-3xl font-semibold tracking-tight">{organization.name}</h1>
-              {organization.description && <p className="mt-2 text-muted-foreground">{organization.description}</p>}
+        </main>
+      ) : organization ? (
+        <>
+          <section className="relative overflow-hidden bg-brand-navy text-white">
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.08]"
+              style={{ backgroundImage: "radial-gradient(circle at 85% 0%, white 0, transparent 45%)" }}
+            />
+            <div className="relative mx-auto max-w-4xl px-6 py-14">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-lg font-bold text-brand-gold ring-1 ring-white/15">
+                {organization.name.slice(0, 1)}
+              </div>
+              <h1 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-4xl">{organization.name}</h1>
+              {organization.description && <p className="mt-2 max-w-2xl text-white/70">{organization.description}</p>}
               {organization.website && (
-                <a href={organization.website} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">
+                <a href={organization.website} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm text-brand-gold-soft hover:text-brand-gold hover:underline">
                   <Globe className="h-3.5 w-3.5" /> {organization.website}
                 </a>
               )}
-              <div className="mt-3 flex gap-3 text-sm text-muted-foreground">
+              <div className="mt-4 flex gap-3 text-sm text-white/70">
                 <span>{conferences.length} conference{conferences.length === 1 ? "" : "s"} hosted</span>
                 <span>·</span>
                 <span>
@@ -58,8 +67,10 @@ export default function OrganizationDetailPage() {
                 </span>
               </div>
             </div>
+          </section>
 
-            <h2 className="mb-4 text-lg font-semibold tracking-tight">Conferences</h2>
+          <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-10">
+            <h2 className="mb-4 font-heading text-lg font-semibold tracking-tight">Conferences</h2>
             {conferences.length === 0 ? (
               <p className="text-sm text-muted-foreground">No public conferences from this organization yet.</p>
             ) : (
@@ -84,9 +95,9 @@ export default function OrganizationDetailPage() {
                 ))}
               </div>
             )}
-          </>
-        ) : null}
-      </main>
+          </main>
+        </>
+      ) : null}
       <PublicFooter />
     </div>
   );

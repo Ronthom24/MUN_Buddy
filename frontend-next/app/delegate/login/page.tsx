@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogoBadge } from "@/components/logo";
 import { useDelegateAuth } from "@/lib/delegate-auth-context";
 import { ApiRequestError } from "@/lib/api";
 
@@ -42,12 +43,10 @@ export default function DelegateLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-muted/50 to-background px-4 py-12">
+    <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-brand-navy/5 to-background px-4 py-12">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-lg font-bold text-primary-foreground">
-            MB
-          </div>
+          <LogoBadge size={72} className="mx-auto mb-2" />
           <CardTitle className="text-2xl font-semibold">Delegate sign in</CardTitle>
           <CardDescription>Access your committee, portfolio, and conference resources.</CardDescription>
         </CardHeader>

@@ -49,21 +49,28 @@ export default function ConferenceLandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <PublicNav />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
-        {loading ? (
+      {loading ? (
+        <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
           <Skeleton className="h-64 w-full" />
-        ) : conference ? (
-          <>
-            <div className="mb-8">
-              <Link href={`/organizations/${conference.organization_slug}`} className="text-sm text-primary hover:underline">
+        </main>
+      ) : conference ? (
+        <>
+          <section className="relative overflow-hidden bg-brand-navy text-white">
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.08]"
+              style={{ backgroundImage: "radial-gradient(circle at 85% 0%, white 0, transparent 45%)" }}
+            />
+            <div className="relative mx-auto max-w-4xl px-6 py-14">
+              <Link href={`/organizations/${conference.organization_slug}`} className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-sm text-brand-gold-soft hover:bg-white/15">
                 {conference.organization_name}
               </Link>
-              <div className="mt-1 flex flex-wrap items-center justify-between gap-4">
-                <h1 className="text-3xl font-semibold tracking-tight">
-                  {conference.name} {conference.acronym && <span className="text-muted-foreground">({conference.acronym})</span>}
+              <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+                <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
+                  {conference.name} {conference.acronym && <span className="text-white/60">({conference.acronym})</span>}
                 </h1>
                 <Button
                   size="lg"
+                  variant="accent"
                   disabled={conference.registration_status !== "open"}
                   render={<Link href="/delegate/register" />}
                   nativeButton={false}
@@ -71,23 +78,25 @@ export default function ConferenceLandingPage() {
                   {CTA_LABEL[conference.registration_status]}
                 </Button>
               </div>
-              {conference.description && <p className="mt-3 text-muted-foreground">{conference.description}</p>}
-              <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+              {conference.description && <p className="mt-3 max-w-2xl text-white/70">{conference.description}</p>}
+              <div className="mt-5 flex flex-wrap gap-4 text-sm text-white/70">
                 <span className="flex items-center gap-1.5">
-                  <CalendarClock className="h-4 w-4" />
+                  <CalendarClock className="h-4 w-4 text-brand-gold" />
                   {new Date(conference.start_date).toLocaleDateString()} – {new Date(conference.end_date).toLocaleDateString()}
                 </span>
                 {conference.location && (
-                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {conference.location}</span>
+                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-brand-gold" /> {conference.location}</span>
                 )}
               </div>
               {conference.registration_deadline && (
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-white/50">
                   Registration deadline: {new Date(conference.registration_deadline).toLocaleDateString()}
                 </p>
               )}
             </div>
+          </section>
 
+          <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-10">
             <Card className="mb-8">
               <CardHeader><CardTitle>Committees ({committees.length})</CardTitle></CardHeader>
               <CardContent>
@@ -147,9 +156,9 @@ export default function ConferenceLandingPage() {
                 )}
               </CardContent>
             </Card>
-          </>
-        ) : null}
-      </main>
+          </main>
+        </>
+      ) : null}
       <PublicFooter />
     </div>
   );

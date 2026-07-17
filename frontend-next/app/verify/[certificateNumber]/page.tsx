@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogoBadge } from "@/components/logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, ApiRequestError } from "@/lib/api";
 import type { CertificateVerification } from "@/lib/types";
@@ -27,12 +28,10 @@ export default function VerifyCertificatePage() {
   }, [certificateNumber]);
 
   return (
-    <div className="flex min-h-screen flex-1 items-center justify-center px-6">
+    <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-brand-navy/5 to-background px-6">
       <Card className="w-full max-w-md">
         <CardHeader className="items-center text-center">
-          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
+          <LogoBadge size={72} className="mb-2" />
           <CardTitle>Certificate Verification</CardTitle>
           <CardDescription className="font-mono">{certificateNumber}</CardDescription>
         </CardHeader>

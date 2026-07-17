@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDelegateAuth } from "@/lib/delegate-auth-context";
 import { NotificationBell } from "@/components/notification-bell";
+import { LogoMark } from "@/components/logo";
 
 const NAV_ITEMS = [
   { href: "/delegate", label: "Overview", icon: Landmark, exact: true },
@@ -59,14 +60,12 @@ function DelegateShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="hidden w-64 shrink-0 border-r bg-muted/20 md:flex md:flex-col">
-        <div className="flex items-center gap-2 border-b px-5 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-            MB
-          </div>
+      <aside className="hidden w-70 shrink-0 bg-sidebar text-sidebar-foreground md:flex md:flex-col">
+        <div className="flex items-center gap-2 border-b border-sidebar-border px-5 py-4">
+          <LogoMark size={32} />
           <div>
             <p className="text-sm font-semibold leading-none">MUN Buddy</p>
-            <p className="text-xs text-muted-foreground">Delegate Workspace</p>
+            <p className="text-xs text-sidebar-foreground/60">Delegate Workspace</p>
           </div>
         </div>
 
@@ -79,7 +78,9 @@ function DelegateShell({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 className={cn(
                   "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  isActive
+                    ? "bg-sidebar-accent text-sidebar-primary"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -89,11 +90,11 @@ function DelegateShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        <div className="border-t p-3">
-          <div className="mb-2 truncate px-3 text-xs text-muted-foreground">{delegate.email}</div>
+        <div className="border-t border-sidebar-border p-3">
+          <div className="mb-2 truncate px-3 text-xs text-sidebar-foreground/60">{delegate.email}</div>
           <button
             onClick={logout}
-            className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
           >
             <LogOut className="h-4 w-4" /> Log out
           </button>
@@ -103,9 +104,7 @@ function DelegateShell({ children }: { children: React.ReactNode }) {
       <div className="flex-1">
         <header className="flex items-center justify-between border-b bg-background px-6 py-3 md:hidden">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
-              MB
-            </div>
+            <LogoMark size={32} />
             <p className="text-sm font-semibold">Delegate Workspace</p>
           </div>
           <div className="flex items-center gap-1">
@@ -115,10 +114,12 @@ function DelegateShell({ children }: { children: React.ReactNode }) {
             </button>
           </div>
         </header>
-        <div className="hidden justify-end border-b bg-background px-6 py-2 md:flex">
+        <div className="hidden h-[72px] items-center justify-end border-b border-border bg-card px-6 md:flex">
           <NotificationBell />
         </div>
-        <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+        <main className="px-6 py-8 md:px-8">
+          <div className="mx-auto w-full max-w-[1440px]">{children}</div>
+        </main>
       </div>
     </div>
   );

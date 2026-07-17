@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogoBadge } from "@/components/logo";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/lib/auth-context";
 import { ApiRequestError } from "@/lib/api";
@@ -59,9 +60,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-1 items-center justify-center px-4 py-12">
+    <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-brand-navy/5 to-background px-4 py-12">
       <Card className="w-full max-w-xl shadow-lg">
         <CardHeader className="text-center">
+          <LogoBadge size={72} className="mx-auto mb-2" />
           <CardTitle className="text-2xl font-semibold">Create your organization</CardTitle>
           <CardDescription>
             Register as an organizer and set up your first conference in one step.

@@ -228,7 +228,7 @@ async function getAnalytics(conferenceId, db = pool) {
     };
 }
 
-async function listPublic({ search, country } = {}, db = pool) {
+async function listPublic({ search, country, month, registrationStatus, organizationSlug } = {}, db = pool) {
     const clauses = ["c.status = 'published'", "c.deleted_at IS NULL", "c.is_publicly_listed = TRUE", "o.is_publicly_listed = TRUE"];
     const params = [];
 
@@ -240,6 +240,18 @@ async function listPublic({ search, country } = {}, db = pool) {
     if (country) {
         clauses.push("c.location LIKE ?");
         params.push(`%${country}%`);
+    }
+    if (month) {
+        clauses.push("MONTH(c.start_date) = ?");
+        params.push(month);
+    }
+    if (registrationStatus) {
+        clauses.push("c.registration_status = ?");
+        params.push(registrationStatus);
+    }
+    if (organizationSlug) {
+        clauses.push("o.slug = ?");
+        params.push(organizationSlug);
     }
 
     const [rows] = await db.query(

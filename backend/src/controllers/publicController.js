@@ -5,6 +5,7 @@ const conferenceModel = require("../models/conferenceModel");
 const committeeModel = require("../models/committeeModel");
 const resourceModel = require("../models/resourceModel");
 const faqModel = require("../models/faqModel");
+const pool = require("../config/database");
 
 const listOrganizations = asyncHandler(async (req, res) => {
     const organizations = await organizationModel.listPublic({ search: req.query.search });
@@ -24,7 +25,13 @@ const getOrganization = asyncHandler(async (req, res) => {
 });
 
 const listConferences = asyncHandler(async (req, res) => {
-    const conferences = await conferenceModel.listPublic({ search: req.query.search, country: req.query.country });
+    const conferences = await conferenceModel.listPublic({
+        search: req.query.search,
+        country: req.query.country,
+        month: req.query.month,
+        registrationStatus: req.query.registrationStatus,
+        organizationSlug: req.query.organization,
+    });
     res.status(200).json({ success: true, conferences });
 });
 
@@ -41,6 +48,25 @@ const getConference = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, conference, committees, resources, faqs });
 });
 
+const getStats = asyncHandler(async (req, res) => {
+    const [[{ organizations }]] = await pool.query(
+        `SELECT COUNT(*) AS organizations FROM organizations WHERE status = 'active' AND is_publicly_listed = TRUE AND deleted_at IS NULL`
+    );
+    const [[{ conferences }]] = await pool.query(
+        `SELECT COUNT(*) AS conferences FROM conferences c INNER JOIN organizations o ON o.id = c.organization_id
+         WHERE c.status = 'published' AND c.deleted_at IS NULL AND c.is_publicly_listed = TRUE AND o.is_publicly_listed = TRUE`
+    );
+    const [[{ delegates }]] = await pool.query(`SELECT COUNT(*) AS delegates FROM delegates WHERE status = 'approved'`);
+    const [[{ countries }]] = await pool.query(
+        `SELECT COUNT(DISTINCT p.name) AS countries
+         FROM portfolios p
+         INNER JOIN committees c ON c.id = p.committee_id
+         INNER JOIN conferences co ON co.id = c.conference_id
+         WHERE p.type = 'country' AND p.status = 'assigned' AND co.is_publicly_listed = TRUE`
+    );
+    res.status(200).json({ success: true, stats: { organizations, conferences, delegates, countries } });
+});
+
 const downloadResource = asyncHandler(async (req, res) => {
     const resource = await resourceModel.findById(req.params.resourceId);
     if (!resource || resource.status !== "published" || resource.visibility !== "all" || !resource.file_path) {
@@ -51,4 +77,4 @@ const downloadResource = asyncHandler(async (req, res) => {
     res.redirect(resource.file_path);
 });
 
-module.exports = { listOrganizations, getOrganization, listConferences, getConference, downloadResource };
+module.exports = { listOrganizations, getOrganization, listConferences, getConference, getStats, downloadResource };

@@ -3,6 +3,7 @@ const publicController = require("../controllers/publicController");
 
 const router = express.Router();
 
+router.get("/stats", publicController.getStats);
 router.get("/organizations", publicController.listOrganizations);
 router.get("/organizations/:slug", publicController.getOrganization);
 router.get("/conferences", publicController.listConferences);

@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, DM_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const dmSans = DM_Sans({
+  variable: "--font-body",
+  subsets: ["latin"],
+});
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-heading",
   subsets: ["latin"],
 });
 
@@ -27,9 +32,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${playfairDisplay.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-muted/30">
+      <body className="min-h-full flex flex-col bg-background">
         <AuthProvider>
           {children}
           <Toaster />

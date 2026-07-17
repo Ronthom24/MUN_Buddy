@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -161,11 +162,9 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen">
       <header className="border-b bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold">
-              MB
-            </div>
+            <LogoMark size={36} />
             <div>
               <p className="text-sm font-medium leading-none">MUN Buddy</p>
               <p className="text-xs text-muted-foreground">Organization Workspace</p>
@@ -195,7 +194,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
+      <main className="mx-auto max-w-[1440px] space-y-8 px-6 py-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{activeOrg?.name ?? "Your Organization"}</h1>
           <p className="text-muted-foreground">Overview of your conferences, members, and activity.</p>

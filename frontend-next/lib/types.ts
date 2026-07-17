@@ -334,6 +334,13 @@ export interface TeamDashboard {
   recentActivity: TeamActivityEntry[];
 }
 
+export interface PublicStats {
+  organizations: number;
+  conferences: number;
+  delegates: number;
+  countries: number;
+}
+
 export interface PublicOrganization {
   id: number;
   name: string;

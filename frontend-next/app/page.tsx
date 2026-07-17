@@ -173,8 +173,8 @@ export default function Home() {
             <div className="absolute inset-8 rounded-full border border-brand-gold/20" />
             <div className="absolute inset-16 rounded-full border border-white/10" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex h-56 w-56 items-center justify-center rounded-full bg-white/[0.03] shadow-2xl ring-1 ring-white/10 backdrop-blur">
-                <LogoBadge size={168} className="drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]" />
+              <div className="flex h-72 w-72 items-center justify-center rounded-full bg-white/[0.03] shadow-2xl ring-1 ring-white/10 backdrop-blur">
+                <LogoBadge size={220} className="drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]" />
               </div>
             </div>
             {[

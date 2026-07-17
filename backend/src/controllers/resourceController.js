@@ -4,6 +4,7 @@ const resourceModel = require("../models/resourceModel");
 const organizerAccessModel = require("../models/organizerAccessModel");
 const assignmentModel = require("../models/assignmentModel");
 const auditLogService = require("../services/auditLogService");
+const storageService = require("../services/storageService");
 
 const listForConference = asyncHandler(async (req, res) => {
     const { search, category, tag } = req.query;
@@ -12,7 +13,8 @@ const listForConference = asyncHandler(async (req, res) => {
 });
 
 const create = asyncHandler(async (req, res) => {
-    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
+    if (req.file) await storageService.persist(req.file);
+    const filePath = req.file ? storageService.resolveFileUrl(req.file.filename) : null;
     const resourceId = await resourceModel.create({
         conferenceId: req.conference.id,
         committeeId: req.body.committeeId || null,
@@ -45,7 +47,8 @@ const update = asyncHandler(async (req, res) => {
 
 const uploadVersion = asyncHandler(async (req, res) => {
     if (!req.file) throw new ApiError(400, "A file is required");
-    const filePath = `/uploads/${req.file.filename}`;
+    await storageService.persist(req.file);
+    const filePath = storageService.resolveFileUrl(req.file.filename);
     const resource = await resourceModel.addVersion(req.resource.id, filePath, req.user.email);
     res.status(200).json({ success: true, resource });
 });

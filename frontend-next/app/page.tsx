@@ -166,7 +166,7 @@ export default function Home() {
                 Create Organization
               </Button>
             </div>
-            <Link href="/delegate/login" className="mt-6 inline-block text-sm text-white/60 underline-offset-4 hover:text-brand-gold hover:underline">
+            <Link href="/delegate/login" className="mt-6 inline-block text-sm font-medium text-brand-gold underline-offset-4 hover:underline">
               I&apos;m a delegate — sign in to my workspace
             </Link>
           </div>

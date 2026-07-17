@@ -16,4 +16,35 @@ async function listForUser(userType, userId, { limit = 20 } = {}, db = pool) {
     return rows;
 }
 
-module.exports = { create, listForUser };
+async function listRecent({ limit = 100, success } = {}, db = pool) {
+    const clauses = [];
+    const params = [];
+    if (success !== undefined) {
+        clauses.push("success = ?");
+        params.push(success ? 1 : 0);
+    }
+    const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+    params.push(limit);
+
+    const [rows] = await db.query(
+        `SELECT * FROM login_history ${where} ORDER BY created_at DESC LIMIT ?`,
+        params
+    );
+    return rows;
+}
+
+/** Emails with N+ failed attempts within the last `windowMinutes` -- the Security Center's "suspicious activity" heuristic. */
+async function listSuspiciousEmails({ windowMinutes = 15, threshold = 5 } = {}, db = pool) {
+    const [rows] = await db.query(
+        `SELECT email, COUNT(*) AS failed_attempts, MAX(created_at) AS last_attempt_at
+         FROM login_history
+         WHERE success = 0 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+         GROUP BY email
+         HAVING failed_attempts >= ?
+         ORDER BY failed_attempts DESC`,
+        [windowMinutes, threshold]
+    );
+    return rows;
+}
+
+module.exports = { create, listForUser, listRecent, listSuspiciousEmails };

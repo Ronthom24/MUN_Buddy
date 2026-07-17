@@ -77,7 +77,9 @@ export default function DelegateRegisterPage() {
     <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-brand-navy/5 to-background px-4 py-12">
       <Card className="w-full max-w-xl shadow-lg">
         <CardHeader className="text-center">
-          <LogoBadge size={72} className="mx-auto mb-2" />
+          <Link href="/" className="mx-auto mb-2 block w-fit transition-opacity hover:opacity-80">
+            <LogoBadge size={72} />
+          </Link>
           <CardTitle className="text-2xl font-semibold">Register as a delegate</CardTitle>
           <CardDescription>Apply to a conference and track your application from your workspace.</CardDescription>
         </CardHeader>

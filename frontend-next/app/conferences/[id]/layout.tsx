@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import {
   ArrowLeft, Award, BarChart3, CalendarClock, ChevronsLeft, ChevronsRight, ClipboardList,
-  Gavel, Megaphone, QrCode, UserCog, Users2, Wallet,
+  Gavel, Megaphone, QrCode, ShieldCheck, UserCog, Users2, Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
@@ -37,10 +37,25 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
 
   const [conference, setConference] = useState<Conference | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [adminView, setAdminView] = useState(false);
 
   useEffect(() => {
     if (!loading && !organizer) router.replace("/login");
   }, [loading, organizer, router]);
+
+  // Platform Administration bridge (spec ch.9): a platform admin who minted
+  // an admin-view token for this conference gets a visible banner instead of
+  // a silent, unlabeled elevated session. See lib/platform-api.ts.
+  useEffect(() => {
+    setAdminView(window.localStorage.getItem("mb_admin_view") === conferenceId);
+  }, [conferenceId]);
+
+  function exitAdminView() {
+    window.localStorage.removeItem("mb_admin_view_token");
+    window.localStorage.removeItem("mb_admin_view");
+    window.localStorage.removeItem("mb_organizer");
+    window.location.href = "/platform/conferences";
+  }
 
   useEffect(() => {
     if (!organizer) return;
@@ -107,6 +122,16 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
+        {adminView && (
+          <div className="flex shrink-0 items-center justify-between bg-brand-gold px-6 py-1.5 text-sm font-medium text-brand-navy">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="h-4 w-4" /> Viewing as Platform Administrator
+            </span>
+            <button onClick={exitAdminView} className="underline underline-offset-2 hover:no-underline">
+              Exit to Platform Dashboard
+            </button>
+          </div>
+        )}
         <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-border bg-card px-6">
           <div className="min-w-0">
             <Link href="/dashboard" className="mb-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">

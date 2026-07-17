@@ -42,7 +42,8 @@ async function assign(delegateId, { committeeId, portfolioId }, db = pool) {
  */
 async function listByConference(conferenceId, db = pool) {
     const [rows] = await db.query(
-        `SELECT a.*, d.full_name AS delegate_name, d.school AS delegate_school, d.status AS delegate_status,
+        `SELECT a.id, d.id AS delegate_id, a.committee_id, a.portfolio_id, a.status, a.published,
+                d.full_name AS delegate_name, d.school AS delegate_school, d.status AS delegate_status,
                 c.name AS committee_name, p.name AS portfolio_name
          FROM delegates d
          LEFT JOIN assignments a ON a.delegate_id = d.id

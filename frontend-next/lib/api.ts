@@ -1,9 +1,11 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 const TOKEN_KEY = "mb_token";
 
+const ADMIN_VIEW_TOKEN_KEY = "mb_admin_view_token";
+
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(TOKEN_KEY);
+  return window.localStorage.getItem(ADMIN_VIEW_TOKEN_KEY) || window.localStorage.getItem(TOKEN_KEY);
 }
 
 export function setToken(token: string) {

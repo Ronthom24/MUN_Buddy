@@ -23,3 +23,4 @@ async function updatePasswordHash(id, passwordHash, db = pool) {
 }
 
 module.exports = { create, findByEmail, findById, updatePasswordHash };
+

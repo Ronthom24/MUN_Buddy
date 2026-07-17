@@ -17,6 +17,8 @@ const certificateRoutes = require("./certificate.routes");
 const faqRoutes = require("./faq.routes");
 const notificationRoutes = require("./notification.routes");
 const publicRoutes = require("./public.routes");
+const platformAuthRoutes = require("./platformAuth.routes");
+const platformRoutes = require("./platform.routes");
 
 const router = express.Router();
 
@@ -52,5 +54,7 @@ router.use("/api/certificates", certificateRoutes);
 router.use("/api/faqs", faqRoutes);
 router.use("/api/notifications", notificationRoutes);
 router.use("/api/public", publicRoutes);
+router.use("/api/platform/auth", platformAuthRoutes);
+router.use("/api/platform", platformRoutes);
 
 module.exports = router;

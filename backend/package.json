@@ -7,7 +7,8 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "db:migrate": "node scripts/runSchema.js",
-    "db:migrate:orgs": "node scripts/migrateOrganizersToOrganizations.js"
+    "db:migrate:orgs": "node scripts/migrateOrganizersToOrganizations.js",
+    "seed:production": "node scripts/seedPlatformAdmin.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

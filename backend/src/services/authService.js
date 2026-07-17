@@ -174,7 +174,10 @@ async function organizerLogin({ email, password }) {
     if (organizer) {
         const matches = await bcrypt.compare(password, organizer.password_hash);
         if (matches) {
-            const token = signToken({ id: organizer.id, role: "organizer", email: organizer.email });
+            if (organizer.status === "suspended") {
+                throw new ApiError(403, "This account has been suspended. Contact your platform administrator.");
+            }
+            const token = signToken({ id: organizer.id, role: "organizer", email: organizer.email, tv: organizer.token_version });
             return {
                 token,
                 organizer: { id: organizer.id, fullName: organizer.full_name, email: organizer.email }
@@ -186,6 +189,10 @@ async function organizerLogin({ email, password }) {
     for (const row of staffRows) {
         const matches = await bcrypt.compare(password, row.password_hash);
         if (matches) {
+            // Deliberately no `tv` claim here: row.id is an organizer_access id, not an
+            // organizers.id, so it can't be checked against organizers.token_version.
+            // Force-logout/suspend (Platform Administration) covers organizers + delegates
+            // only -- see services/platformUserService.js.
             const token = signToken({ id: row.id, role: "organizer", email: row.email });
             return {
                 token,
@@ -279,8 +286,13 @@ async function delegateLogin({ email, password }) {
     const matches = await bcrypt.compare(password, delegate.password_hash);
     if (!matches) throw new ApiError(401, "Invalid email or password");
 
+    if (delegate.account_status === "suspended") {
+        throw new ApiError(403, "This account has been suspended. Contact your platform administrator.");
+    }
+
     const token = signToken({
-        id: delegate.id, role: "delegate", email: delegate.email, conferenceId: delegate.conference_id
+        id: delegate.id, role: "delegate", email: delegate.email, conferenceId: delegate.conference_id,
+        tv: delegate.token_version
     });
     return {
         token,

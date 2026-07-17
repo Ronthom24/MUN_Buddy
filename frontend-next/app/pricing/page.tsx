@@ -81,17 +81,17 @@ export default function PricingPage() {
       <main className="mx-auto w-full max-w-[1440px] flex-1 px-6 py-16">
         <div className="grid gap-6 lg:grid-cols-3">
           {PLANS.map((plan) => (
-            <Card
-              key={plan.name}
-              className={
-                plan.featured
-                  ? "relative border-brand-gold shadow-lg ring-1 ring-brand-gold/30"
-                  : "relative"
-              }
-            >
+            <div key={plan.name} className="relative">
               {plan.featured && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-gold text-white">Most popular</Badge>
+                <Badge className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 bg-brand-gold text-white">Most popular</Badge>
               )}
+              <Card
+                className={
+                  plan.featured
+                    ? "h-full border-brand-gold shadow-lg ring-1 ring-brand-gold/30"
+                    : "h-full"
+                }
+              >
               <CardContent className="flex h-full flex-col gap-6 p-7">
                 <div>
                   <p className="font-heading text-lg font-semibold">{plan.name}</p>
@@ -119,7 +119,8 @@ export default function PricingPage() {
                   {plan.cta}
                 </Button>
               </CardContent>
-            </Card>
+              </Card>
+            </div>
           ))}
         </div>
       </main>

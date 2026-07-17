@@ -31,7 +31,9 @@ export default function VerifyCertificatePage() {
     <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-brand-navy/5 to-background px-6">
       <Card className="w-full max-w-md">
         <CardHeader className="items-center text-center">
-          <LogoBadge size={72} className="mb-2" />
+          <Link href="/" className="mb-2 block w-fit transition-opacity hover:opacity-80">
+            <LogoBadge size={72} />
+          </Link>
           <CardTitle>Certificate Verification</CardTitle>
           <CardDescription className="font-mono">{certificateNumber}</CardDescription>
         </CardHeader>

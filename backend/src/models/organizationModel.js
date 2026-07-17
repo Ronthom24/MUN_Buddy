@@ -67,6 +67,11 @@ async function softDelete(id, db = pool) {
     await db.execute(`UPDATE organizations SET deleted_at = NOW(), status = 'suspended' WHERE id = ?`, [id]);
 }
 
+/** Suspend/reactivate without soft-deleting -- distinct from softDelete above. */
+async function setStatus(id, status, db = pool) {
+    await db.execute(`UPDATE organizations SET status = ? WHERE id = ?`, [status, id]);
+}
+
 async function getStats(organizationId, db = pool) {
     const [[conferenceCounts]] = await db.query(
         `SELECT
@@ -127,6 +132,6 @@ async function findPublicBySlug(slug, db = pool) {
 }
 
 module.exports = {
-    create, findById, findBySlug, slugExists, listByMemberEmail, update, softDelete, getStats,
+    create, findById, findBySlug, slugExists, listByMemberEmail, update, softDelete, setStatus, getStats,
     listPublic, findPublicBySlug
 };

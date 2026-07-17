@@ -54,7 +54,10 @@ export function PublicNav() {
           })}
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link href="/delegate/login" className="text-sm font-medium text-brand-gold-dark hover:underline">
+            Delegate login
+          </Link>
           <Button variant="ghost" size="sm" render={<Link href="/login" />} nativeButton={false}>
             Log in
           </Button>

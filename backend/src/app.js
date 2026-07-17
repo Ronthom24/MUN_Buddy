@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const indexRoutes = require("./routes");
 const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
 const { generalLimiter } = require("./middleware/rateLimit");
+const { maintenanceMode } = require("./middleware/maintenanceMode");
 
 const app = express();
 
@@ -14,6 +15,7 @@ const app = express();
 app.use(helmet());
 app.set("trust proxy", 1);
 app.use("/api", generalLimiter);
+app.use(maintenanceMode);
 
 // Enable CORS
 app.use(cors());

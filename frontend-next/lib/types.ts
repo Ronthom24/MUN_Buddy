@@ -699,7 +699,7 @@ export interface AuditLogEntry {
 
 export interface LoginHistoryEntry {
   id: number;
-  user_type: "organizer" | "delegate";
+  user_type: "organizer" | "delegate" | "platform_admin";
   user_id: number | null;
   email: string;
   success: 0 | 1;
@@ -742,4 +742,88 @@ export interface TrashBin {
   portfolios: TrashedPortfolio[];
   resources: TrashedResource[];
   announcements: TrashedAnnouncement[];
+}
+
+// ============================================
+// Platform Administration (Super Admin)
+// ============================================
+
+export interface PlatformAdmin {
+  id: number;
+  name: string;
+  email: string;
+  lastLogin?: string | null;
+}
+
+export interface PlatformOrganizationSummary {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  status: "active" | "suspended";
+  is_publicly_listed: 0 | 1;
+  created_at: string;
+  conference_count: number;
+  member_count: number;
+}
+
+export interface PlatformConferenceSummary {
+  id: number;
+  name: string;
+  acronym: string | null;
+  status: "draft" | "published" | "archived";
+  registration_status: "open" | "closed" | "invite_only";
+  admin_disabled: 0 | 1;
+  start_date: string;
+  end_date: string;
+  organization_id: number;
+  organization_name: string;
+  delegate_count: number;
+}
+
+export interface PlatformUserSummary {
+  id: number;
+  user_type: "organizer" | "delegate";
+  full_name: string;
+  email: string;
+  account_status: "active" | "suspended";
+  suspended_at: string | null;
+  conference_id: number | null;
+  created_at: string;
+}
+
+export interface PlatformAuditLogEntry {
+  id: number;
+  conference_id: number | null;
+  actor_type: "organizer" | "delegate" | "system" | "platform_admin";
+  actor_email: string | null;
+  actor_name: string | null;
+  action: string;
+  resource_type: string;
+  resource_id: number | null;
+  previous_value: unknown;
+  new_value: unknown;
+  created_at: string;
+}
+
+export interface PlatformSettings {
+  platform_name?: string;
+  platform_logo_path?: string | null;
+  maintenance_mode?: "true" | "false";
+  default_timezone?: string;
+}
+
+export interface PlatformDashboardStats {
+  organizations: { total: number; active: number; suspended: number };
+  conferences: { total: number; published: number; draft: number; archived: number; disabled: number };
+  organizers: { total: number; suspended: number };
+  delegates: { total: number; suspended: number };
+  certificates: { total: number };
+  payments: { total: number; totalAmount: number };
+}
+
+export interface PlatformGrowthSeries {
+  dailyRegistrations: { date: string; count: number }[];
+  monthlyConferences: { month: string; count: number }[];
+  organizationGrowth: { month: string; count: number }[];
 }

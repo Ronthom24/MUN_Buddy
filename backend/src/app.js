@@ -15,13 +15,16 @@ const app = express();
 // Security
 app.use(helmet());
 app.set("trust proxy", 1);
-app.use("/api", generalLimiter);
-app.use(maintenanceMode);
 
 // Enable CORS -- restricted to known frontend origins. CORS_ORIGINS
 // overrides with a comma-separated list; otherwise falls back to
 // FRONTEND_URL alone. Auth is Bearer-token-based (no cookies), so
 // credentials don't need to be enabled here.
+// Deliberately placed before rateLimit/maintenanceMode: those can both
+// short-circuit the chain with an early response, and a response sent
+// before cors() runs goes out with no CORS headers at all -- the browser's
+// preflight then fails with an opaque network error instead of surfacing
+// the actual 429/503 to calling code.
 const allowedOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || "http://localhost:3000")
     .split(",")
     .map((origin) => origin.trim())
@@ -33,6 +36,9 @@ app.use(cors({
         callback(new ApiError(403, `Origin ${origin} is not allowed by CORS`));
     }
 }));
+
+app.use("/api", generalLimiter);
+app.use(maintenanceMode);
 
 // Logging
 app.use(morgan("dev"));

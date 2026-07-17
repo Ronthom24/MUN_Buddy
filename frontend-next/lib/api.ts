@@ -37,6 +37,13 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   if (res.status === 204) return undefined as T;
 
+  // maintenanceMode middleware (backend) is the only thing that returns 503
+  // in this app -- redirect to a branded page instead of leaving every
+  // caller to render its own raw error state for it.
+  if (res.status === 503 && typeof window !== "undefined" && window.location.pathname !== "/maintenance") {
+    window.location.href = "/maintenance";
+  }
+
   const body = await res.json().catch(() => ({}));
 
   if (!res.ok) {

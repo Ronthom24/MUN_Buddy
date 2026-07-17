@@ -14,6 +14,7 @@ import type { Conference } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NotificationBell } from "@/components/notification-bell";
 import { LogoMark } from "@/components/logo";
+import { WorkspaceMobileNav } from "@/components/workspace-mobile-nav";
 
 const NAV_ITEMS = [
   { href: "registrations", label: "Registrations", icon: ClipboardList },
@@ -38,6 +39,11 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
   const [conference, setConference] = useState<Conference | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [adminView, setAdminView] = useState(false);
+
+  const mobileNavItems = NAV_ITEMS.map((item) => ({
+    ...item,
+    href: `/conferences/${conferenceId}/${item.href}`,
+  }));
 
   useEffect(() => {
     if (!loading && !organizer) router.replace("/login");
@@ -132,21 +138,24 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
             </button>
           </div>
         )}
-        <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-border bg-card px-6">
-          <div className="min-w-0">
-            <Link href="/dashboard" className="mb-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="h-3 w-3" /> Back to organization
-            </Link>
-            {conference ? (
-              <div className="flex items-center gap-2">
-                <h1 className="truncate text-base font-semibold leading-tight">{conference.name}</h1>
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  {conference.conference_code} · {conference.status}
-                </span>
-              </div>
-            ) : (
-              <Skeleton className="h-5 w-48" />
-            )}
+        <header className="flex h-[72px] shrink-0 items-center justify-between gap-3 border-b border-border bg-card px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <WorkspaceMobileNav subtitle="Organizer Workspace" items={mobileNavItems} pathname={pathname} />
+            <div className="min-w-0">
+              <Link href="/dashboard" className="mb-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+                <ArrowLeft className="h-3 w-3" /> Back to organization
+              </Link>
+              {conference ? (
+                <div className="flex items-center gap-2">
+                  <h1 className="truncate text-base font-semibold leading-tight">{conference.name}</h1>
+                  <span className="shrink-0 text-xs text-muted-foreground">
+                    {conference.conference_code} · {conference.status}
+                  </span>
+                </div>
+              ) : (
+                <Skeleton className="h-5 w-48" />
+              )}
+            </div>
           </div>
           <NotificationBell />
         </header>

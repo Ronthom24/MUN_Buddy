@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlatformAdminAuth } from "@/lib/platform-auth-context";
 import { LogoMark } from "@/components/logo";
+import { WorkspaceMobileNav } from "@/components/workspace-mobile-nav";
 
 const NAV_ITEMS = [
   { href: "/platform/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -95,6 +96,22 @@ function PlatformShell({ children }: { children: React.ReactNode }) {
       <div className="flex-1">
         <header className="flex items-center justify-between border-b bg-background px-6 py-3 md:hidden">
           <div className="flex items-center gap-2">
+            <WorkspaceMobileNav
+              subtitle="Platform Admin"
+              items={NAV_ITEMS}
+              pathname={pathname}
+              footer={
+                <>
+                  <div className="mb-2 truncate px-3 text-xs text-sidebar-foreground/60">{admin.email}</div>
+                  <button
+                    onClick={logout}
+                    className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+                  >
+                    <LogOut className="h-4 w-4" /> Log out
+                  </button>
+                </>
+              }
+            />
             <LogoMark size={32} />
             <p className="text-sm font-semibold">Platform Admin</p>
           </div>

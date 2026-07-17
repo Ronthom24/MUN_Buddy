@@ -157,7 +157,11 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
               )}
             </div>
           </div>
-          <NotificationBell />
+          {/* Admin-view tokens have no real organizer id (id: null, by
+              design -- see platformAdminViewService.js), so /notifications/me
+              has no user to query for; show nothing rather than a bell that
+              always renders empty. */}
+          {!adminView && <NotificationBell />}
         </header>
 
         <main className="flex-1 space-y-6 px-6 py-8 md:px-8">

@@ -420,12 +420,12 @@ export default function ResultsPage() {
                           <Input id="name" name="name" required defaultValue={editingTemplate?.name} placeholder="Delegate Participation" />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="certificateType">Type</Label>
+                          <Label htmlFor="template-certificateType">Type</Label>
                           <Select
                             name="certificateType" items={certTypeSelectItems}
                             defaultValue={editingTemplate?.certificate_type || "participation"}
                           >
-                            <SelectTrigger id="certificateType" className="w-full">
+                            <SelectTrigger id="template-certificateType" className="w-full">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -561,9 +561,9 @@ export default function ResultsPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="certificateType">Type override</Label>
+                          <Label htmlFor="issue-certificateType">Type override</Label>
                           <Select name="certificateType" items={certTypeSelectItems}>
-                            <SelectTrigger id="certificateType" className="w-full">
+                            <SelectTrigger id="issue-certificateType" className="w-full">
                               <SelectValue placeholder="Use template's type" />
                             </SelectTrigger>
                             <SelectContent>

@@ -363,8 +363,8 @@ export default function CommunicationPage() {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="title">Title</Label>
-                        <Input id="title" name="title" required defaultValue={editingAnnouncement?.title} />
+                        <Label htmlFor="announcement-title">Title</Label>
+                        <Input id="announcement-title" name="title" required defaultValue={editingAnnouncement?.title} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="content">Content</Label>
@@ -372,13 +372,13 @@ export default function CommunicationPage() {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="category">Category</Label>
+                          <Label htmlFor="announcement-category">Category</Label>
                           <Select
                             name="category"
                             items={Object.fromEntries(ANNOUNCEMENT_CATEGORIES.map((c) => [c, c.replace("_", " ")]))}
                             defaultValue={editingAnnouncement?.category || "general_update"}
                           >
-                            <SelectTrigger id="category" className="w-full"><SelectValue /></SelectTrigger>
+                            <SelectTrigger id="announcement-category" className="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               {ANNOUNCEMENT_CATEGORIES.map((c) => (
                                 <SelectItem key={c} value={c}>{c.replace("_", " ")}</SelectItem>
@@ -419,12 +419,12 @@ export default function CommunicationPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="committeeId">Restrict to committee</Label>
+                          <Label htmlFor="announcement-committeeId">Restrict to committee</Label>
                           <Select
                             name="committeeId" items={committeeItems}
                             defaultValue={editingAnnouncement?.committee_id ? String(editingAnnouncement.committee_id) : "none"}
                           >
-                            <SelectTrigger id="committeeId" className="w-full"><SelectValue /></SelectTrigger>
+                            <SelectTrigger id="announcement-committeeId" className="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="none">Entire conference</SelectItem>
                               {committees.map((c) => (
@@ -436,13 +436,13 @@ export default function CommunicationPage() {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="status">Status</Label>
+                          <Label htmlFor="announcement-status">Status</Label>
                           <Select
                             name="status"
                             items={{ draft: "Draft", scheduled: "Scheduled", published: "Published" }}
                             defaultValue={editingAnnouncement?.status || "draft"}
                           >
-                            <SelectTrigger id="status" className="w-full"><SelectValue /></SelectTrigger>
+                            <SelectTrigger id="announcement-status" className="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="draft">Draft</SelectItem>
                               <SelectItem value="scheduled">Scheduled</SelectItem>
@@ -548,18 +548,18 @@ export default function CommunicationPage() {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="title">Title</Label>
-                        <Input id="title" name="title" required defaultValue={editingResource?.title} />
+                        <Label htmlFor="resource-title">Title</Label>
+                        <Input id="resource-title" name="title" required defaultValue={editingResource?.title} />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="category">Category</Label>
+                          <Label htmlFor="resource-category">Category</Label>
                           <Select
                             name="category"
                             items={Object.fromEntries(RESOURCE_CATEGORIES.map((c) => [c, c.replace(/_/g, " ")]))}
                             defaultValue={editingResource?.category || "other"}
                           >
-                            <SelectTrigger id="category" className="w-full"><SelectValue /></SelectTrigger>
+                            <SelectTrigger id="resource-category" className="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               {RESOURCE_CATEGORIES.map((c) => (
                                 <SelectItem key={c} value={c}>{c.replace(/_/g, " ")}</SelectItem>
@@ -578,12 +578,12 @@ export default function CommunicationPage() {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="committeeId">Restrict to committee</Label>
+                          <Label htmlFor="resource-committeeId">Restrict to committee</Label>
                           <Select
                             name="committeeId" items={committeeItems}
                             defaultValue={editingResource?.committee_id ? String(editingResource.committee_id) : "none"}
                           >
-                            <SelectTrigger id="committeeId" className="w-full"><SelectValue /></SelectTrigger>
+                            <SelectTrigger id="resource-committeeId" className="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="none">Entire conference</SelectItem>
                               {committees.map((c) => (
@@ -609,9 +609,9 @@ export default function CommunicationPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="status">Status</Label>
+                        <Label htmlFor="resource-status">Status</Label>
                         <Select name="status" items={{ draft: "Draft", published: "Published" }} defaultValue={editingResource?.status || "draft"}>
-                          <SelectTrigger id="status" className="w-full"><SelectValue /></SelectTrigger>
+                          <SelectTrigger id="resource-status" className="w-full"><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="draft">Draft</SelectItem>
                             <SelectItem value="published">Published</SelectItem>
@@ -778,9 +778,9 @@ export default function CommunicationPage() {
                     <Textarea id="answer" name="answer" rows={4} required defaultValue={answerFaq?.answer || ""} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="status">Visibility</Label>
+                    <Label htmlFor="faq-status">Visibility</Label>
                     <Select name="status" items={{ answered: "Answered (private)", published: "Published (public)" }} defaultValue="published">
-                      <SelectTrigger id="status" className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectTrigger id="faq-status" className="w-full"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="answered">Answered (private to this delegate)</SelectItem>
                         <SelectItem value="published">Published (visible to everyone)</SelectItem>
@@ -817,18 +817,18 @@ export default function CommunicationPage() {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="subject">Subject</Label>
-                        <Input id="subject" name="subject" required />
+                        <Label htmlFor="broadcast-subject">Subject</Label>
+                        <Input id="broadcast-subject" name="subject" required />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="body">Body (HTML)</Label>
-                        <Textarea id="body" name="body" rows={5} required />
+                        <Label htmlFor="broadcast-body">Body (HTML)</Label>
+                        <Textarea id="broadcast-body" name="body" rows={5} required />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="audience">Audience</Label>
+                          <Label htmlFor="broadcast-audience">Audience</Label>
                           <Select name="audience" items={Object.fromEntries(BROADCAST_AUDIENCES.map((a) => [a, a]))} defaultValue="approved">
-                            <SelectTrigger id="audience" className="w-full"><SelectValue /></SelectTrigger>
+                            <SelectTrigger id="broadcast-audience" className="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               {BROADCAST_AUDIENCES.map((a) => (
                                 <SelectItem key={a} value={a}>{a}</SelectItem>
@@ -837,9 +837,9 @@ export default function CommunicationPage() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="committeeId">Committee (if audience = committee)</Label>
+                          <Label htmlFor="broadcast-committeeId">Committee (if audience = committee)</Label>
                           <Select name="committeeId" items={Object.fromEntries(committees.map((c) => [String(c.id), c.name]))}>
-                            <SelectTrigger id="committeeId" className="w-full"><SelectValue placeholder="Select committee" /></SelectTrigger>
+                            <SelectTrigger id="broadcast-committeeId" className="w-full"><SelectValue placeholder="Select committee" /></SelectTrigger>
                             <SelectContent>
                               {committees.map((c) => (
                                 <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
@@ -924,16 +924,16 @@ export default function CommunicationPage() {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
-                        <Input id="name" name="name" required defaultValue={editingTemplate?.name} />
+                        <Label htmlFor="template-name">Name</Label>
+                        <Input id="template-name" name="name" required defaultValue={editingTemplate?.name} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="subject">Subject</Label>
-                        <Input id="subject" name="subject" required defaultValue={editingTemplate?.subject} />
+                        <Label htmlFor="template-subject">Subject</Label>
+                        <Input id="template-subject" name="subject" required defaultValue={editingTemplate?.subject} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="body">Body (HTML)</Label>
-                        <Textarea id="body" name="body" rows={5} required defaultValue={editingTemplate?.body} />
+                        <Label htmlFor="template-body">Body (HTML)</Label>
+                        <Textarea id="template-body" name="body" rows={5} required defaultValue={editingTemplate?.body} />
                       </div>
                     </div>
                     <DialogFooter>

@@ -26,4 +26,20 @@ function isOneOf(value, field, allowed, errors) {
     }
 }
 
-module.exports = { required, isEmail, minLength, isOneOf };
+const SPECIAL_CHAR_RE = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
+
+/** Minimum 6 characters, at least 1 number, at least 1 special character. */
+function strongPassword(value, field, errors) {
+    if (!value) return;
+    if (String(value).length < 6) {
+        errors.push(`${field} must be at least 6 characters`);
+    }
+    if (!/\d/.test(value)) {
+        errors.push(`${field} must contain at least one number`);
+    }
+    if (!SPECIAL_CHAR_RE.test(value)) {
+        errors.push(`${field} must contain at least one special character`);
+    }
+}
+
+module.exports = { required, isEmail, minLength, isOneOf, strongPassword };

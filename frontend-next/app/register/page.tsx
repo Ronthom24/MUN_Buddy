@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,11 +16,13 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/lib/auth-context";
 import { ApiRequestError } from "@/lib/api";
 
+const PASSWORD_RULE = /^(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,}$/;
+
 const schema = z
   .object({
     fullName: z.string().min(2, "Enter your full name"),
     email: z.string().email("Enter a valid email"),
-    password: z.string().min(6, "At least 6 characters"),
+    password: z.string().regex(PASSWORD_RULE, "At least 6 characters, with a number and a special character"),
     confirmPassword: z.string(),
     organizationName: z.string().optional(),
     conferenceName: z.string().min(2, "Enter a conference name"),
@@ -38,6 +41,8 @@ type FormValues = z.infer<typeof schema>;
 export default function RegisterPage() {
   const { register: registerOrganizer } = useAuth();
   const [submitting, setSubmitting] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [devVerifyLink, setDevVerifyLink] = useState<string | undefined>();
   const {
     register,
     handleSubmit,
@@ -47,16 +52,48 @@ export default function RegisterPage() {
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
     try {
-      const { organization, conference } = await registerOrganizer(values);
-      toast.success(`${organization.name} created`, {
-        description: `${conference.name} is ready in your dashboard.`,
-      });
+      const { organization, devVerifyLink: link } = await registerOrganizer(values);
+      setSubmittedEmail(values.email);
+      setDevVerifyLink(link);
+      toast.success(`${organization.name} created`, { description: "Check your email to verify your address." });
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Something went wrong";
       toast.error("Registration failed", { description: message });
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (submittedEmail) {
+    return (
+      <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-brand-navy/5 to-background px-4 py-12">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-brand-navy text-brand-gold">
+              <MailCheck className="h-7 w-7" />
+            </div>
+            <CardTitle className="text-2xl font-semibold">Check your email</CardTitle>
+            <CardDescription>
+              We sent a verification link to <span className="font-medium text-foreground">{submittedEmail}</span>.
+              Verify your address to activate your account, then sign in.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-center">
+            {devVerifyLink && (
+              <p className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
+                Dev mode (no SMTP configured yet):{" "}
+                <Link href={devVerifyLink} className="text-primary underline-offset-4 hover:underline">
+                  click here to verify
+                </Link>
+              </p>
+            )}
+            <Button className="w-full" render={<Link href="/login" />} nativeButton={false}>
+              Go to sign in
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (

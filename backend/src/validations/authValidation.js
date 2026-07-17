@@ -1,11 +1,11 @@
-const { required, isEmail, minLength } = require("./rules");
+const { required, isEmail, minLength, isOneOf, strongPassword } = require("./rules");
 
 function organizerRegister(body) {
     const errors = [];
 
     required(body.fullName, "fullName", errors);
     if (required(body.email, "email", errors)) isEmail(body.email, "email", errors);
-    if (required(body.password, "password", errors)) minLength(body.password, "password", 6, errors);
+    if (required(body.password, "password", errors)) strongPassword(body.password, "password", errors);
     if (body.confirmPassword !== undefined && body.confirmPassword !== body.password) {
         errors.push("confirmPassword must match password");
     }
@@ -34,7 +34,7 @@ function delegateRegister(body) {
 
     required(body.fullName, "fullName", errors);
     if (required(body.email, "email", errors)) isEmail(body.email, "email", errors);
-    if (required(body.password, "password", errors)) minLength(body.password, "password", 6, errors);
+    if (required(body.password, "password", errors)) strongPassword(body.password, "password", errors);
     if (body.confirmPassword !== undefined && body.confirmPassword !== body.password) {
         errors.push("confirmPassword must match password");
     }
@@ -62,7 +62,7 @@ function organizerAccessClaim(body) {
     required(body.conferenceId, "conferenceId", errors);
     required(body.fullName, "fullName", errors);
     if (required(body.email, "email", errors)) isEmail(body.email, "email", errors);
-    if (required(body.password, "password", errors)) minLength(body.password, "password", 6, errors);
+    if (required(body.password, "password", errors)) strongPassword(body.password, "password", errors);
     if (body.confirmPassword !== undefined && body.confirmPassword !== body.password) {
         errors.push("confirmPassword must match password");
     }
@@ -78,11 +78,25 @@ function passwordResetRequest(body) {
 function passwordResetConfirm(body) {
     const errors = [];
     required(body.token, "token", errors);
-    if (required(body.newPassword, "newPassword", errors)) minLength(body.newPassword, "newPassword", 6, errors);
+    if (required(body.newPassword, "newPassword", errors)) strongPassword(body.newPassword, "newPassword", errors);
+    return errors;
+}
+
+function verifyEmail(body) {
+    const errors = [];
+    required(body.token, "token", errors);
+    return errors;
+}
+
+function resendVerification(body) {
+    const errors = [];
+    if (required(body.email, "email", errors)) isEmail(body.email, "email", errors);
+    if (required(body.accountType, "accountType", errors)) isOneOf(body.accountType, "accountType", ["organizer", "delegate"], errors);
     return errors;
 }
 
 module.exports = {
     organizerRegister, organizerLogin, delegateRegister, delegateLogin,
-    organizerAccessClaim, passwordResetRequest, passwordResetConfirm
+    organizerAccessClaim, passwordResetRequest, passwordResetConfirm,
+    verifyEmail, resendVerification
 };

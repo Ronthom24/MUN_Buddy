@@ -9,7 +9,12 @@ interface AuthState {
   organizer: Organizer | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (payload: Record<string, unknown>) => Promise<{ organization: Organization; conference: Conference }>;
+  register: (payload: Record<string, unknown>) => Promise<{
+    organization: Organization;
+    conference: Conference;
+    message: string;
+    devVerifyLink?: string;
+  }>;
   logout: () => void;
 }
 
@@ -23,10 +28,11 @@ interface LoginResponse {
 
 interface RegisterResponse {
   success: true;
-  token: string;
+  message: string;
   organizer: Organizer;
   organization: Organization;
   conference: Conference;
+  devVerifyLink?: string;
 }
 
 const ORGANIZER_KEY = "mb_organizer";
@@ -58,12 +64,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(payload: Record<string, unknown>) {
+    // Deliberately no auto-login here: the account must be email-verified
+    // (see /verify-email) before the returned session is usable.
     const result = await api.post<RegisterResponse>("/auth/organizer/register", payload);
-    setToken(result.token);
-    window.localStorage.setItem(ORGANIZER_KEY, JSON.stringify(result.organizer));
-    setOrganizer(result.organizer);
-    router.push("/dashboard");
-    return { organization: result.organization, conference: result.conference };
+    return {
+      organization: result.organization,
+      conference: result.conference,
+      message: result.message,
+      devVerifyLink: result.devVerifyLink,
+    };
   }
 
   function logout() {

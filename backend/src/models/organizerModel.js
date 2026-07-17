@@ -22,5 +22,9 @@ async function updatePasswordHash(id, passwordHash, db = pool) {
     await db.execute(`UPDATE organizers SET password_hash = ? WHERE id = ?`, [passwordHash, id]);
 }
 
-module.exports = { create, findByEmail, findById, updatePasswordHash };
+async function setEmailVerified(id, db = pool) {
+    await db.execute(`UPDATE organizers SET email_verified = TRUE WHERE id = ?`, [id]);
+}
+
+module.exports = { create, findByEmail, findById, updatePasswordHash, setEmailVerified };
 

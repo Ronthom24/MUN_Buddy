@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogoBadge } from "@/components/logo";
 import { useAuth } from "@/lib/auth-context";
-import { ApiRequestError } from "@/lib/api";
+import { api, ApiRequestError } from "@/lib/api";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -21,9 +21,13 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
+const UNVERIFIED_MESSAGE = "Please verify your email before logging in. Check your inbox for the verification link.";
+
 export default function LoginPage() {
   const { login } = useAuth();
   const [submitting, setSubmitting] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [resending, setResending] = useState(false);
   const {
     register,
     handleSubmit,
@@ -32,13 +36,26 @@ export default function LoginPage() {
 
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
+    setUnverifiedEmail(null);
     try {
       await login(values.email, values.password);
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Something went wrong";
+      if (message === UNVERIFIED_MESSAGE) setUnverifiedEmail(values.email);
       toast.error("Login failed", { description: message });
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function resendVerification() {
+    if (!unverifiedEmail) return;
+    setResending(true);
+    try {
+      await api.post("/auth/email/resend", { email: unverifiedEmail, accountType: "organizer" });
+      toast.success("Verification email sent", { description: "Check your inbox." });
+    } finally {
+      setResending(false);
     }
   }
 
@@ -60,10 +77,30 @@ export default function LoginPage() {
               {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link href="/forgot-password" className="text-xs text-primary underline-offset-4 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
               <Input id="password" type="password" {...register("password")} />
               {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
+
+            {unverifiedEmail && (
+              <div className="rounded-md border border-warning/40 bg-warning/5 p-3 text-sm">
+                <p className="text-foreground/80">Your email isn&apos;t verified yet.</p>
+                <button
+                  type="button"
+                  onClick={resendVerification}
+                  disabled={resending}
+                  className="mt-1 font-medium text-primary underline-offset-4 hover:underline disabled:opacity-50"
+                >
+                  {resending ? "Sending..." : "Resend verification email"}
+                </button>
+              </div>
+            )}
+
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting ? "Signing in..." : "Sign in"}
             </Button>

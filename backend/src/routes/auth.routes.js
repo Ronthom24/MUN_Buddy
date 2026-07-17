@@ -35,4 +35,7 @@ router.post(
 
 router.get("/me/login-history", authenticate, controller.myLoginHistory);
 
+router.post("/email/verify", authLimiter, validateBody(authValidation.verifyEmail), controller.verifyEmail);
+router.post("/email/resend", authLimiter, validateBody(authValidation.resendVerification), controller.resendVerification);
+
 module.exports = router;

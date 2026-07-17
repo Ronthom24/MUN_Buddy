@@ -12,12 +12,43 @@ const organizerAccessModel = require("../models/organizerAccessModel");
 const committeeModel = require("../models/committeeModel");
 const delegateModel = require("../models/delegateModel");
 const passwordResetTokenModel = require("../models/passwordResetTokenModel");
+const emailVerificationTokenModel = require("../models/emailVerificationTokenModel");
 const organizationModel = require("../models/organizationModel");
 const organizationMemberModel = require("../models/organizationMemberModel");
 const registrationFormModel = require("../models/registrationFormModel");
+const emailService = require("./emailService");
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000;
+const VERIFY_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+
+/**
+ * Sends (or, without SMTP configured, log-only "sends" -- see emailService.js)
+ * an email verification link and returns it too, so callers can surface a
+ * devVerifyLink in non-production API responses the same way password reset
+ * already does. Organizer/delegate self-registration both gate login on this;
+ * organizer_access staff (invited, not self-registered) don't need a
+ * separate verification step -- accepting the invite already proves email
+ * ownership.
+ */
+async function sendVerificationEmail({ accountType, accountId, email, fullName }) {
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + VERIFY_TOKEN_TTL_MS);
+    await emailVerificationTokenModel.create({ accountType, accountId, token, expiresAt });
+
+    const verifyLink = `${FRONTEND_URL}/verify-email?type=${accountType}&token=${token}`;
+    await emailService.sendMail({
+        to: email,
+        subject: "Verify your MUN Buddy email address",
+        html: `<p>Hi ${fullName},</p>
+               <p>Welcome to MUN Buddy. Please verify your email address to activate your account:</p>
+               <p><a href="${verifyLink}">${verifyLink}</a></p>
+               <p>This link expires in 24 hours.</p>`
+    });
+
+    return verifyLink;
+}
 
 async function organizerRegister(body) {
     const existing = await organizerModel.findByEmail(body.email);
@@ -93,13 +124,17 @@ async function organizerRegister(body) {
         const organizer = await organizerModel.findById(organizerId);
         const conference = await conferenceModel.findById(conferenceId);
         const organization = await organizationModel.findById(organizationId);
-        const token = signToken({ id: organizerId, role: "organizer", email: organizer.email });
+
+        const verifyLink = await sendVerificationEmail({
+            accountType: "organizer", accountId: organizer.id, email: organizer.email, fullName: organizer.full_name
+        });
 
         return {
-            token,
+            message: "Account created. Check your email to verify your address before logging in.",
             organizer: { id: organizer.id, fullName: organizer.full_name, email: organizer.email },
             organization,
-            conference
+            conference,
+            ...(process.env.NODE_ENV !== "production" ? { devVerifyLink: verifyLink } : {})
         };
     } catch (err) {
         await connection.rollback();
@@ -176,6 +211,9 @@ async function organizerLogin({ email, password }) {
         if (matches) {
             if (organizer.status === "suspended") {
                 throw new ApiError(403, "This account has been suspended. Contact your platform administrator.");
+            }
+            if (!organizer.email_verified) {
+                throw new ApiError(403, "Please verify your email before logging in. Check your inbox for the verification link.");
             }
             const token = signToken({ id: organizer.id, role: "organizer", email: organizer.email, tv: organizer.token_version });
             return {
@@ -261,12 +299,15 @@ async function delegateRegister(body) {
         await connection.commit();
 
         const delegate = await delegateModel.findById(delegateId);
-        const token = signToken({ id: delegateId, role: "delegate", email: delegate.email, conferenceId: body.conferenceId });
+        const verifyLink = await sendVerificationEmail({
+            accountType: "delegate", accountId: delegate.id, email: delegate.email, fullName: delegate.full_name
+        });
 
         return {
-            token,
+            message: "Application submitted. Check your email to verify your address before logging in.",
             delegate: { id: delegate.id, fullName: delegate.full_name, email: delegate.email, status: delegate.status },
-            conference: { id: conference.id, name: conference.name }
+            conference: { id: conference.id, name: conference.name },
+            ...(process.env.NODE_ENV !== "production" ? { devVerifyLink: verifyLink } : {})
         };
     } catch (err) {
         await connection.rollback();
@@ -288,6 +329,9 @@ async function delegateLogin({ email, password }) {
 
     if (delegate.account_status === "suspended") {
         throw new ApiError(403, "This account has been suspended. Contact your platform administrator.");
+    }
+    if (!delegate.email_verified) {
+        throw new ApiError(403, "Please verify your email before logging in. Check your inbox for the verification link.");
     }
 
     const token = signToken({
@@ -331,8 +375,14 @@ async function requestPasswordReset({ email, conferenceId }) {
     const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
     await passwordResetTokenModel.create({ accountType, accountId, token, expiresAt });
 
-    const resetLink = `http://localhost:8000/reset-password.html?token=${token}`;
-    console.log(`Password reset requested for ${email} (${accountType}#${accountId}): ${resetLink}`);
+    const resetLink = `${FRONTEND_URL}/reset-password?token=${token}`;
+    await emailService.sendMail({
+        to: email,
+        subject: "Reset your MUN Buddy password",
+        html: `<p>We received a request to reset your MUN Buddy password.</p>
+               <p><a href="${resetLink}">${resetLink}</a></p>
+               <p>This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>`
+    });
 
     if (process.env.NODE_ENV !== "production") {
         return { ...genericResponse, devResetLink: resetLink, devToken: token };
@@ -358,7 +408,41 @@ async function confirmPasswordReset({ token, newPassword }) {
     return { message: "Password has been reset successfully" };
 }
 
+async function verifyEmail({ token }) {
+    const record = await emailVerificationTokenModel.findValidByToken(token);
+    if (!record) throw new ApiError(400, "This verification link is invalid or has expired");
+
+    if (record.account_type === "organizer") {
+        await organizerModel.setEmailVerified(record.account_id);
+    } else if (record.account_type === "delegate") {
+        await delegateModel.setEmailVerified(record.account_id);
+    }
+
+    await emailVerificationTokenModel.markUsed(record.id);
+    return { accountType: record.account_type, message: "Email verified. You can now log in." };
+}
+
+async function resendVerificationEmail({ email, accountType }) {
+    const genericResponse = { message: "If an unverified account with that email exists, a new verification link has been sent." };
+
+    const account = accountType === "organizer"
+        ? await organizerModel.findByEmail(email)
+        : await delegateModel.findLatestByEmail(email);
+
+    if (!account || account.email_verified) return genericResponse;
+
+    const verifyLink = await sendVerificationEmail({
+        accountType, accountId: account.id, email: account.email, fullName: account.full_name
+    });
+
+    if (process.env.NODE_ENV !== "production") {
+        return { ...genericResponse, devVerifyLink: verifyLink };
+    }
+    return genericResponse;
+}
+
 module.exports = {
     organizerRegister, organizerLogin, organizerAccessClaim, delegateRegister, delegateLogin,
-    requestPasswordReset, confirmPasswordReset, createConferenceForOrganization
+    requestPasswordReset, confirmPasswordReset, createConferenceForOrganization,
+    verifyEmail, resendVerificationEmail
 };

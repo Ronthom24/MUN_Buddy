@@ -9,7 +9,7 @@ interface DelegateAuthState {
   delegate: DelegateSelf | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (payload: Record<string, unknown>) => Promise<void>;
+  register: (payload: Record<string, unknown>) => Promise<{ message: string; devVerifyLink?: string }>;
   logout: () => void;
 }
 
@@ -19,6 +19,13 @@ interface DelegateAuthResponse {
   success: true;
   token: string;
   delegate: { id: number; fullName: string; email: string; status: string };
+}
+
+interface DelegateRegisterResponse {
+  success: true;
+  message: string;
+  delegate: { id: number; fullName: string; email: string; status: string };
+  devVerifyLink?: string;
 }
 
 const DELEGATE_KEY = "mb_delegate";
@@ -51,12 +58,10 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(payload: Record<string, unknown>) {
-    const result = await api.post<DelegateAuthResponse>("/auth/delegate/register", payload);
-    setToken(result.token);
-    const self: DelegateSelf = { ...result.delegate, status: result.delegate.status as DelegateSelf["status"] };
-    window.localStorage.setItem(DELEGATE_KEY, JSON.stringify(self));
-    setDelegate(self);
-    router.push("/delegate");
+    // Deliberately no auto-login here: the account must be email-verified
+    // (see /verify-email) before the returned session is usable.
+    const result = await api.post<DelegateRegisterResponse>("/auth/delegate/register", payload);
+    return { message: result.message, devVerifyLink: result.devVerifyLink };
   }
 
   function logout() {

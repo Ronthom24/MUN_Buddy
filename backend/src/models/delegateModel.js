@@ -124,6 +124,10 @@ async function updatePasswordHash(id, passwordHash, db = pool) {
     await db.execute(`UPDATE delegates SET password_hash = ? WHERE id = ?`, [passwordHash, id]);
 }
 
+async function setEmailVerified(id, db = pool) {
+    await db.execute(`UPDATE delegates SET email_verified = TRUE WHERE id = ?`, [id]);
+}
+
 async function addCommitteePreferences(delegateId, committeePreferences, db = pool) {
     for (const pref of committeePreferences || []) {
         await db.execute(
@@ -164,6 +168,6 @@ async function getCountryPreferences(delegateId, db = pool) {
 
 module.exports = {
     create, findById, findByEmail, findLatestByEmail, listByConference, updateStatus, bulkUpdateStatus,
-    updateOwnProfile, updatePasswordHash, addCommitteePreferences, addCountryPreferences,
+    updateOwnProfile, updatePasswordHash, setEmailVerified, addCommitteePreferences, addCountryPreferences,
     getCommitteePreferences, getCountryPreferences, findPossibleDuplicateIds
 };

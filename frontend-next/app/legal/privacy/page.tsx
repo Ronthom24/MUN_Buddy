@@ -40,7 +40,25 @@ export default function PrivacyPolicyPage() {
               <a href="mailto:hello@munbuddy.app" className="text-primary hover:underline">hello@munbuddy.app</a>.
             </p>
           </section>
+          <section>
+            <h2 className="font-heading text-lg font-semibold text-foreground">5. Children&rsquo;s privacy</h2>
+            <p className="mt-2">
+              Many delegates on MUN Buddy are minors. Delegate accounts and data are typically submitted by the
+              delegate through a school, university, or MUN society running the conference (the &ldquo;organizer&rdquo;),
+              and that organizer is responsible for obtaining any parental or guardian consent required under
+              applicable law before a minor&rsquo;s information is submitted. Parents or guardians who want data
+              about a minor accessed, corrected, or deleted should contact the conference organizer directly, or
+              reach us at <a href="mailto:hello@munbuddy.app" className="text-primary hover:underline">hello@munbuddy.app</a> and
+              we will route the request.
+            </p>
+          </section>
         </div>
+
+        <p className="mt-10 rounded-md border border-dashed border-border p-4 text-xs text-muted-foreground">
+          This page is a working draft, not a substitute for review by a qualified lawyer in your jurisdiction —
+          have it reviewed before this platform is used by a real organization, especially given the number of
+          minors involved.
+        </p>
       </main>
       <PublicFooter />
     </div>

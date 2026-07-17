@@ -32,13 +32,28 @@ export default function TermsPage() {
             </p>
           </section>
           <section>
-            <h2 className="font-heading text-lg font-semibold text-foreground">4. Changes to these terms</h2>
+            <h2 className="font-heading text-lg font-semibold text-foreground">4. Delegates under the age of majority</h2>
+            <p className="mt-2">
+              Many delegates using MUN Buddy are minors registering through a school, university, or MUN society.
+              The organizer running a conference is responsible for obtaining any parental or guardian consent
+              required in their jurisdiction before submitting or collecting a minor&rsquo;s information through the
+              platform. MUN Buddy does not independently verify delegate age or consent.
+            </p>
+          </section>
+          <section>
+            <h2 className="font-heading text-lg font-semibold text-foreground">5. Changes to these terms</h2>
             <p className="mt-2">
               We may update these terms as the platform evolves. Continued use of MUN Buddy after changes take
               effect constitutes acceptance of the updated terms.
             </p>
           </section>
         </div>
+
+        <p className="mt-10 rounded-md border border-dashed border-border p-4 text-xs text-muted-foreground">
+          This page is a working draft, not a substitute for review by a qualified lawyer in your jurisdiction —
+          have it reviewed before this platform is used by a real organization, especially given the number of
+          minors involved.
+        </p>
       </main>
       <PublicFooter />
     </div>

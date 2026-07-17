@@ -68,21 +68,18 @@ const JOURNEY = [
   { step: "06", title: "Generate Certificates", text: "Publish results, issue awards, and generate verifiable certificates automatically." },
 ];
 
-const TESTIMONIALS = [
+const WHY_MUN_BUDDY = [
   {
-    quote: "MUN Buddy replaced four different tools for us — registration, payments, and certificates now run from one dashboard.",
-    name: "Secretary-General",
-    context: "University MUN Society",
+    title: "One dashboard instead of four tools",
+    body: "Registration, payments, and certificates run from a single organizer workspace instead of stitched-together spreadsheets and forms.",
   },
   {
-    quote: "Delegate assignment used to take our team a full weekend. With conflict-checked assignment, it's down to an afternoon.",
-    name: "Conference Organizer",
-    context: "High School MUN Conference",
+    title: "Conflict-checked delegate assignment",
+    body: "Assign delegates to committees and countries with built-in conflict checks, instead of a manual weekend-long process.",
   },
   {
-    quote: "As a delegate, having my schedule, position papers, and certificate all in one workspace made the whole conference feel effortless.",
-    name: "Delegate",
-    context: "Model United Nations Program",
+    title: "Everything a delegate needs in one place",
+    body: "Schedule, position papers, and certificates live in a single delegate workspace instead of scattered emails.",
   },
 ];
 
@@ -352,24 +349,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Why MUN Buddy */}
       <section className="mx-auto w-full max-w-[1440px] px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand-gold">Testimonials</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand-gold">What changes</p>
           <h2 className="mt-2 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-            Trusted by organizers and delegates alike
+            Built for organizers and delegates alike
           </h2>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <Card key={t.name + t.context} className="h-full border-border/70">
-              <CardContent className="flex h-full flex-col gap-4 p-6">
-                <p className="font-heading text-3xl leading-none text-brand-gold">&ldquo;</p>
-                <p className="flex-1 text-sm text-foreground/80">{t.quote}</p>
-                <div>
-                  <p className="text-sm font-semibold">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.context}</p>
-                </div>
+          {WHY_MUN_BUDDY.map((w) => (
+            <Card key={w.title} className="h-full border-border/70">
+              <CardContent className="flex h-full flex-col gap-2 p-6">
+                <p className="text-sm font-semibold">{w.title}</p>
+                <p className="flex-1 text-sm text-foreground/80">{w.body}</p>
               </CardContent>
             </Card>
           ))}

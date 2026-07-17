@@ -68,9 +68,13 @@ export default function DelegateRegisterPage() {
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
     try {
-      const { devVerifyLink: link } = await registerDelegate({ ...values, conferenceId: Number(values.conferenceId) });
-      setSubmittedEmail(values.email);
-      setDevVerifyLink(link);
+      const { verificationRequired, devVerifyLink: link } = await registerDelegate({
+        ...values, conferenceId: Number(values.conferenceId)
+      });
+      if (verificationRequired) {
+        setSubmittedEmail(values.email);
+        setDevVerifyLink(link);
+      }
       toast.success("Application submitted");
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Something went wrong";

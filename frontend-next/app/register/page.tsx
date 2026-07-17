@@ -52,10 +52,14 @@ export default function RegisterPage() {
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
     try {
-      const { organization, devVerifyLink: link } = await registerOrganizer(values);
-      setSubmittedEmail(values.email);
-      setDevVerifyLink(link);
-      toast.success(`${organization.name} created`, { description: "Check your email to verify your address." });
+      const { organization, verificationRequired, devVerifyLink: link } = await registerOrganizer(values);
+      if (verificationRequired) {
+        setSubmittedEmail(values.email);
+        setDevVerifyLink(link);
+        toast.success(`${organization.name} created`, { description: "Check your email to verify your address." });
+      } else {
+        toast.success(`${organization.name} created`, { description: "Welcome to your dashboard." });
+      }
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Something went wrong";
       toast.error("Registration failed", { description: message });

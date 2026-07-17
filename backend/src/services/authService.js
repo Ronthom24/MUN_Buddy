@@ -24,6 +24,17 @@ const VERIFY_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 /**
+ * Temporary escape hatch: real SMTP delivery needs a verified domain, which
+ * isn't set up yet (Brevo can't reliably deliver "from" a gmail.com address
+ * or their own shared brevosend.com domain -- see 2026-07-17 session notes).
+ * Until a domain is in place, set REQUIRE_EMAIL_VERIFICATION=false to fall
+ * back to the pre-verification behavior (immediate usable login on
+ * register). Flip back to true (or unset -- true is the default) once real
+ * delivery works, no other code changes needed.
+ */
+const REQUIRE_EMAIL_VERIFICATION = process.env.REQUIRE_EMAIL_VERIFICATION !== "false";
+
+/**
  * Sends (or, without SMTP configured, log-only "sends" -- see emailService.js)
  * an email verification link and returns it too, so callers can surface a
  * devVerifyLink in non-production API responses the same way password reset
@@ -125,6 +136,17 @@ async function organizerRegister(body) {
         const conference = await conferenceModel.findById(conferenceId);
         const organization = await organizationModel.findById(organizationId);
 
+        if (!REQUIRE_EMAIL_VERIFICATION) {
+            await organizerModel.setEmailVerified(organizer.id);
+            const token = signToken({ id: organizer.id, role: "organizer", email: organizer.email, tv: organizer.token_version });
+            return {
+                token,
+                organizer: { id: organizer.id, fullName: organizer.full_name, email: organizer.email },
+                organization,
+                conference
+            };
+        }
+
         const verifyLink = await sendVerificationEmail({
             accountType: "organizer", accountId: organizer.id, email: organizer.email, fullName: organizer.full_name
         });
@@ -212,7 +234,7 @@ async function organizerLogin({ email, password }) {
             if (organizer.status === "suspended") {
                 throw new ApiError(403, "This account has been suspended. Contact your platform administrator.");
             }
-            if (!organizer.email_verified) {
+            if (REQUIRE_EMAIL_VERIFICATION && !organizer.email_verified) {
                 throw new ApiError(403, "Please verify your email before logging in. Check your inbox for the verification link.");
             }
             const token = signToken({ id: organizer.id, role: "organizer", email: organizer.email, tv: organizer.token_version });
@@ -299,6 +321,20 @@ async function delegateRegister(body) {
         await connection.commit();
 
         const delegate = await delegateModel.findById(delegateId);
+
+        if (!REQUIRE_EMAIL_VERIFICATION) {
+            await delegateModel.setEmailVerified(delegate.id);
+            const token = signToken({
+                id: delegate.id, role: "delegate", email: delegate.email, conferenceId: delegate.conference_id,
+                tv: delegate.token_version
+            });
+            return {
+                token,
+                delegate: { id: delegate.id, fullName: delegate.full_name, email: delegate.email, status: delegate.status },
+                conference: { id: conference.id, name: conference.name }
+            };
+        }
+
         const verifyLink = await sendVerificationEmail({
             accountType: "delegate", accountId: delegate.id, email: delegate.email, fullName: delegate.full_name
         });
@@ -330,7 +366,7 @@ async function delegateLogin({ email, password }) {
     if (delegate.account_status === "suspended") {
         throw new ApiError(403, "This account has been suspended. Contact your platform administrator.");
     }
-    if (!delegate.email_verified) {
+    if (REQUIRE_EMAIL_VERIFICATION && !delegate.email_verified) {
         throw new ApiError(403, "Please verify your email before logging in. Check your inbox for the verification link.");
     }
 

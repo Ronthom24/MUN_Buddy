@@ -12,7 +12,8 @@ interface AuthState {
   register: (payload: Record<string, unknown>) => Promise<{
     organization: Organization;
     conference: Conference;
-    message: string;
+    verificationRequired: boolean;
+    message?: string;
     devVerifyLink?: string;
   }>;
   logout: () => void;
@@ -28,10 +29,15 @@ interface LoginResponse {
 
 interface RegisterResponse {
   success: true;
-  message: string;
   organizer: Organizer;
   organization: Organization;
   conference: Conference;
+  // Present only when REQUIRE_EMAIL_VERIFICATION=false on the backend (see
+  // authService.js) -- registration auto-logs in immediately, same as
+  // before email verification existed.
+  token?: string;
+  // Present only when verification is required.
+  message?: string;
   devVerifyLink?: string;
 }
 
@@ -64,12 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(payload: Record<string, unknown>) {
-    // Deliberately no auto-login here: the account must be email-verified
-    // (see /verify-email) before the returned session is usable.
     const result = await api.post<RegisterResponse>("/auth/organizer/register", payload);
+
+    if (result.token) {
+      // Verification is temporarily disabled backend-side -- behaves like
+      // pre-verification registration (immediate usable session).
+      setToken(result.token);
+      window.localStorage.setItem(ORGANIZER_KEY, JSON.stringify(result.organizer));
+      setOrganizer(result.organizer);
+      router.push("/dashboard");
+      return { organization: result.organization, conference: result.conference, verificationRequired: false };
+    }
+
     return {
       organization: result.organization,
       conference: result.conference,
+      verificationRequired: true,
       message: result.message,
       devVerifyLink: result.devVerifyLink,
     };

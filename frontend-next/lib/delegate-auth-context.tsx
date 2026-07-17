@@ -9,7 +9,11 @@ interface DelegateAuthState {
   delegate: DelegateSelf | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (payload: Record<string, unknown>) => Promise<{ message: string; devVerifyLink?: string }>;
+  register: (payload: Record<string, unknown>) => Promise<{
+    verificationRequired: boolean;
+    message?: string;
+    devVerifyLink?: string;
+  }>;
   logout: () => void;
 }
 
@@ -23,8 +27,11 @@ interface DelegateAuthResponse {
 
 interface DelegateRegisterResponse {
   success: true;
-  message: string;
   delegate: { id: number; fullName: string; email: string; status: string };
+  // Present only when REQUIRE_EMAIL_VERIFICATION=false on the backend.
+  token?: string;
+  // Present only when verification is required.
+  message?: string;
   devVerifyLink?: string;
 }
 
@@ -58,10 +65,20 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(payload: Record<string, unknown>) {
-    // Deliberately no auto-login here: the account must be email-verified
-    // (see /verify-email) before the returned session is usable.
     const result = await api.post<DelegateRegisterResponse>("/auth/delegate/register", payload);
-    return { message: result.message, devVerifyLink: result.devVerifyLink };
+
+    if (result.token) {
+      // Verification is temporarily disabled backend-side -- behaves like
+      // pre-verification registration (immediate usable session).
+      setToken(result.token);
+      const self: DelegateSelf = { ...result.delegate, status: result.delegate.status as DelegateSelf["status"] };
+      window.localStorage.setItem(DELEGATE_KEY, JSON.stringify(self));
+      setDelegate(self);
+      router.push("/delegate");
+      return { verificationRequired: false };
+    }
+
+    return { verificationRequired: true, message: result.message, devVerifyLink: result.devVerifyLink };
   }
 
   function logout() {

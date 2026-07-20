@@ -16,36 +16,42 @@ const RESOURCES = [
     category: "Delegates",
     title: "Delegate Handbook",
     text: "Everything a first-time delegate needs — from registration to walking into committee prepared.",
+    href: "/resources/delegate-handbook",
   },
   {
     icon: Users,
     category: "Organizers",
     title: "Organizer Guide",
     text: "How to structure your organization, launch a conference, and run registration end to end.",
+    href: "/resources/organizer-guide",
   },
   {
     icon: Gavel,
     category: "Chairs",
     title: "Chair Guide",
     text: "Running sessions, moderating debate, and using the schedule and attendance tools as a chair.",
+    href: "/resources/chair-guide",
   },
   {
     icon: Scale,
     category: "Reference",
     title: "Rules of Procedure",
     text: "A plain-language walkthrough of standard parliamentary procedure used across MUN committees.",
+    href: "/resources/rules-of-procedure",
   },
   {
     icon: FileText,
     category: "Delegates",
     title: "Position Paper Guide",
     text: "Structure, research, and formatting guidance for writing a strong position paper.",
+    href: "/resources/position-paper-guide",
   },
   {
     icon: Newspaper,
     category: "Reading",
     title: "Blog Articles",
-    text: "Notes on running better conferences, delegate prep, and what's new on the platform.",
+    text: "Notes on running better conferences, delegate prep, and what's new on the platform. Coming soon.",
+    href: null,
   },
 ];
 
@@ -85,20 +91,31 @@ export default function ResourcesPage() {
           <p className="py-16 text-center text-sm text-muted-foreground">No resources match "{search}".</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((r) => (
-              <Card key={r.title} className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="space-y-3 p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy text-brand-gold">
-                      <r.icon className="h-5 w-5" />
+            {filtered.map((r) => {
+              const card = (
+                <Card
+                  className={r.href ? "h-full transition-shadow hover:shadow-md" : "h-full opacity-70"}
+                >
+                  <CardContent className="space-y-3 p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy text-brand-gold">
+                        <r.icon className="h-5 w-5" />
+                      </div>
+                      <Badge variant="outline">{r.category}</Badge>
                     </div>
-                    <Badge variant="outline">{r.category}</Badge>
-                  </div>
-                  <p className="font-semibold">{r.title}</p>
-                  <p className="text-sm text-muted-foreground">{r.text}</p>
-                </CardContent>
-              </Card>
-            ))}
+                    <p className="font-semibold">{r.title}</p>
+                    <p className="text-sm text-muted-foreground">{r.text}</p>
+                  </CardContent>
+                </Card>
+              );
+              return r.href ? (
+                <Link key={r.title} href={r.href}>
+                  {card}
+                </Link>
+              ) : (
+                <div key={r.title}>{card}</div>
+              );
+            })}
           </div>
         )}
 

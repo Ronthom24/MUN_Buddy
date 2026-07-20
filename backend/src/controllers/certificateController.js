@@ -7,6 +7,7 @@ const conferenceModel = require("../models/conferenceModel");
 const { resolveConferenceAccess } = require("../middleware/auth");
 const notificationService = require("../services/notificationService");
 const auditLogService = require("../services/auditLogService");
+const storageService = require("../services/storageService");
 
 const listTemplates = asyncHandler(async (req, res) => {
     const templates = await certificateTemplateModel.listByOrganization(req.organization.id, { includeArchived: true });
@@ -25,6 +26,14 @@ const updateTemplate = asyncHandler(async (req, res) => {
 
 const archiveTemplate = asyncHandler(async (req, res) => {
     const template = await certificateService.archiveTemplate(req.organization.id, Number(req.params.templateId));
+    res.status(200).json({ success: true, template });
+});
+
+const uploadTemplateLogo = asyncHandler(async (req, res) => {
+    if (!req.file) throw new ApiError(400, "A logo image is required");
+    await storageService.persist(req.file);
+    const logoPath = storageService.resolveFileUrl(req.file.filename);
+    const template = await certificateService.updateTemplate(req.organization.id, Number(req.params.templateId), { logoPath });
     res.status(200).json({ success: true, template });
 });
 
@@ -115,6 +124,6 @@ const verify = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-    listTemplates, createTemplate, updateTemplate, archiveTemplate, listTemplatesForConference,
+    listTemplates, createTemplate, updateTemplate, archiveTemplate, uploadTemplateLogo, listTemplatesForConference,
     listCertificates, certificateStats, issueCertificate, bulkIssue, myCertificates, downloadPdf, verify
 };

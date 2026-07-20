@@ -8,6 +8,7 @@ const validateBody = require("../middleware/validate");
 const organizationValidation = require("../validations/organizationValidation");
 const certificateValidation = require("../validations/certificateValidation");
 const broadcastValidation = require("../validations/broadcastValidation");
+const upload = require("../middleware/upload");
 
 const router = express.Router();
 const asOrganizer = [authenticate, requireRole("organizer")];
@@ -57,6 +58,10 @@ router.put(
 router.delete(
     "/:id/certificate-templates/:templateId", ...asOrganizer, requireOrganizationAccess(...MANAGE),
     certificateController.archiveTemplate
+);
+router.post(
+    "/:id/certificate-templates/:templateId/logo", ...asOrganizer, requireOrganizationAccess(...MANAGE),
+    upload.single("file"), certificateController.uploadTemplateLogo
 );
 
 router.get("/:id/email-templates", ...asOrganizer, requireOrganizationAccess(...ANY_MEMBER), broadcastController.listTemplates);

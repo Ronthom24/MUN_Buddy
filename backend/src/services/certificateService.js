@@ -1,3 +1,5 @@
+const path = require("path");
+const fs = require("fs/promises");
 const ApiError = require("../utils/ApiError");
 const certificateModel = require("../models/certificateModel");
 const certificateTemplateModel = require("../models/certificateTemplateModel");
@@ -6,6 +8,23 @@ const conferenceModel = require("../models/conferenceModel");
 const awardModel = require("../models/awardModel");
 const { generateCertificateNumber } = require("../utils/certificateNumber");
 const { renderCertificatePdf } = require("../utils/certificatePdf");
+const storageService = require("./storageService");
+
+/** Reads a template's logo (local disk or S3 URL) into a Buffer for pdfkit, which needs bytes, not a URL. */
+async function resolveLogoBuffer(logoPath) {
+    if (!logoPath) return null;
+    try {
+        if (/^https?:\/\//.test(logoPath)) {
+            const res = await fetch(logoPath);
+            if (!res.ok) return null;
+            return Buffer.from(await res.arrayBuffer());
+        }
+        const filename = path.basename(logoPath);
+        return await fs.readFile(path.join(storageService.uploadDir, filename));
+    } catch {
+        return null;
+    }
+}
 
 async function createTemplate(organizationId, data) {
     return certificateTemplateModel.create({ organizationId, ...data });
@@ -73,11 +92,14 @@ async function streamCertificatePdf(certificateId, stream, { recordDownload = tr
     const context = await certificateModel.findRenderContext(certificateId);
     if (!context) throw new ApiError(404, "Certificate not found");
 
+    const logoBuffer = await resolveLogoBuffer(context.template_logo_path);
+
     renderCertificatePdf({
         certificate: { certificate_number: context.certificate_number, issued_at: context.issued_at },
         template: {
             title: context.template_title, body_text: context.template_body_text, accent_color: context.template_accent_color,
-            signatory_name: context.template_signatory_name, signatory_title: context.template_signatory_title
+            signatory_name: context.template_signatory_name, signatory_title: context.template_signatory_title,
+            logo_buffer: logoBuffer
         },
         conference: { name: context.conference_name, start_date: context.conference_start_date, end_date: context.conference_end_date },
         delegate: { full_name: context.delegate_full_name },

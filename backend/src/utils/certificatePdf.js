@@ -44,23 +44,37 @@ function renderCertificatePdf({ certificate, template, conference, delegate, awa
     doc.lineWidth(3).strokeColor(accent).rect(28, 28, width - 56, height - 56).stroke();
     doc.lineWidth(0.75).strokeColor(accent).rect(38, 38, width - 76, height - 76).stroke();
 
+    // Everything below shifts down uniformly when a logo is present, so it
+    // never overlaps the fixed footer regardless of which elements exist.
+    let y = 70;
+    if (template.logo_buffer) {
+        const logoSize = 52;
+        doc.image(template.logo_buffer, width / 2 - logoSize / 2, y, { fit: [logoSize, logoSize], align: "center" });
+        y += logoSize + 14;
+    }
+
     doc.fillColor("#6b7280").font("Helvetica").fontSize(11)
-        .text(conference.name.toUpperCase(), 0, 70, { align: "center", width });
+        .text(conference.name.toUpperCase(), 0, y, { align: "center", width });
+    y += 35;
 
     doc.fillColor(accent).font("Times-Bold").fontSize(34)
-        .text(template.title, 0, 105, { align: "center", width });
+        .text(template.title, 0, y, { align: "center", width });
+    y += 60;
 
     doc.fillColor("#374151").font("Helvetica").fontSize(13)
-        .text("This is to certify that", 0, 165, { align: "center", width });
+        .text("This is to certify that", 0, y, { align: "center", width });
+    y += 30;
 
     doc.fillColor("#111827").font("Times-Bold").fontSize(30)
-        .text(fields.delegateName, 0, 195, { align: "center", width });
+        .text(fields.delegateName, 0, y, { align: "center", width });
+    y += 45;
 
-    doc.moveTo(width / 2 - 140, 240).lineTo(width / 2 + 140, 240).lineWidth(1).strokeColor(accent).stroke();
+    doc.moveTo(width / 2 - 140, y).lineTo(width / 2 + 140, y).lineWidth(1).strokeColor(accent).stroke();
+    y += 25;
 
     const bodyText = resolveFields(template.body_text, fields);
     doc.fillColor("#374151").font("Helvetica").fontSize(13)
-        .text(bodyText, 120, 265, { align: "center", width: width - 240, lineGap: 4 });
+        .text(bodyText, 120, y, { align: "center", width: width - 240, lineGap: 4 });
 
     const footerY = height - 130;
     const footerWidth = 260;

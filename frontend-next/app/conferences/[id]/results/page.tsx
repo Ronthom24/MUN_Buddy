@@ -25,7 +25,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { api, ApiRequestError } from "@/lib/api";
+import { api, ApiRequestError, resolveFileUrl } from "@/lib/api";
 import { openBlob } from "@/lib/utils";
 import type {
   AssignmentRow,
@@ -67,6 +67,14 @@ export default function ResultsPage() {
   const [awardDialogOpen, setAwardDialogOpen] = useState(false);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<CertificateTemplate | null>(null);
+  const [previewTemplate, setPreviewTemplate] = useState({
+    title: "Certificate of Participation",
+    bodyText: "has actively participated in {{conferenceName}} as a delegate.",
+    signatoryName: "",
+    signatoryTitle: "",
+    accentColor: "#1f2937",
+  });
+  const [logoUploading, setLogoUploading] = useState(false);
   const [issueDialogOpen, setIssueDialogOpen] = useState(false);
   const [selectedDelegateIds, setSelectedDelegateIds] = useState<Set<number>>(new Set());
   const [submitting, setSubmitting] = useState(false);
@@ -192,6 +200,40 @@ export default function ResultsPage() {
       toast.error(err instanceof ApiRequestError ? err.message : "Could not save template");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  function openTemplateDialog(template: CertificateTemplate | null) {
+    setEditingTemplate(template);
+    setPreviewTemplate({
+      title: template?.title || "Certificate of Participation",
+      bodyText: template?.body_text || "has actively participated in {{conferenceName}} as a delegate.",
+      signatoryName: template?.signatory_name || "",
+      signatoryTitle: template?.signatory_title || "",
+      accentColor: template?.accent_color || "#1f2937",
+    });
+    setTemplateDialogOpen(true);
+  }
+
+  async function handleUploadTemplateLogo(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file || !editingTemplate || !conference) return;
+    setLogoUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await api.postForm<{ success: true; template: CertificateTemplate }>(
+        `/organizations/${conference.organization_id}/certificate-templates/${editingTemplate.id}/logo`,
+        formData
+      );
+      setEditingTemplate(res.template);
+      toast.success("Logo uploaded");
+      await load();
+    } catch (err) {
+      toast.error(err instanceof ApiRequestError ? err.message : "Could not upload logo");
+    } finally {
+      setLogoUploading(false);
+      event.target.value = "";
     }
   }
 
@@ -404,10 +446,10 @@ export default function ResultsPage() {
                   if (!open) setEditingTemplate(null);
                 }}
               >
-                <DialogTrigger render={<Button size="sm" onClick={() => setEditingTemplate(null)} />}>
+                <DialogTrigger render={<Button size="sm" onClick={() => openTemplateDialog(null)} />}>
                   <Plus className="mr-1 h-4 w-4" /> New template
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-3xl">
                   <form onSubmit={handleSaveTemplate}>
                     <DialogHeader>
                       <DialogTitle>{editingTemplate ? "Edit template" : "New certificate template"}</DialogTitle>
@@ -415,61 +457,115 @@ export default function ResultsPage() {
                         Use {"{{delegateName}}"}, {"{{conferenceName}}"}, {"{{committee}}"}, {"{{portfolio}}"}, {"{{awardCategory}}"} in the body text.
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Internal name</Label>
-                          <Input id="name" name="name" required defaultValue={editingTemplate?.name} placeholder="Delegate Participation" />
+                    <div className="grid gap-6 py-4 lg:grid-cols-2">
+                      <div className="grid gap-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Internal name</Label>
+                            <Input id="name" name="name" required defaultValue={editingTemplate?.name} placeholder="Delegate Participation" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="template-certificateType">Type</Label>
+                            <Select
+                              name="certificateType" items={certTypeSelectItems}
+                              defaultValue={editingTemplate?.certificate_type || "participation"}
+                            >
+                              <SelectTrigger id="template-certificateType" className="w-full">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {CERT_TYPE_OPTIONS.map((t) => (
+                                  <SelectItem key={t.value} value={t.value}>
+                                    {t.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="template-certificateType">Type</Label>
-                          <Select
-                            name="certificateType" items={certTypeSelectItems}
-                            defaultValue={editingTemplate?.certificate_type || "participation"}
-                          >
-                            <SelectTrigger id="template-certificateType" className="w-full">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {CERT_TYPE_OPTIONS.map((t) => (
-                                <SelectItem key={t.value} value={t.value}>
-                                  {t.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="title">Certificate title</Label>
-                        <Input
-                          id="title" name="title" required defaultValue={editingTemplate?.title}
-                          placeholder="Certificate of Participation"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="bodyText">Body text</Label>
-                        <Textarea
-                          id="bodyText" name="bodyText" rows={3} required defaultValue={editingTemplate?.body_text}
-                          placeholder="has actively participated in {{conferenceName}} as a delegate."
-                        />
-                      </div>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="signatoryName">Signatory name</Label>
-                          <Input id="signatoryName" name="signatoryName" defaultValue={editingTemplate?.signatory_name ?? ""} />
+                          <Label htmlFor="title">Certificate title</Label>
+                          <Input
+                            id="title" name="title" required defaultValue={editingTemplate?.title}
+                            placeholder="Certificate of Participation"
+                            onChange={(e) => setPreviewTemplate((p) => ({ ...p, title: e.target.value }))}
+                          />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="signatoryTitle">Signatory title</Label>
-                          <Input id="signatoryTitle" name="signatoryTitle" defaultValue={editingTemplate?.signatory_title ?? ""} />
+                          <Label htmlFor="bodyText">Body text</Label>
+                          <Textarea
+                            id="bodyText" name="bodyText" rows={3} required defaultValue={editingTemplate?.body_text}
+                            placeholder="has actively participated in {{conferenceName}} as a delegate."
+                            onChange={(e) => setPreviewTemplate((p) => ({ ...p, bodyText: e.target.value }))}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="signatoryName">Signatory name</Label>
+                            <Input
+                              id="signatoryName" name="signatoryName" defaultValue={editingTemplate?.signatory_name ?? ""}
+                              onChange={(e) => setPreviewTemplate((p) => ({ ...p, signatoryName: e.target.value }))}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="signatoryTitle">Signatory title</Label>
+                            <Input
+                              id="signatoryTitle" name="signatoryTitle" defaultValue={editingTemplate?.signatory_title ?? ""}
+                              onChange={(e) => setPreviewTemplate((p) => ({ ...p, signatoryTitle: e.target.value }))}
+                            />
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="accentColor">Accent color</Label>
                           <Input
-                            id="accentColor" name="accentColor" type="color" className="h-9 p-1"
+                            id="accentColor" name="accentColor" type="color" className="h-9 w-20 p-1"
                             defaultValue={editingTemplate?.accent_color || "#1f2937"}
+                            onChange={(e) => setPreviewTemplate((p) => ({ ...p, accentColor: e.target.value }))}
                           />
                         </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="logoFile">Logo / seal image</Label>
+                          {editingTemplate ? (
+                            <Input id="logoFile" type="file" accept="image/*" disabled={logoUploading} onChange={handleUploadTemplateLogo} />
+                          ) : (
+                            <p className="text-xs text-muted-foreground">Save the template first, then you can upload a logo.</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Preview</Label>
+                        <div
+                          className="flex aspect-[1.4/1] flex-col items-center justify-center gap-2 rounded-md p-6 text-center"
+                          style={{ border: `3px solid ${previewTemplate.accentColor}`, backgroundColor: "#fdfdfb" }}
+                        >
+                          {editingTemplate?.logo_path && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={resolveFileUrl(editingTemplate.logo_path)} alt="" className="h-10 w-10 object-contain" />
+                          )}
+                          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                            {conference?.name || "Conference Name"}
+                          </p>
+                          <p className="font-heading text-lg font-bold" style={{ color: previewTemplate.accentColor }}>
+                            {previewTemplate.title || "Certificate Title"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">This is to certify that</p>
+                          <p className="font-heading text-base font-bold">Jane Delegate</p>
+                          <p className="max-w-xs text-xs text-muted-foreground">
+                            {previewTemplate.bodyText.replace(/\{\{\s*conferenceName\s*\}\}/g, conference?.name || "the conference")}
+                          </p>
+                          {previewTemplate.signatoryName && (
+                            <div className="mt-2 text-center">
+                              <p className="text-xs font-semibold">{previewTemplate.signatoryName}</p>
+                              {previewTemplate.signatoryTitle && (
+                                <p className="text-[10px] text-muted-foreground">{previewTemplate.signatoryTitle}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Approximate preview — the real certificate is a landscape A4 PDF with fixed margins.
+                        </p>
                       </div>
                     </div>
                     <DialogFooter>
@@ -500,13 +596,7 @@ export default function ResultsPage() {
                         </div>
                         <p className="line-clamp-2 text-xs text-muted-foreground">{template.body_text}</p>
                         <div className="flex gap-2 pt-1">
-                          <Button
-                            size="xs" variant="ghost"
-                            onClick={() => {
-                              setEditingTemplate(template);
-                              setTemplateDialogOpen(true);
-                            }}
-                          >
+                          <Button size="xs" variant="ghost" onClick={() => openTemplateDialog(template)}>
                             Edit
                           </Button>
                           <Button size="xs" variant="ghost" onClick={() => handleArchiveTemplate(template)}>

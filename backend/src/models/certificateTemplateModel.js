@@ -32,7 +32,8 @@ async function listByOrganization(organizationId, { includeArchived = false } = 
 
 const UPDATABLE_FIELDS = {
     name: "name", certificateType: "certificate_type", title: "title", bodyText: "body_text",
-    signatoryName: "signatory_name", signatoryTitle: "signatory_title", accentColor: "accent_color"
+    signatoryName: "signatory_name", signatoryTitle: "signatory_title", accentColor: "accent_color",
+    logoPath: "logo_path"
 };
 
 async function update(id, data, db = pool) {

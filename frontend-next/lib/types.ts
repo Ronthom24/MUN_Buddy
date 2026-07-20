@@ -566,6 +566,7 @@ export interface CertificateTemplate {
   signatory_name: string | null;
   signatory_title: string | null;
   accent_color: string;
+  logo_path: string | null;
   status: "active" | "archived";
 }
 

@@ -50,6 +50,7 @@ async function findRenderContext(id, db = pool) {
             c.name AS conference_name, c.start_date AS conference_start_date, c.end_date AS conference_end_date,
             ct.title AS template_title, ct.body_text AS template_body_text, ct.accent_color AS template_accent_color,
             ct.signatory_name AS template_signatory_name, ct.signatory_title AS template_signatory_title,
+            ct.logo_path AS template_logo_path,
             a.category AS award_category,
             aw_committee.name AS award_committee_name, aw_portfolio.name AS award_portfolio_name
          FROM certificates cert

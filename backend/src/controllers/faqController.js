@@ -53,7 +53,7 @@ async function requireFaqAccess(req, res, next) {
         if (!faq) return next(new ApiError(404, "FAQ not found"));
 
         const conference = await conferenceModel.findById(faq.conference_id);
-        const access = await resolveConferenceAccess(conference, req.user.email);
+        const access = await resolveConferenceAccess(conference, req.user);
         if (!access || !["owner", "conference_manager", "organizer", "committee_director"].includes(access.role)) {
             return next(new ApiError(403, "You do not have access to this resource"));
         }

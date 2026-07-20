@@ -99,7 +99,7 @@ const downloadPdf = asyncHandler(async (req, res) => {
         allowed = certificate.delegate_id === req.user.id;
     } else if (req.user.role === "organizer") {
         const conference = await conferenceModel.findById(certificate.conference_id);
-        const access = await resolveConferenceAccess(conference, req.user.email);
+        const access = await resolveConferenceAccess(conference, req.user);
         allowed = Boolean(access);
     }
     if (!allowed) throw new ApiError(403, "You do not have access to this certificate");

@@ -27,10 +27,12 @@ export default function DelegateCertificatesPage() {
 
   async function handleDownload(certificate: Certificate) {
     setDownloadingId(certificate.id);
+    const win = window.open("", "_blank", "noopener,noreferrer");
     try {
       const blob = await api.getBlob(`/certificates/${certificate.id}/pdf`);
-      openBlob(blob);
+      openBlob(blob, win);
     } catch (err) {
+      win?.close();
       toast.error(err instanceof ApiRequestError ? err.message : "Could not open certificate");
     } finally {
       setDownloadingId(null);

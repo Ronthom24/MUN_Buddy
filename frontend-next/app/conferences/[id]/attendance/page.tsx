@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { CalendarClock, CheckCircle2, Circle, QrCode, ScanLine, UserCheck, Users } from "lucide-react";
+import { Camera, CalendarClock, CheckCircle2, Circle, QrCode, ScanLine, UserCheck, Users } from "lucide-react";
+import { QrScanner } from "@/components/qr-scanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +32,7 @@ export default function AttendancePage() {
   const [rosterLoading, setRosterLoading] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
   const [tokenSubmitting, setTokenSubmitting] = useState(false);
+  const [scanning, setScanning] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -87,14 +89,13 @@ export default function AttendancePage() {
     }
   }
 
-  async function submitToken(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!activeEvent || !tokenInput.trim()) return;
+  async function checkInByToken(token: string) {
+    if (!activeEvent || !token.trim()) return;
     setTokenSubmitting(true);
     try {
       const res = await api.post<{ success: true; alreadyCheckedIn: boolean; delegateName: string }>(
         `/conferences/${conferenceId}/schedule/events/${activeEvent.id}/attendance/check-in`,
-        { token: tokenInput.trim() }
+        { token: token.trim() }
       );
       toast.success(res.alreadyCheckedIn ? `${res.delegateName} was already checked in` : `${res.delegateName} checked in`);
       setTokenInput("");
@@ -105,6 +106,16 @@ export default function AttendancePage() {
     } finally {
       setTokenSubmitting(false);
     }
+  }
+
+  async function submitToken(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await checkInByToken(tokenInput);
+  }
+
+  function handleScan(decodedText: string) {
+    setScanning(false);
+    checkInByToken(decodedText);
   }
 
   const checkedInCount = roster.filter((r) => r.checkedIn).length;
@@ -186,7 +197,15 @@ export default function AttendancePage() {
         </CardContent>
       </Card>
 
-      <Dialog open={Boolean(activeEvent)} onOpenChange={(open) => !open && setActiveEvent(null)}>
+      <Dialog
+        open={Boolean(activeEvent)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setActiveEvent(null);
+            setScanning(false);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           {activeEvent && (
             <>
@@ -207,7 +226,12 @@ export default function AttendancePage() {
                 <Button type="submit" size="sm" disabled={tokenSubmitting || !tokenInput.trim()}>
                   <QrCode className="h-4 w-4" />
                 </Button>
+                <Button type="button" size="sm" variant="outline" onClick={() => setScanning((s) => !s)}>
+                  <Camera className="mr-1 h-4 w-4" /> {scanning ? "Stop" : "Scan"}
+                </Button>
               </form>
+
+              {scanning && <QrScanner active={scanning} onScan={handleScan} />}
 
               <div className="max-h-72 space-y-1 overflow-y-auto">
                 {rosterLoading ? (

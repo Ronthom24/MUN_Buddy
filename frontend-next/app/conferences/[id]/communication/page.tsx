@@ -19,7 +19,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
-import { api, ApiRequestError } from "@/lib/api";
+import { api, ApiRequestError, resolveFileUrl } from "@/lib/api";
+import { downloadBlob } from "@/lib/utils";
 import type {
   Announcement, Committee, Conference, EmailBroadcast, EmailTemplate, Faq, Resource, ResourceVersion,
 } from "@/lib/types";
@@ -174,6 +175,16 @@ export default function CommunicationPage() {
       toast.error(err instanceof ApiRequestError ? err.message : "Could not save resource");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleDownloadResource(r: Resource) {
+    try {
+      const blob = await api.getBlob(`/resources/${r.id}/download`);
+      const ext = r.file_path?.includes(".") ? r.file_path.slice(r.file_path.lastIndexOf(".")) : "";
+      downloadBlob(blob, `${r.title}${ext}`);
+    } catch (err) {
+      toast.error(err instanceof ApiRequestError ? err.message : "Could not download resource");
     }
   }
 
@@ -666,6 +677,9 @@ export default function CommunicationPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1">
+                            <Button size="xs" variant="ghost" onClick={() => handleDownloadResource(r)} disabled={!r.file_path}>
+                              <Download className="mr-1 h-3.5 w-3.5" /> Download
+                            </Button>
                             <Button size="xs" variant="ghost" onClick={() => openVersions(r)}>
                               <History className="mr-1 h-3.5 w-3.5" /> Versions
                             </Button>
@@ -708,7 +722,7 @@ export default function CommunicationPage() {
                 {versions.map((v) => (
                   <div key={v.id} className="flex items-center justify-between rounded-md border p-2 text-sm">
                     <span>Version {v.version}</span>
-                    <a href={`${process.env.NEXT_PUBLIC_API_BASE_URL}${v.file_path}`} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                    <a href={resolveFileUrl(v.file_path)} target="_blank" rel="noreferrer" className="text-primary hover:underline">
                       <Download className="mr-1 inline h-3.5 w-3.5" /> Download
                     </a>
                   </div>

@@ -8,6 +8,18 @@ export function getToken(): string | null {
   return window.localStorage.getItem(ADMIN_VIEW_TOKEN_KEY) || window.localStorage.getItem(TOKEN_KEY);
 }
 
+/**
+ * Resolves a stored file_path (e.g. "/uploads/xyz.pdf" from local disk
+ * storage, or a full https:// URL from S3 -- see backend storageService.js)
+ * to a URL a browser can load directly. Local paths are rooted at the API
+ * server's origin, NOT under /api -- API_BASE_URL includes /api, so it must
+ * be stripped, not prepended raw (that produces a 404 at .../api/uploads/...).
+ */
+export function resolveFileUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) return path;
+  return `${API_BASE_URL.replace(/\/api\/?$/, "")}${path}`;
+}
+
 export function setToken(token: string) {
   window.localStorage.setItem(TOKEN_KEY, token);
 }

@@ -160,7 +160,7 @@ export default function DashboardPage() {
   const activeOrg = organizations.find((o) => o.id === activeOrgId);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-muted/30">
       <header className="border-b bg-background">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
@@ -276,9 +276,17 @@ export default function DashboardPage() {
                 </TableHeader>
                 <TableBody>
                   {conferences.map((conference) => (
-                    <TableRow key={conference.id}>
+                    <TableRow
+                      key={conference.id}
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/conferences/${conference.id}`)}
+                    >
                       <TableCell className="font-medium">
-                        <Link href={`/conferences/${conference.id}`} className="hover:underline">
+                        <Link
+                          href={`/conferences/${conference.id}`}
+                          className="hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           {conference.name}
                         </Link>
                         {conference.acronym && (
@@ -402,7 +410,7 @@ function StatCard({
           <p className="text-sm text-muted-foreground">{label}</p>
           {loading ? <Skeleton className="mt-1 h-7 w-10" /> : <p className="text-2xl font-semibold">{value ?? 0}</p>}
         </div>
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-navy/10 text-brand-navy">
           {icon}
         </div>
       </CardContent>

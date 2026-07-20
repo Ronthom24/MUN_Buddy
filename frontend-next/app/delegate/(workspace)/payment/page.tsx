@@ -155,7 +155,7 @@ export default function DelegatePaymentPage() {
                 <DialogTrigger render={<Button size="sm" />}>
                   <Plus className="mr-1 h-4 w-4" /> Submit payment
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-lg">
                   <form onSubmit={handleSubmit}>
                     <DialogHeader>
                       <DialogTitle>Submit a payment</DialogTitle>

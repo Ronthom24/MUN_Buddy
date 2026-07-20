@@ -461,7 +461,7 @@ export default function PaymentsPage() {
                 <DialogTrigger render={<Button size="sm" />}>
                   <Plus className="mr-1 h-4 w-4" /> Record payment
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-xl">
                   <form onSubmit={handleRecordPayment}>
                     <DialogHeader>
                       <DialogTitle>Record a payment</DialogTitle>
@@ -652,7 +652,7 @@ export default function PaymentsPage() {
                 <DialogTrigger render={<Button size="sm" />}>
                   <Plus className="mr-1 h-4 w-4" /> Add fee
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-lg">
                   <form onSubmit={handleCreateFeeCategory}>
                     <DialogHeader>
                       <DialogTitle>Add a fee category</DialogTitle>
@@ -768,7 +768,7 @@ export default function PaymentsPage() {
                 <DialogTrigger render={<Button size="sm" variant="outline" />}>
                   <Plus className="mr-1 h-4 w-4" /> Apply discount
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-lg">
                   <form onSubmit={handleApplyDiscount}>
                     <DialogHeader>
                       <DialogTitle>Apply a discount</DialogTitle>
@@ -856,7 +856,7 @@ export default function PaymentsPage() {
       </Tabs>
 
       <Dialog open={Boolean(verifyNotesTarget)} onOpenChange={(open) => !open && setVerifyNotesTarget(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-lg">
           {verifyNotesTarget && (
             <form
               onSubmit={(e) => {
@@ -888,7 +888,7 @@ export default function PaymentsPage() {
       </Dialog>
 
       <Dialog open={Boolean(refundTarget)} onOpenChange={(open) => !open && setRefundTarget(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-lg">
           {refundTarget && (
             <form onSubmit={handleRefund}>
               <DialogHeader>

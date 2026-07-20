@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, FileText, Flag, Plus } from "lucide-react";
+import { ArrowLeft, FileText, Flag, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api, ApiRequestError } from "@/lib/api";
 import type { Agenda, Committee, CommitteeStats, Portfolio } from "@/lib/types";
 
@@ -36,6 +37,9 @@ export default function CommitteeDetailPage() {
   const [agendaDialogOpen, setAgendaDialogOpen] = useState(false);
   const [portfolioDialogOpen, setPortfolioDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [chairDialogOpen, setChairDialogOpen] = useState(false);
+  const [editingAgenda, setEditingAgenda] = useState<Agenda | null>(null);
+  const [editingPortfolio, setEditingPortfolio] = useState<Portfolio | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -83,6 +87,40 @@ export default function CommitteeDetailPage() {
     }
   }
 
+  async function handleUpdateAgenda(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingAgenda) return;
+    const form = new FormData(event.currentTarget);
+    setSubmitting(true);
+    try {
+      await api.put(`/agenda/${editingAgenda.id}`, {
+        title: form.get("title"),
+        description: form.get("description") || undefined,
+        backgroundNotes: form.get("backgroundNotes") || undefined,
+        status: form.get("status"),
+      });
+      toast.success("Agenda item updated");
+      setEditingAgenda(null);
+      await load();
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not update agenda item";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleDeleteAgenda(agenda: Agenda) {
+    try {
+      await api.delete(`/agenda/${agenda.id}`);
+      toast.success("Agenda item removed");
+      await load();
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not remove agenda item";
+      toast.error(message);
+    }
+  }
+
   async function handleCreatePortfolio(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -97,6 +135,59 @@ export default function CommitteeDetailPage() {
       await load();
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Could not add portfolio";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleUpdatePortfolio(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingPortfolio) return;
+    const form = new FormData(event.currentTarget);
+    setSubmitting(true);
+    try {
+      await api.put(`/portfolios/${editingPortfolio.id}`, {
+        name: form.get("name"),
+        type: form.get("type"),
+      });
+      toast.success("Portfolio updated");
+      setEditingPortfolio(null);
+      await load();
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not update portfolio";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleDeletePortfolio(portfolio: Portfolio) {
+    try {
+      await api.delete(`/portfolios/${portfolio.id}`);
+      toast.success("Portfolio removed");
+      await load();
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not remove portfolio";
+      toast.error(message);
+    }
+  }
+
+  async function handleUpdateChairs(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!committee) return;
+    const form = new FormData(event.currentTarget);
+    setSubmitting(true);
+    try {
+      await api.put(`/committees/${committee.id}`, {
+        chair: form.get("chair") || null,
+        viceChair: form.get("viceChair") || null,
+      });
+      toast.success("Committee leadership updated");
+      setChairDialogOpen(false);
+      await load();
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not update committee leadership";
       toast.error(message);
     } finally {
       setSubmitting(false);
@@ -129,8 +220,35 @@ export default function CommitteeDetailPage() {
               <Badge variant={committee.type === "crisis" ? "destructive" : "secondary"}>{committee.type}</Badge>
               <Badge variant="outline">{committee.status}</Badge>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
               Chair: {committee.chair || "Unassigned"} · Vice Chair: {committee.vice_chair || "Unassigned"}
+              <Dialog open={chairDialogOpen} onOpenChange={setChairDialogOpen}>
+                <DialogTrigger render={<Button size="icon-sm" variant="ghost" className="h-5 w-5" />}>
+                  <Pencil className="h-3 w-3" />
+                </DialogTrigger>
+                <DialogContent>
+                  <form onSubmit={handleUpdateChairs}>
+                    <DialogHeader>
+                      <DialogTitle>Committee leadership</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="chair">Chair</Label>
+                        <Input id="chair" name="chair" defaultValue={committee.chair || ""} placeholder="Chair name" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="viceChair">Vice Chair</Label>
+                        <Input id="viceChair" name="viceChair" defaultValue={committee.vice_chair || ""} placeholder="Vice chair name" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" disabled={submitting}>
+                        {submitting ? "Saving..." : "Save"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </p>
           </div>
           <div className="flex gap-6 text-center">
@@ -203,9 +321,17 @@ export default function CommitteeDetailPage() {
                 {agendas.map((agenda, i) => (
                   <div key={agenda.id}>
                     {i > 0 && <Separator className="mb-3" />}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <p className="font-medium">{agenda.title}</p>
-                      <Badge variant="outline">{agenda.status}</Badge>
+                      <div className="flex shrink-0 items-center gap-1">
+                        <Badge variant="outline">{agenda.status}</Badge>
+                        <Button size="icon-sm" variant="ghost" onClick={() => setEditingAgenda(agenda)}>
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button size="icon-sm" variant="ghost" onClick={() => handleDeleteAgenda(agenda)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </div>
                     {agenda.description && <p className="mt-1 text-sm text-muted-foreground">{agenda.description}</p>}
                   </div>
@@ -253,15 +379,119 @@ export default function CommitteeDetailPage() {
             ) : (
               <div className="flex flex-wrap gap-2">
                 {portfolios.map((portfolio) => (
-                  <Badge key={portfolio.id} variant={portfolio.status === "assigned" ? "default" : "outline"}>
-                    {portfolio.name}
-                  </Badge>
+                  <div
+                    key={portfolio.id}
+                    className="group flex items-center gap-1 rounded-full border border-border py-0.5 pl-3 pr-1 text-sm"
+                  >
+                    <Badge variant={portfolio.status === "assigned" ? "default" : "outline"} className="border-none p-0">
+                      {portfolio.name}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{portfolio.type}</span>
+                    <Button
+                      size="icon-sm" variant="ghost" className="h-5 w-5 opacity-0 group-hover:opacity-100"
+                      onClick={() => setEditingPortfolio(portfolio)}
+                    >
+                      <Pencil className="h-3 w-3" />
+                    </Button>
+                    <Button
+                      size="icon-sm" variant="ghost" className="h-5 w-5 opacity-0 group-hover:opacity-100"
+                      onClick={() => handleDeletePortfolio(portfolio)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
                 ))}
               </div>
             )}
           </CardContent>
         </Card>
       </div>
+
+      <Dialog open={Boolean(editingAgenda)} onOpenChange={(open) => !open && setEditingAgenda(null)}>
+        <DialogContent>
+          {editingAgenda && (
+            <form onSubmit={handleUpdateAgenda}>
+              <DialogHeader>
+                <DialogTitle>Edit agenda item</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="editAgendaTitle">Title</Label>
+                  <Input id="editAgendaTitle" name="title" required defaultValue={editingAgenda.title} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="editAgendaDescription">Description</Label>
+                  <Textarea id="editAgendaDescription" name="description" rows={3} defaultValue={editingAgenda.description || ""} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="editAgendaBackground">Background notes</Label>
+                  <Textarea id="editAgendaBackground" name="backgroundNotes" rows={3} defaultValue={editingAgenda.background_notes || ""} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="editAgendaStatus">Status</Label>
+                  <Select
+                    name="status" defaultValue={editingAgenda.status}
+                    items={{ draft: "Draft", published: "Published", archived: "Archived" }}
+                  >
+                    <SelectTrigger id="editAgendaStatus">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="published">Published</SelectItem>
+                      <SelectItem value="archived">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? "Saving..." : "Save"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(editingPortfolio)} onOpenChange={(open) => !open && setEditingPortfolio(null)}>
+        <DialogContent>
+          {editingPortfolio && (
+            <form onSubmit={handleUpdatePortfolio}>
+              <DialogHeader>
+                <DialogTitle>Edit portfolio</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="editPortfolioName">Name</Label>
+                  <Input id="editPortfolioName" name="name" required defaultValue={editingPortfolio.name} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="editPortfolioType">Type</Label>
+                  <Select
+                    name="type" defaultValue={editingPortfolio.type}
+                    items={{ country: "Country", position: "Position", observer: "Observer" }}
+                  >
+                    <SelectTrigger id="editPortfolioType">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="country">Country</SelectItem>
+                      <SelectItem value="position">Position</SelectItem>
+                      <SelectItem value="observer">Observer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? "Saving..." : "Save"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

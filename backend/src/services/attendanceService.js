@@ -39,6 +39,18 @@ async function checkIn(conferenceId, scheduleEventId, { delegateId, token }, che
     const delegate = await delegateModel.findById(resolvedDelegateId);
     if (!delegate || delegate.conference_id !== conferenceId) throw new ApiError(404, "Delegate not found in this conference");
 
+    // Committee-scoped events (spec: "Session Attendance") only expect delegates
+    // assigned to that committee. Without this check, checking in a delegate who
+    // isn't on the event's roster inflates checkedInCount past expectedCount in
+    // getAnalytics, producing attendance rates over 100%.
+    if (event.committee_id) {
+        const assignments = await assignmentModel.listByConference(conferenceId);
+        const onRoster = assignments.some(
+            (a) => a.delegate_id === resolvedDelegateId && a.committee_id === event.committee_id && a.status === "assigned"
+        );
+        if (!onRoster) throw new ApiError(403, "This delegate isn't assigned to this session's committee");
+    }
+
     const existing = await attendanceModel.findAttendanceRecord(event.id, resolvedDelegateId);
     if (existing) return { record: existing, alreadyCheckedIn: true, delegateName: delegate.full_name };
 
@@ -103,7 +115,12 @@ async function getAnalytics(conferenceId) {
             startTime: row.start_time,
             checkedInCount: Number(row.checked_in_count),
             expectedCount,
-            attendanceRate: expectedCount > 0 ? Number((Number(row.checked_in_count) / expectedCount).toFixed(2)) : 0
+            // Clamped to 1.0: expectedCount is the *current* roster, recomputed
+            // live on every call, while checkedInCount is a historical count of
+            // check-ins -- a delegate checked in before being reassigned/removed
+            // from the committee still counts, which can otherwise push this
+            // over 100%.
+            attendanceRate: expectedCount > 0 ? Math.min(1, Number((Number(row.checked_in_count) / expectedCount).toFixed(2))) : 0
         };
     });
 
@@ -112,7 +129,7 @@ async function getAnalytics(conferenceId) {
 
     return {
         events,
-        overallAttendanceRate: totalExpected > 0 ? Number((totalCheckIns / totalExpected).toFixed(2)) : 0
+        overallAttendanceRate: totalExpected > 0 ? Math.min(1, Number((totalCheckIns / totalExpected).toFixed(2))) : 0
     };
 }
 

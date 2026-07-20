@@ -115,7 +115,7 @@ export default function AttendancePage() {
         <StatCard
           icon={<UserCheck className="h-4 w-4" />}
           label="Overall attendance rate"
-          value={analytics ? `${Math.round(analytics.overallAttendanceRate * 100)}%` : undefined}
+          value={analytics ? `${Math.min(100, Math.round(analytics.overallAttendanceRate * 100))}%` : undefined}
           loading={loading}
         />
         <StatCard

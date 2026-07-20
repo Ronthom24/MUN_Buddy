@@ -205,6 +205,7 @@ export default function AssignmentsPage() {
                       </TableCell>
                       <TableCell>
                         <Select
+                          items={Object.fromEntries(committees.map((c) => [String(c.id), c.name]))}
                           value={selectedCommitteeId ? String(selectedCommitteeId) : ""}
                           onValueChange={(value) => setDraft(row.delegate_id, { committeeId: value ? Number(value) : undefined, portfolioId: undefined })}
                         >
@@ -222,6 +223,10 @@ export default function AssignmentsPage() {
                       </TableCell>
                       <TableCell>
                         <Select
+                          items={Object.fromEntries(portfolioOptions.map((p) => [
+                            String(p.id),
+                            p.name + (p.status === "assigned" && p.id !== row.portfolio_id ? " (taken)" : "")
+                          ]))}
                           value={draft.portfolioId ? String(draft.portfolioId) : row.portfolio_id ? String(row.portfolio_id) : ""}
                           onValueChange={(value) => setDraft(row.delegate_id, { portfolioId: value ? Number(value) : undefined })}
                           disabled={!selectedCommitteeId}

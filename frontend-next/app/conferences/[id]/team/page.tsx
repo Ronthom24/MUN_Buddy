@@ -27,6 +27,7 @@ const TRASH_ITEM_LABEL: Record<keyof TrashBin, string> = {
 };
 
 const ROLES = [
+  { value: "admin", label: "Admin" },
   { value: "conference_manager", label: "Executive Board" },
   { value: "organizer", label: "Organizing Committee" },
   { value: "committee_director", label: "Committee Director" },
@@ -54,6 +55,7 @@ export default function TeamPage() {
   const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [inviteRole, setInviteRole] = useState("organizer");
+  const [viewingMember, setViewingMember] = useState<OrganizerAccessRow | null>(null);
 
   const departmentItems = useMemo(
     () => ({ none: "No department", ...Object.fromEntries(departments.map((d) => [String(d.id), d.name])) }),
@@ -283,7 +285,7 @@ export default function TeamPage() {
                   </TableHeader>
                   <TableBody>
                     {members.map((m) => (
-                      <TableRow key={m.id}>
+                      <TableRow key={m.id} className="cursor-pointer" onClick={() => setViewingMember(m)}>
                         <TableCell className="font-medium">{m.email}</TableCell>
                         <TableCell>
                           <Badge variant="outline">{ROLE_ITEMS[m.role] || m.role}</Badge>
@@ -299,7 +301,15 @@ export default function TeamPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           {m.role !== "owner" && (
-                            <Button size="xs" variant="ghost" onClick={() => handleRemoveMember(m)}>Revoke</Button>
+                            <Button
+                              size="xs" variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveMember(m);
+                              }}
+                            >
+                              Revoke
+                            </Button>
                           )}
                         </TableCell>
                       </TableRow>
@@ -498,6 +508,62 @@ export default function TeamPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={Boolean(viewingMember)} onOpenChange={(open) => !open && setViewingMember(null)}>
+        <DialogContent>
+          {viewingMember && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{viewingMember.fullName || viewingMember.email}</DialogTitle>
+                <DialogDescription>{viewingMember.email}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3 py-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Role</span>
+                  <Badge variant="outline">{ROLE_ITEMS[viewingMember.role] || viewingMember.role}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Status</span>
+                  <Badge variant={viewingMember.role === "owner" || viewingMember.claimed ? "default" : "outline"}>
+                    {viewingMember.role === "owner" || viewingMember.claimed ? "Active" : "Invited"}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Department</span>
+                  <span>{departments.find((d) => d.id === viewingMember.departmentId)?.name || "—"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Position</span>
+                  <span>{viewingMember.positionTitle || "—"}</span>
+                </div>
+                {viewingMember.role === "committee_director" && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Committee</span>
+                    <span>{committees.find((c) => c.id === viewingMember.committeeId)?.name || "—"}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Added</span>
+                  <span>{new Date(viewingMember.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+              {viewingMember.role !== "owner" && (
+                <DialogFooter>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      handleRemoveMember(viewingMember);
+                      setViewingMember(null);
+                    }}
+                  >
+                    Revoke access
+                  </Button>
+                </DialogFooter>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

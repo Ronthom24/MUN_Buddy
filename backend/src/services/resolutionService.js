@@ -49,7 +49,7 @@ async function remove(resolutionId, user) {
 
     const access = await organizerAccessModel.findByConferenceAndEmail(resolution.conference_id, user.email);
     const allowed = access && (
-        ["owner", "conference_manager"].includes(access.role) ||
+        ["owner", "conference_manager", "admin"].includes(access.role) ||
         (access.role === "committee_director" && access.committee_id === resolution.committee_id)
     );
 

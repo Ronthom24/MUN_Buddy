@@ -40,11 +40,11 @@ const router = express.Router();
 const asOrganizer = [authenticate, requireRole("organizer")];
 
 // Anyone with any access role on the conference can read; write access varies by route below.
-const ALL_ROLES = ["owner", "conference_manager", "organizer", "committee_director"];
-const MANAGE_STRUCTURE = ["owner", "conference_manager"];
-const OPERATIONAL = ["owner", "conference_manager", "organizer"];
+const ALL_ROLES = ["owner", "conference_manager", "admin", "organizer", "committee_director"];
+const MANAGE_STRUCTURE = ["owner", "conference_manager", "admin"];
+const OPERATIONAL = ["owner", "conference_manager", "admin", "organizer"];
 const OWNER_ONLY = ["owner"];
-const RESOLUTION_REVIEW = ["owner", "conference_manager", "committee_director"];
+const RESOLUTION_REVIEW = ["owner", "conference_manager", "admin", "committee_director"];
 
 router.get("/open", conferenceController.listOpen);
 router.get("/me", ...asOrganizer, conferenceController.listMine);

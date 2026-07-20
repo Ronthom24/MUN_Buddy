@@ -308,7 +308,7 @@ export interface Department {
 export interface OrganizerAccessRow {
   id: number;
   email: string;
-  role: "owner" | "conference_manager" | "organizer" | "committee_director";
+  role: "owner" | "conference_manager" | "admin" | "organizer" | "committee_director";
   committeeId: number | null;
   departmentId: number | null;
   positionTitle: string | null;

@@ -139,7 +139,7 @@ async function resolveConferenceAccess(conference, user) {
     return null;
 }
 
-const DEFAULT_OPERATIONAL_ROLES = ["owner", "conference_manager", "organizer"];
+const DEFAULT_OPERATIONAL_ROLES = ["owner", "conference_manager", "admin", "organizer"];
 
 function requireConferenceAccess(...allowedRoles) {
     return async (req, res, next) => {
@@ -317,7 +317,7 @@ async function requireResolutionOwnership(req, res, next) {
         const conference = await conferenceModel.findById(resolution.conference_id);
         const access = await resolveConferenceAccess(conference, req.user);
 
-        const allowed = ["owner", "conference_manager", "committee_director"];
+        const allowed = ["owner", "conference_manager", "admin", "committee_director"];
         if (!access || !allowed.includes(access.role)) {
             return next(new ApiError(403, "You do not have access to this resource"));
         }

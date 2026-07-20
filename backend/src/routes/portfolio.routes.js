@@ -6,7 +6,7 @@ const entityValidation = require("../validations/entityValidation");
 
 const router = express.Router();
 const asOrganizer = [authenticate, requireRole("organizer")];
-const MANAGE_COMMITTEE_CONTENT = ["owner", "conference_manager", "committee_director"];
+const MANAGE_COMMITTEE_CONTENT = ["owner", "conference_manager", "admin", "committee_director"];
 
 router.put(
     "/:id", ...asOrganizer, requirePortfolioAccess(...MANAGE_COMMITTEE_CONTENT),

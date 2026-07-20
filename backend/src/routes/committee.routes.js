@@ -9,8 +9,8 @@ const entityValidation = require("../validations/entityValidation");
 const router = express.Router();
 const asOrganizer = [authenticate, requireRole("organizer")];
 
-const MANAGE_STRUCTURE = ["owner", "conference_manager"];
-const MANAGE_COMMITTEE_CONTENT = ["owner", "conference_manager", "committee_director"];
+const MANAGE_STRUCTURE = ["owner", "conference_manager", "admin"];
+const MANAGE_COMMITTEE_CONTENT = ["owner", "conference_manager", "admin", "committee_director"];
 
 router.get("/:id", committeeController.getOne);
 router.get("/:id/stats", committeeController.stats);

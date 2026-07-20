@@ -1,6 +1,6 @@
 const { required, isEmail, isOneOf } = require("./rules");
 
-const ROLES = ["conference_manager", "organizer", "committee_director"];
+const ROLES = ["conference_manager", "admin", "organizer", "committee_director"];
 
 function invite(body) {
     const errors = [];

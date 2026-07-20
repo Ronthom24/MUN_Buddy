@@ -51,7 +51,7 @@ const RESOURCES = [
 
 const FAQS = [
   { q: "Do I need an account to browse conferences?", a: "No — the conference and organization directories are open to everyone. You only need an account to register as a delegate or organize a conference." },
-  { q: "Is MUN Buddy free to use?", a: "Yes, the Starter plan is free for a single organization running one conference at a time. See the Pricing page for details on larger plans." },
+  { q: "Is MUN Buddy free to use?", a: "Pricing is set per conference based on size and needs. See the Pricing page to get in touch." },
   { q: "How do I verify a certificate?", a: "Use the Certificate Verification tool in the footer, or go to /verify and enter the certificate number." },
 ];
 

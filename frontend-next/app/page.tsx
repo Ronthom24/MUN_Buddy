@@ -375,7 +375,7 @@ export default function Home() {
           <ShieldCheck className="mx-auto mb-4 h-9 w-9 text-brand-gold" />
           <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">Ready to run your own conference?</h2>
           <p className="mt-3 text-white/70">
-            Set up your organization, launch a conference, and manage the entire lifecycle — for free.
+            Set up your organization and manage the entire conference lifecycle from one place.
           </p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Button size="lg" variant="accent" render={<Link href="/register" />} nativeButton={false}>

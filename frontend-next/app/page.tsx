@@ -24,7 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LogoBadge } from "@/components/logo";
 import { PublicNav, PublicFooter } from "@/components/public-nav";
 import { api } from "@/lib/api";
-import type { PublicConference, PublicOrganization, PublicStats } from "@/lib/types";
+import type { PublicConference, PublicOrganization } from "@/lib/types";
 
 const FEATURES = [
   {
@@ -83,35 +83,19 @@ const WHY_MUN_BUDDY = [
   },
 ];
 
-function StatTile({ label, value, loading }: { label: string; value: number; loading: boolean }) {
-  return (
-    <div className="text-center">
-      {loading ? (
-        <Skeleton className="mx-auto h-9 w-16" />
-      ) : (
-        <p className="font-heading text-3xl font-bold text-white sm:text-4xl">{value.toLocaleString()}+</p>
-      )}
-      <p className="mt-1.5 text-sm text-white/60">{label}</p>
-    </div>
-  );
-}
-
 export default function Home() {
   const [conferences, setConferences] = useState<PublicConference[]>([]);
   const [organizations, setOrganizations] = useState<PublicOrganization[]>([]);
-  const [stats, setStats] = useState<PublicStats>({ organizations: 0, conferences: 0, delegates: 0, countries: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       api.get<{ success: true; conferences: PublicConference[] }>("/public/conferences"),
       api.get<{ success: true; organizations: PublicOrganization[] }>("/public/organizations"),
-      api.get<{ success: true; stats: PublicStats }>("/public/stats"),
     ])
-      .then(([conferencesRes, organizationsRes, statsRes]) => {
+      .then(([conferencesRes, organizationsRes]) => {
         setConferences(conferencesRes.conferences.slice(0, 3));
         setOrganizations(organizationsRes.organizations.slice(0, 4));
-        setStats(statsRes.stats);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -187,16 +171,6 @@ export default function Home() {
                 <Icon className="h-5 w-5" />
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Platform statistics */}
-        <div className="relative border-t border-white/10 bg-black/10">
-          <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-6 px-6 py-10 sm:grid-cols-4">
-            <StatTile label="Organizations" value={stats.organizations} loading={loading} />
-            <StatTile label="Conferences" value={stats.conferences} loading={loading} />
-            <StatTile label="Delegates" value={stats.delegates} loading={loading} />
-            <StatTile label="Countries Represented" value={stats.countries} loading={loading} />
           </div>
         </div>
       </section>

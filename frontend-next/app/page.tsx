@@ -143,7 +143,7 @@ export default function Home() {
             <Badge className="mb-5 border-brand-gold/40 bg-white/10 text-brand-gold-soft" variant="outline">
               The operating system for Model UN
             </Badge>
-            <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:mx-0">
+            <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:mx-0 lg:text-6xl">
               Run, Discover, and Experience Model United Nations
               <span className="text-brand-gold"> — All in One Platform</span>
             </h1>
@@ -197,6 +197,31 @@ export default function Home() {
             <StatTile label="Conferences" value={stats.conferences} loading={loading} />
             <StatTile label="Delegates" value={stats.delegates} loading={loading} />
             <StatTile label="Countries Represented" value={stats.countries} loading={loading} />
+          </div>
+        </div>
+      </section>
+
+      {/* Why MUN Buddy */}
+      <section id="features" className="bg-muted/30 py-16 sm:py-20">
+        <div className="mx-auto max-w-[1440px] px-6">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-gold">Why MUN Buddy</p>
+            <h2 className="mt-2 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+              Every conference operation, one connected platform
+            </h2>
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <Card key={f.title} className="border-border/70 bg-background transition-shadow hover:shadow-md">
+                <CardContent className="space-y-3 p-6">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy text-brand-gold">
+                    <f.icon className="h-5 w-5" />
+                  </div>
+                  <p className="font-semibold">{f.title}</p>
+                  <p className="text-sm text-muted-foreground">{f.text}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -258,31 +283,6 @@ export default function Home() {
         <Link href="/discover" className="mt-6 flex items-center gap-1 text-sm font-medium text-primary hover:underline sm:hidden">
           View all conferences <ArrowRight className="h-3.5 w-3.5" />
         </Link>
-      </section>
-
-      {/* Why MUN Buddy */}
-      <section id="features" className="bg-muted/30 py-16 sm:py-20">
-        <div className="mx-auto max-w-[1440px] px-6">
-          <div className="mx-auto max-w-xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-gold">Why MUN Buddy</p>
-            <h2 className="mt-2 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-              Every conference operation, one connected platform
-            </h2>
-          </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f) => (
-              <Card key={f.title} className="border-border/70 bg-background transition-shadow hover:shadow-md">
-                <CardContent className="space-y-3 p-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy text-brand-gold">
-                    <f.icon className="h-5 w-5" />
-                  </div>
-                  <p className="font-semibold">{f.title}</p>
-                  <p className="text-sm text-muted-foreground">{f.text}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* Journey */}
@@ -349,7 +349,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why MUN Buddy */}
+      {/* What changes */}
       <section className="mx-auto w-full max-w-[1440px] px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-gold">What changes</p>

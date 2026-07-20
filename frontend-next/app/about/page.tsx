@@ -112,8 +112,8 @@ export default function AboutPage() {
                 Reach out and our team will help you plan your first conference or migrate an existing one.
               </p>
               <div className="mt-6 flex flex-col gap-2 text-sm">
-                <a href="mailto:hello@munbuddy.app" className="flex items-center gap-2 text-foreground hover:text-brand-navy">
-                  <Mail className="h-4 w-4 text-brand-gold" /> hello@munbuddy.app
+                <a href="mailto:admin.munbuddy@gmail.com" className="flex items-center gap-2 text-foreground hover:text-brand-navy">
+                  <Mail className="h-4 w-4 text-brand-gold" /> admin.munbuddy@gmail.com
                 </a>
                 <span className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="h-4 w-4 text-brand-gold" /> Remote-first team

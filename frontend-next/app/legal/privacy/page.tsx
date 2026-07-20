@@ -37,7 +37,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="font-heading text-lg font-semibold text-foreground">4. Your rights</h2>
             <p className="mt-2">
               You may request access to, correction of, or deletion of your personal data by contacting us at{" "}
-              <a href="mailto:hello@munbuddy.app" className="text-primary hover:underline">hello@munbuddy.app</a>.
+              <a href="mailto:admin.munbuddy@gmail.com" className="text-primary hover:underline">admin.munbuddy@gmail.com</a>.
             </p>
           </section>
           <section>
@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
               and that organizer is responsible for obtaining any parental or guardian consent required under
               applicable law before a minor&rsquo;s information is submitted. Parents or guardians who want data
               about a minor accessed, corrected, or deleted should contact the conference organizer directly, or
-              reach us at <a href="mailto:hello@munbuddy.app" className="text-primary hover:underline">hello@munbuddy.app</a> and
+              reach us at <a href="mailto:admin.munbuddy@gmail.com" className="text-primary hover:underline">admin.munbuddy@gmail.com</a> and
               we will route the request.
             </p>
           </section>

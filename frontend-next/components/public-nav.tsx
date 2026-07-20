@@ -62,7 +62,7 @@ export function PublicNav() {
             Log in
           </Button>
           <Button size="sm" variant="accent" render={<Link href="/register" />} nativeButton={false}>
-            Get Started
+            Register Organization
           </Button>
         </div>
 
@@ -101,7 +101,7 @@ export function PublicNav() {
                 Log in
               </Button>
               <Button variant="accent" render={<Link href="/register" />} nativeButton={false}>
-                Get Started
+                Register Organization
               </Button>
               <Link
                 href="/delegate/login"

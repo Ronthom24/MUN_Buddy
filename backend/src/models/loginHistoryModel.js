@@ -3,14 +3,14 @@ const pool = require("../config/database");
 async function create({ userType, userId, email, success, ipAddress, userAgent }, db = pool) {
     await db.execute(
         `INSERT INTO login_history (user_type, user_id, email, success, ip_address, user_agent)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5, $6)`,
         [userType, userId || null, email, success, ipAddress || null, (userAgent || "").slice(0, 255)]
     );
 }
 
 async function listForUser(userType, userId, { limit = 20 } = {}, db = pool) {
     const [rows] = await db.query(
-        `SELECT * FROM login_history WHERE user_type = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?`,
+        `SELECT * FROM login_history WHERE user_type = $1 AND user_id = $2 ORDER BY created_at DESC LIMIT $3`,
         [userType, userId, limit]
     );
     return rows;
@@ -20,14 +20,14 @@ async function listRecent({ limit = 100, success } = {}, db = pool) {
     const clauses = [];
     const params = [];
     if (success !== undefined) {
-        clauses.push("success = ?");
-        params.push(success ? 1 : 0);
+        params.push(success ? true : false);
+        clauses.push(`success = $${params.length}`);
     }
     const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
     params.push(limit);
 
     const [rows] = await db.query(
-        `SELECT * FROM login_history ${where} ORDER BY created_at DESC LIMIT ?`,
+        `SELECT * FROM login_history ${where} ORDER BY created_at DESC LIMIT $${params.length}`,
         params
     );
     return rows;
@@ -38,9 +38,9 @@ async function listSuspiciousEmails({ windowMinutes = 15, threshold = 5 } = {}, 
     const [rows] = await db.query(
         `SELECT email, COUNT(*) AS failed_attempts, MAX(created_at) AS last_attempt_at
          FROM login_history
-         WHERE success = 0 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+         WHERE success = FALSE AND created_at >= now() - ($1 || ' minutes')::interval
          GROUP BY email
-         HAVING failed_attempts >= ?
+         HAVING COUNT(*) >= $2
          ORDER BY failed_attempts DESC`,
         [windowMinutes, threshold]
     );
@@ -51,7 +51,7 @@ async function listSuspiciousEmails({ windowMinutes = 15, threshold = 5 } = {}, 
 async function countRecentFailures(email, { windowMinutes = 15 } = {}, db = pool) {
     const [rows] = await db.query(
         `SELECT COUNT(*) AS count FROM login_history
-         WHERE email = ? AND success = 0 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)`,
+         WHERE email = $1 AND success = FALSE AND created_at >= now() - ($2 || ' minutes')::interval`,
         [email, windowMinutes]
     );
     return rows[0].count;

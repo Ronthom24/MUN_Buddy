@@ -9,14 +9,14 @@ async function getAll(db = pool) {
 }
 
 async function get(key, db = pool) {
-    const [rows] = await db.execute(`SELECT setting_value FROM platform_settings WHERE setting_key = ?`, [key]);
+    const [rows] = await db.execute(`SELECT setting_value FROM platform_settings WHERE setting_key = $1`, [key]);
     return rows[0] ? rows[0].setting_value : null;
 }
 
 async function set(key, value, db = pool) {
     await db.execute(
-        `INSERT INTO platform_settings (setting_key, setting_value) VALUES (?, ?)
-         ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`,
+        `INSERT INTO platform_settings (setting_key, setting_value) VALUES ($1, $2)
+         ON CONFLICT (setting_key) DO UPDATE SET setting_value = EXCLUDED.setting_value`,
         [key, value]
     );
 }

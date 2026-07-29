@@ -7,21 +7,22 @@ async function create(
     },
     db = pool
 ) {
-    const [result] = await db.execute(
+    const [rows] = await db.execute(
         `INSERT INTO announcements
             (conference_id, committee_id, portfolio_id, title, category, target_audience, priority, content, attachment_path, publish_date, status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+         RETURNING id`,
         [
             conferenceId, committeeId || null, portfolioId || null, title, category || "general_update",
             targetAudience || "all", priority || "normal", content, attachmentPath || null,
             publishDate || null, status || "draft"
         ]
     );
-    return result.insertId;
+    return rows[0].id;
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM announcements WHERE id = ? AND deleted_at IS NULL`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM announcements WHERE id = $1 AND deleted_at IS NULL`, [id]);
     return rows[0] || null;
 }
 
@@ -33,7 +34,7 @@ async function listByConference(conferenceId, db = pool) {
          FROM announcements a
          LEFT JOIN committees c ON c.id = a.committee_id
          LEFT JOIN portfolios p ON p.id = a.portfolio_id
-         WHERE a.conference_id = ? AND a.deleted_at IS NULL
+         WHERE a.conference_id = $1 AND a.deleted_at IS NULL
          ORDER BY a.created_at DESC`,
         [conferenceId]
     );
@@ -52,30 +53,30 @@ async function update(id, data, db = pool) {
 
     for (const [key, column] of Object.entries(UPDATABLE_FIELDS)) {
         if (data[key] !== undefined) {
-            setClauses.push(`${column} = ?`);
             params.push(data[key]);
+            setClauses.push(`${column} = $${params.length}`);
         }
     }
 
     if (setClauses.length === 0) return findById(id, db);
 
     params.push(id);
-    await db.execute(`UPDATE announcements SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    await db.execute(`UPDATE announcements SET ${setClauses.join(", ")} WHERE id = $${params.length}`, params);
     return findById(id, db);
 }
 
 async function remove(id, db = pool) {
-    await db.execute(`UPDATE announcements SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+    await db.execute(`UPDATE announcements SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1`, [id]);
 }
 
 async function restore(id, db = pool) {
-    await db.execute(`UPDATE announcements SET deleted_at = NULL WHERE id = ?`, [id]);
+    await db.execute(`UPDATE announcements SET deleted_at = NULL WHERE id = $1`, [id]);
     return findById(id, db);
 }
 
 async function listTrashed(conferenceId, db = pool) {
     const [rows] = await db.query(
-        `SELECT * FROM announcements WHERE conference_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
+        `SELECT * FROM announcements WHERE conference_id = $1 AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
         [conferenceId]
     );
     return rows;
@@ -90,8 +91,8 @@ async function publishDueAnnouncements(conferenceId, db = pool) {
     await db.execute(
         `UPDATE announcements
          SET status = 'published'
-         WHERE conference_id = ? AND status = 'scheduled' AND deleted_at IS NULL
-           AND publish_date IS NOT NULL AND publish_date <= NOW()`,
+         WHERE conference_id = $1 AND status = 'scheduled' AND deleted_at IS NULL
+           AND publish_date IS NOT NULL AND publish_date <= now()`,
         [conferenceId]
     );
 }
@@ -100,11 +101,11 @@ async function listVisibleToDelegate(conferenceId, { delegateId, committeeId, po
     await publishDueAnnouncements(conferenceId, db);
 
     const [rows] = await db.query(
-        `SELECT a.*, (SELECT COUNT(*) FROM announcement_reads r WHERE r.announcement_id = a.id AND r.delegate_id = ?) AS is_read
+        `SELECT a.*, (SELECT COUNT(*) FROM announcement_reads r WHERE r.announcement_id = a.id AND r.delegate_id = $1) AS is_read
          FROM announcements a
-         WHERE a.conference_id = ? AND a.status = 'published' AND a.deleted_at IS NULL AND a.target_audience IN ('all', 'delegates')
-           AND (a.committee_id IS NULL OR a.committee_id = ?)
-           AND (a.portfolio_id IS NULL OR a.portfolio_id = ?)
+         WHERE a.conference_id = $2 AND a.status = 'published' AND a.deleted_at IS NULL AND a.target_audience IN ('all', 'delegates')
+           AND (a.committee_id IS NULL OR a.committee_id = $3)
+           AND (a.portfolio_id IS NULL OR a.portfolio_id = $4)
          ORDER BY COALESCE(a.publish_date, a.created_at) DESC`,
         [delegateId || 0, conferenceId, committeeId || null, portfolioId || null]
     );
@@ -113,8 +114,8 @@ async function listVisibleToDelegate(conferenceId, { delegateId, committeeId, po
 
 async function markRead(announcementId, delegateId, db = pool) {
     await db.execute(
-        `INSERT INTO announcement_reads (announcement_id, delegate_id) VALUES (?, ?)
-         ON DUPLICATE KEY UPDATE read_at = read_at`,
+        `INSERT INTO announcement_reads (announcement_id, delegate_id) VALUES ($1, $2)
+         ON CONFLICT (announcement_id, delegate_id) DO NOTHING`,
         [announcementId, delegateId]
     );
 }

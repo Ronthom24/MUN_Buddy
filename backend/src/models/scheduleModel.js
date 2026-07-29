@@ -1,39 +1,41 @@
 const pool = require("../config/database");
 
 async function createDay({ conferenceId, dayDate, label }, db = pool) {
-    const [result] = await db.execute(
-        `INSERT INTO conference_schedule_days (conference_id, day_date, label) VALUES (?, ?, ?)`,
+    const [rows] = await db.execute(
+        `INSERT INTO conference_schedule_days (conference_id, day_date, label) VALUES ($1, $2, $3)
+         RETURNING id`,
         [conferenceId, dayDate, label || null]
     );
-    return result.insertId;
+    return rows[0].id;
 }
 
 async function findDayById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM conference_schedule_days WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM conference_schedule_days WHERE id = $1`, [id]);
     return rows[0] || null;
 }
 
 async function removeDay(id, db = pool) {
-    await db.execute(`DELETE FROM conference_schedule_days WHERE id = ?`, [id]);
+    await db.execute(`DELETE FROM conference_schedule_days WHERE id = $1`, [id]);
 }
 
 async function createEvent(
     { scheduleDayId, committeeId, title, type, location, startTime, endTime, status },
     db = pool
 ) {
-    const [result] = await db.execute(
+    const [rows] = await db.execute(
         `INSERT INTO schedule_events (schedule_day_id, committee_id, title, type, location, start_time, end_time, status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING id`,
         [
             scheduleDayId, committeeId || null, title, type || "general_event",
             location || null, startTime, endTime, status || "scheduled"
         ]
     );
-    return result.insertId;
+    return rows[0].id;
 }
 
 async function findEventById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM schedule_events WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM schedule_events WHERE id = $1`, [id]);
     return rows[0] || null;
 }
 
@@ -48,25 +50,25 @@ async function updateEvent(id, data, db = pool) {
 
     for (const [key, column] of Object.entries(UPDATABLE_EVENT_FIELDS)) {
         if (data[key] !== undefined) {
-            setClauses.push(`${column} = ?`);
             params.push(data[key]);
+            setClauses.push(`${column} = $${params.length}`);
         }
     }
 
     if (setClauses.length === 0) return findEventById(id, db);
 
     params.push(id);
-    await db.execute(`UPDATE schedule_events SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    await db.execute(`UPDATE schedule_events SET ${setClauses.join(", ")} WHERE id = $${params.length}`, params);
     return findEventById(id, db);
 }
 
 async function removeEvent(id, db = pool) {
-    await db.execute(`DELETE FROM schedule_events WHERE id = ?`, [id]);
+    await db.execute(`DELETE FROM schedule_events WHERE id = $1`, [id]);
 }
 
 async function listForConference(conferenceId, db = pool) {
     const [days] = await db.execute(
-        `SELECT * FROM conference_schedule_days WHERE conference_id = ? ORDER BY day_date ASC`,
+        `SELECT * FROM conference_schedule_days WHERE conference_id = $1 ORDER BY day_date ASC`,
         [conferenceId]
     );
     if (days.length === 0) return [];
@@ -76,7 +78,7 @@ async function listForConference(conferenceId, db = pool) {
         `SELECT se.*, c.name AS committee_name
          FROM schedule_events se
          LEFT JOIN committees c ON c.id = se.committee_id
-         WHERE se.schedule_day_id IN (?)
+         WHERE se.schedule_day_id = ANY($1::bigint[])
          ORDER BY se.start_time ASC`,
         [dayIds]
     );

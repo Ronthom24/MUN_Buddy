@@ -8,7 +8,7 @@ const listOpen = asyncHandler(async (req, res) => {
 });
 
 const listMine = asyncHandler(async (req, res) => {
-    const conferences = await conferenceModel.listByAccessEmail(req.user.email);
+    const conferences = await conferenceModel.listByAccessProfile(req.user.id);
     res.status(200).json({ success: true, conferences });
 });
 

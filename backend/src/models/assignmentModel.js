@@ -1,7 +1,7 @@
 const pool = require("../config/database");
 
 async function findByDelegateId(delegateId, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM assignments WHERE delegate_id = ?`, [delegateId]);
+    const [rows] = await db.execute(`SELECT * FROM assignments WHERE delegate_id = $1`, [delegateId]);
     return rows[0] || null;
 }
 
@@ -9,7 +9,7 @@ async function ensureRow(delegateId, db = pool) {
     const existing = await findByDelegateId(delegateId, db);
     if (existing) return existing;
 
-    await db.execute(`INSERT INTO assignments (delegate_id) VALUES (?)`, [delegateId]);
+    await db.execute(`INSERT INTO assignments (delegate_id) VALUES ($1)`, [delegateId]);
     return findByDelegateId(delegateId, db);
 }
 
@@ -20,17 +20,17 @@ async function assign(delegateId, { committeeId, portfolioId }, db = pool) {
     const params = [];
 
     if (committeeId !== undefined) {
-        setClauses.push("committee_id = ?");
         params.push(committeeId);
+        setClauses.push(`committee_id = $${params.length}`);
     }
     if (portfolioId !== undefined) {
-        setClauses.push("portfolio_id = ?");
         params.push(portfolioId);
+        setClauses.push(`portfolio_id = $${params.length}`);
     }
     setClauses.push("status = 'assigned'");
 
     params.push(delegateId);
-    await db.execute(`UPDATE assignments SET ${setClauses.join(", ")} WHERE delegate_id = ?`, params);
+    await db.execute(`UPDATE assignments SET ${setClauses.join(", ")} WHERE delegate_id = $${params.length}`, params);
     return findByDelegateId(delegateId, db);
 }
 
@@ -43,14 +43,15 @@ async function assign(delegateId, { committeeId, portfolioId }, db = pool) {
 async function listByConference(conferenceId, db = pool) {
     const [rows] = await db.query(
         `SELECT a.id, d.id AS delegate_id, a.committee_id, a.portfolio_id, a.status, a.published,
-                d.full_name AS delegate_name, d.school AS delegate_school, d.status AS delegate_status,
+                pr.full_name AS delegate_name, d.school AS delegate_school, d.status AS delegate_status,
                 c.name AS committee_name, p.name AS portfolio_name
          FROM delegates d
+         JOIN profiles pr ON pr.id = d.profile_id
          LEFT JOIN assignments a ON a.delegate_id = d.id
          LEFT JOIN committees c ON c.id = a.committee_id
          LEFT JOIN portfolios p ON p.id = a.portfolio_id
-         WHERE d.conference_id = ? AND d.status = 'approved'
-         ORDER BY d.full_name ASC`,
+         WHERE d.conference_id = $1 AND d.status = 'approved'
+         ORDER BY pr.full_name ASC`,
         [conferenceId]
     );
     return rows;
@@ -58,7 +59,7 @@ async function listByConference(conferenceId, db = pool) {
 
 async function countAssignedInCommittee(committeeId, db = pool) {
     const [[row]] = await db.query(
-        `SELECT COUNT(*) AS count FROM assignments WHERE committee_id = ? AND status = 'assigned'`,
+        `SELECT COUNT(*) AS count FROM assignments WHERE committee_id = $1 AND status = 'assigned'`,
         [committeeId]
     );
     return Number(row.count) || 0;
@@ -67,7 +68,7 @@ async function countAssignedInCommittee(committeeId, db = pool) {
 async function logHistory({ delegateId, committeeId, portfolioId, action, changedByAccessId }, db = pool) {
     await db.execute(
         `INSERT INTO assignment_history (delegate_id, committee_id, portfolio_id, action, changed_by_organizer_access_id)
-         VALUES (?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5)`,
         [delegateId, committeeId ?? null, portfolioId ?? null, action, changedByAccessId ?? null]
     );
 }
@@ -78,7 +79,7 @@ async function getHistoryForDelegate(delegateId, db = pool) {
          FROM assignment_history ah
          LEFT JOIN committees c ON c.id = ah.committee_id
          LEFT JOIN portfolios p ON p.id = ah.portfolio_id
-         WHERE ah.delegate_id = ?
+         WHERE ah.delegate_id = $1
          ORDER BY ah.created_at ASC`,
         [delegateId]
     );
@@ -89,7 +90,7 @@ async function unassign(delegateId, db = pool) {
     await ensureRow(delegateId, db);
     await db.execute(
         `UPDATE assignments SET committee_id = NULL, portfolio_id = NULL, status = 'unassigned', published = FALSE
-         WHERE delegate_id = ?`,
+         WHERE delegate_id = $1`,
         [delegateId]
     );
     return findByDelegateId(delegateId, db);
@@ -98,9 +99,9 @@ async function unassign(delegateId, db = pool) {
 async function publishAll(conferenceId, db = pool) {
     await db.query(
         `UPDATE assignments a
-         INNER JOIN delegates d ON d.id = a.delegate_id
-         SET a.published = 1
-         WHERE d.conference_id = ? AND a.status = 'assigned'`,
+         SET published = TRUE
+         FROM delegates d
+         WHERE d.id = a.delegate_id AND d.conference_id = $1 AND a.status = 'assigned'`,
         [conferenceId]
     );
 }
@@ -111,7 +112,7 @@ async function findPublishedByDelegateId(delegateId, db = pool) {
          FROM assignments a
          LEFT JOIN committees c ON c.id = a.committee_id
          LEFT JOIN portfolios p ON p.id = a.portfolio_id
-         WHERE a.delegate_id = ?`,
+         WHERE a.delegate_id = $1`,
         [delegateId]
     );
     return rows[0] || null;

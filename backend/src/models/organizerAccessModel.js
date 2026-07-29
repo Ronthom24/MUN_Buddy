@@ -1,64 +1,58 @@
 const pool = require("../config/database");
 
 async function create({ conferenceId, email, role, committeeId, departmentId, positionTitle }, db = pool) {
-    const [result] = await db.execute(
-        `INSERT INTO organizer_access (conference_id, email, role, committee_id, department_id, position_title) VALUES (?, ?, ?, ?, ?, ?)`,
+    const [rows] = await db.execute(
+        `INSERT INTO organizer_access (conference_id, invite_email, role, committee_id, department_id, position_title)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
         [conferenceId, email, role || "organizer", committeeId || null, departmentId || null, positionTitle || null]
     );
-    return result.insertId;
+    return rows[0].id;
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM organizer_access WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM organizer_access WHERE id = $1`, [id]);
     return rows[0] || null;
 }
 
 async function listByConference(conferenceId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM organizer_access WHERE conference_id = ? ORDER BY created_at ASC`,
+        `SELECT * FROM organizer_access WHERE conference_id = $1 ORDER BY created_at ASC`,
         [conferenceId]
     );
     return rows;
 }
 
+/** Pre-claim invite lookup (no profile_id yet) -- used by the invite/claim flow. */
 async function findByConferenceAndEmail(conferenceId, email, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM organizer_access WHERE conference_id = ? AND email = ?`,
+        `SELECT * FROM organizer_access WHERE conference_id = $1 AND invite_email = $2`,
         [conferenceId, email]
     );
     return rows[0] || null;
 }
 
-async function listClaimedByEmail(email, db = pool) {
+/** Post-auth lookup, keyed by the verified Supabase profile id -- what resolveConferenceAccess uses. */
+async function findByConferenceAndProfile(conferenceId, profileId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM organizer_access WHERE email = ? AND password_hash IS NOT NULL`,
-        [email]
+        `SELECT * FROM organizer_access WHERE conference_id = $1 AND profile_id = $2 AND status = 'active'`,
+        [conferenceId, profileId]
     );
+    return rows[0] || null;
+}
+
+/** Every claimed organizer_access row this profile can act through (all conferences). */
+async function listByProfile(profileId, db = pool) {
+    const [rows] = await db.execute(`SELECT * FROM organizer_access WHERE profile_id = $1`, [profileId]);
     return rows;
 }
 
-/**
- * Every organizer_access row for this email, claimed or not -- the conference
- * owner's own row never carries a password_hash (their credential lives in
- * `organizers`), so notification/recipient lookups that need "every access
- * row this person can act through" must use this instead of
- * listClaimedByEmail, which would silently exclude every owner.
- */
-async function listByEmail(email, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM organizer_access WHERE email = ?`, [email]);
-    return rows;
-}
-
-async function setPassword(id, { passwordHash, fullName }, db = pool) {
+/** Links a pending invite to the claiming profile. */
+async function claimInvite(id, { profileId, positionTitle }, db = pool) {
     await db.execute(
-        `UPDATE organizer_access SET password_hash = ?, full_name = ? WHERE id = ?`,
-        [passwordHash, fullName || null, id]
+        `UPDATE organizer_access SET profile_id = $1, position_title = COALESCE($2, position_title) WHERE id = $3`,
+        [profileId, positionTitle || null, id]
     );
     return findById(id, db);
-}
-
-async function updatePasswordHash(id, passwordHash, db = pool) {
-    await db.execute(`UPDATE organizer_access SET password_hash = ? WHERE id = ?`, [passwordHash, id]);
 }
 
 const UPDATABLE_FIELDS = {
@@ -68,10 +62,11 @@ const UPDATABLE_FIELDS = {
 async function update(id, data, db = pool) {
     const setClauses = [];
     const params = [];
+    let i = 1;
 
     for (const [key, column] of Object.entries(UPDATABLE_FIELDS)) {
         if (data[key] !== undefined) {
-            setClauses.push(`${column} = ?`);
+            setClauses.push(`${column} = $${i++}`);
             params.push(data[key]);
         }
     }
@@ -79,31 +74,36 @@ async function update(id, data, db = pool) {
     if (setClauses.length === 0) return findById(id, db);
 
     params.push(id);
-    await db.execute(`UPDATE organizer_access SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    await db.execute(`UPDATE organizer_access SET ${setClauses.join(", ")} WHERE id = $${i}`, params);
     return findById(id, db);
 }
 
 async function remove(id, db = pool) {
-    await db.execute(`DELETE FROM organizer_access WHERE id = ?`, [id]);
+    await db.execute(`DELETE FROM organizer_access WHERE id = $1`, [id]);
 }
 
 /**
- * Revokes every staff session under this organizer's conferences (force-
- * logout/suspend cascade -- see platformUserService.suspendUser/forceLogout).
- * Staff JWTs carry a `tv` claim checked against this column, same pattern as
- * organizers.token_version/delegates.token_version.
+ * Revokes every staff grant under conferences owned by this profile's
+ * organization(s) (force-logout/suspend cascade -- see
+ * platformUserService.suspendUser/forceLogout). Replaces the old
+ * token_version-bump pattern: with Supabase Auth owning session validity,
+ * conference-scoped revocation is a plain status flag checked in
+ * resolveConferenceAccess, not a version counter compared on every request.
  */
-async function bumpTokenVersionForOwner(organizerId, db = pool) {
+async function setStatusForOwnerConferences(ownerProfileId, status, db = pool) {
     await db.execute(
-        `UPDATE organizer_access oa
-         JOIN conferences c ON c.id = oa.conference_id
-         SET oa.token_version = oa.token_version + 1
-         WHERE c.organizer_id = ?`,
-        [organizerId]
+        `UPDATE organizer_access
+         SET status = $1
+         WHERE conference_id IN (
+             SELECT c.id FROM conferences c
+             JOIN organization_members om ON om.organization_id = c.organization_id
+             WHERE om.profile_id = $2 AND om.org_role = 'owner'
+         )`,
+        [status, ownerProfileId]
     );
 }
 
 module.exports = {
-    create, findById, listByConference, findByConferenceAndEmail, listClaimedByEmail, listByEmail,
-    setPassword, updatePasswordHash, update, remove, bumpTokenVersionForOwner
+    create, findById, listByConference, findByConferenceAndEmail, findByConferenceAndProfile, listByProfile,
+    claimInvite, update, remove, setStatusForOwnerConferences
 };

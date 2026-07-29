@@ -1,18 +1,18 @@
 const pool = require("../config/database");
 
 async function listAll(db = pool) {
-    const [rows] = await db.execute(`SELECT \`key\`, label, module FROM permissions ORDER BY module, \`key\``);
+    const [rows] = await db.execute(`SELECT key, label, module FROM permissions ORDER BY module, key`);
     return rows;
 }
 
 async function listDefaultsForRole(role, db = pool) {
-    const [rows] = await db.execute(`SELECT permission_key FROM role_permissions WHERE role = ?`, [role]);
+    const [rows] = await db.execute(`SELECT permission_key FROM role_permissions WHERE role = $1`, [role]);
     return rows.map((row) => row.permission_key);
 }
 
 async function listOverridesForAccess(organizerAccessId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT permission_key, granted FROM organizer_access_permission_overrides WHERE organizer_access_id = ?`,
+        `SELECT permission_key, granted FROM organizer_access_permission_overrides WHERE organizer_access_id = $1`,
         [organizerAccessId]
     );
     return rows;
@@ -45,15 +45,15 @@ async function hasPermission(role, organizerAccessId, permissionKey, db = pool) 
 async function setOverride(organizerAccessId, permissionKey, granted, db = pool) {
     await db.execute(
         `INSERT INTO organizer_access_permission_overrides (organizer_access_id, permission_key, granted)
-         VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE granted = VALUES(granted)`,
+         VALUES ($1, $2, $3)
+         ON CONFLICT (organizer_access_id, permission_key) DO UPDATE SET granted = EXCLUDED.granted`,
         [organizerAccessId, permissionKey, granted]
     );
 }
 
 async function clearOverride(organizerAccessId, permissionKey, db = pool) {
     await db.execute(
-        `DELETE FROM organizer_access_permission_overrides WHERE organizer_access_id = ? AND permission_key = ?`,
+        `DELETE FROM organizer_access_permission_overrides WHERE organizer_access_id = $1 AND permission_key = $2`,
         [organizerAccessId, permissionKey]
     );
 }

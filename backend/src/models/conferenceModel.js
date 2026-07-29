@@ -1,14 +1,14 @@
 const pool = require("../config/database");
 
 async function create(data, db = pool) {
-    const [result] = await db.execute(
+    const [rows] = await db.execute(
         `INSERT INTO conferences
-            (organizer_id, organization_id, name, acronym, short_name, institution, location, website, description,
+            (created_by, organization_id, name, acronym, short_name, institution, location, website, description,
              start_date, end_date, registration_deadline, max_delegates, conference_code,
              status, registration_status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`,
         [
-            data.organizerId,
+            data.createdBy,
             data.organizationId,
             data.name,
             data.acronym || null,
@@ -26,64 +26,57 @@ async function create(data, db = pool) {
             data.registrationStatus || "closed"
         ]
     );
-    return result.insertId;
+    return rows[0].id;
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM conferences WHERE id = ? AND deleted_at IS NULL`, [id]);
+    const [rows] = await db.execute(`SELECT * FROM conferences WHERE id = $1 AND deleted_at IS NULL`, [id]);
     return rows[0] || null;
 }
 
-async function listByOrganizer(organizerId, db = pool) {
-    const [rows] = await db.execute(
-        `SELECT * FROM conferences WHERE organizer_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`,
-        [organizerId]
-    );
-    return rows;
-}
-
-async function listByAccessEmail(email, db = pool) {
+/** Every conference this profile can access: a direct organizer_access grant, or via organization ownership/admin. */
+async function listByAccessProfile(profileId, db = pool) {
     const [rows] = await db.query(
         `SELECT c.*, oa.role AS access_role, oa.committee_id AS access_committee_id, FALSE AS via_organization
          FROM organizer_access oa
          INNER JOIN conferences c ON c.id = oa.conference_id
-         WHERE oa.email = ? AND c.deleted_at IS NULL
+         WHERE oa.profile_id = $1 AND oa.status = 'active' AND c.deleted_at IS NULL
 
          UNION
 
          SELECT c.*, 'owner' AS access_role, NULL AS access_committee_id, TRUE AS via_organization
          FROM organization_members om
          INNER JOIN conferences c ON c.organization_id = om.organization_id
-         WHERE om.email = ? AND om.status = 'active' AND om.org_role IN ('owner', 'admin')
+         WHERE om.profile_id = $1 AND om.status = 'active' AND om.org_role IN ('owner', 'admin')
            AND c.deleted_at IS NULL
-           AND c.id NOT IN (SELECT conference_id FROM organizer_access WHERE email = ?)
+           AND c.id NOT IN (SELECT conference_id FROM organizer_access WHERE profile_id = $1 AND status = 'active')
 
          ORDER BY created_at DESC`,
-        [email, email, email]
+        [profileId]
     );
     return rows;
 }
 
 async function listByOrganization(organizationId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM conferences WHERE organization_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`,
+        `SELECT * FROM conferences WHERE organization_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC`,
         [organizationId]
     );
     return rows;
 }
 
 async function remove(id, db = pool) {
-    await db.execute(`UPDATE conferences SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+    await db.execute(`UPDATE conferences SET deleted_at = now() WHERE id = $1`, [id]);
 }
 
 async function restore(id, db = pool) {
-    await db.execute(`UPDATE conferences SET deleted_at = NULL WHERE id = ?`, [id]);
+    await db.execute(`UPDATE conferences SET deleted_at = NULL WHERE id = $1`, [id]);
     return findById(id, db);
 }
 
 async function listTrashedByOrganization(organizationId, db = pool) {
     const [rows] = await db.query(
-        `SELECT * FROM conferences WHERE organization_id = ? AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
+        `SELECT * FROM conferences WHERE organization_id = $1 AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,
         [organizationId]
     );
     return rows;
@@ -108,10 +101,11 @@ const UPDATABLE_FIELDS = {
 async function update(id, data, db = pool) {
     const setClauses = [];
     const params = [];
+    let i = 1;
 
     for (const [key, column] of Object.entries(UPDATABLE_FIELDS)) {
         if (data[key] !== undefined) {
-            setClauses.push(`${column} = ?`);
+            setClauses.push(`${column} = $${i++}`);
             params.push(data[key]);
         }
     }
@@ -119,32 +113,33 @@ async function update(id, data, db = pool) {
     if (setClauses.length === 0) return findById(id, db);
 
     params.push(id);
-    await db.execute(`UPDATE conferences SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    await db.execute(`UPDATE conferences SET ${setClauses.join(", ")} WHERE id = $${i}`, params);
     return findById(id, db);
 }
 
 async function updatePaymentConfig(id, { paymentRequired, currency }, db = pool) {
     const setClauses = [];
     const params = [];
+    let i = 1;
 
     if (paymentRequired !== undefined) {
-        setClauses.push("payment_required = ?");
+        setClauses.push(`payment_required = $${i++}`);
         params.push(Boolean(paymentRequired));
     }
     if (currency !== undefined) {
-        setClauses.push("currency = ?");
+        setClauses.push(`currency = $${i++}`);
         params.push(currency);
     }
 
     if (setClauses.length === 0) return findById(id, db);
 
     params.push(id);
-    await db.execute(`UPDATE conferences SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    await db.execute(`UPDATE conferences SET ${setClauses.join(", ")} WHERE id = $${i}`, params);
     return findById(id, db);
 }
 
 async function publishResults(id, db = pool) {
-    await db.execute(`UPDATE conferences SET results_published = TRUE, results_published_at = CURRENT_TIMESTAMP WHERE id = ?`, [id]);
+    await db.execute(`UPDATE conferences SET results_published = TRUE, results_published_at = now() WHERE id = $1`, [id]);
     return findById(id, db);
 }
 
@@ -152,21 +147,22 @@ async function getStats(conferenceId, db = pool) {
     const [[delegateCounts]] = await db.query(
         `SELECT
             COUNT(*) AS total_delegates,
-            SUM(status = 'pending') AS pending_delegates,
-            SUM(status = 'approved') AS approved_delegates,
-            SUM(status = 'rejected') AS rejected_delegates
-         FROM delegates WHERE conference_id = ?`,
+            COUNT(*) FILTER (WHERE status = 'pending') AS pending_delegates,
+            COUNT(*) FILTER (WHERE status = 'approved') AS approved_delegates,
+            COUNT(*) FILTER (WHERE status = 'rejected') AS rejected_delegates
+         FROM delegates WHERE conference_id = $1`,
         [conferenceId]
     );
     const [[committeeCounts]] = await db.query(
-        `SELECT COUNT(*) AS total_committees FROM committees WHERE conference_id = ?`,
+        `SELECT COUNT(*) AS total_committees FROM committees WHERE conference_id = $1`,
         [conferenceId]
     );
     const [[assignmentCounts]] = await db.query(
-        `SELECT SUM(a.status = 'assigned') AS assigned_delegates, SUM(a.published = 1) AS published_assignments
+        `SELECT COUNT(*) FILTER (WHERE a.status = 'assigned') AS assigned_delegates,
+                COUNT(*) FILTER (WHERE a.published = TRUE) AS published_assignments
          FROM assignments a
          INNER JOIN delegates d ON d.id = a.delegate_id
-         WHERE d.conference_id = ?`,
+         WHERE d.conference_id = $1`,
         [conferenceId]
     );
 
@@ -185,8 +181,8 @@ async function getAnalytics(conferenceId, db = pool) {
     const [[approval]] = await db.query(
         `SELECT
             COUNT(*) AS total_delegates,
-            SUM(status = 'approved') AS approved_delegates
-         FROM delegates WHERE conference_id = ?`,
+            COUNT(*) FILTER (WHERE status = 'approved') AS approved_delegates
+         FROM delegates WHERE conference_id = $1`,
         [conferenceId]
     );
 
@@ -195,7 +191,7 @@ async function getAnalytics(conferenceId, db = pool) {
          FROM delegate_committee_preferences dcp
          INNER JOIN delegates d ON d.id = dcp.delegate_id
          INNER JOIN committees c ON c.id = dcp.committee_id
-         WHERE d.conference_id = ?
+         WHERE d.conference_id = $1
          GROUP BY c.id, c.name
          ORDER BY preference_count DESC`,
         [conferenceId]
@@ -203,7 +199,7 @@ async function getAnalytics(conferenceId, db = pool) {
 
     const [registrationsByDay] = await db.query(
         `SELECT DATE(created_at) AS day, COUNT(*) AS count
-         FROM delegates WHERE conference_id = ?
+         FROM delegates WHERE conference_id = $1
          GROUP BY DATE(created_at)
          ORDER BY day ASC`,
         [conferenceId]
@@ -231,26 +227,27 @@ async function getAnalytics(conferenceId, db = pool) {
 async function listPublic({ search, country, month, registrationStatus, organizationSlug } = {}, db = pool) {
     const clauses = ["c.status = 'published'", "c.deleted_at IS NULL", "c.is_publicly_listed = TRUE", "o.is_publicly_listed = TRUE"];
     const params = [];
+    let i = 1;
 
     if (search) {
-        clauses.push("(c.name LIKE ? OR c.acronym LIKE ? OR o.name LIKE ?)");
-        const like = `%${search}%`;
-        params.push(like, like, like);
+        clauses.push(`(c.name ILIKE $${i} OR c.acronym ILIKE $${i} OR o.name ILIKE $${i})`);
+        params.push(`%${search}%`);
+        i++;
     }
     if (country) {
-        clauses.push("c.location LIKE ?");
+        clauses.push(`c.location ILIKE $${i++}`);
         params.push(`%${country}%`);
     }
     if (month) {
-        clauses.push("MONTH(c.start_date) = ?");
+        clauses.push(`EXTRACT(MONTH FROM c.start_date) = $${i++}`);
         params.push(month);
     }
     if (registrationStatus) {
-        clauses.push("c.registration_status = ?");
+        clauses.push(`c.registration_status = $${i++}`);
         params.push(registrationStatus);
     }
     if (organizationSlug) {
-        clauses.push("o.slug = ?");
+        clauses.push(`o.slug = $${i++}`);
         params.push(organizationSlug);
     }
 
@@ -271,7 +268,7 @@ async function findPublicBySlug(slug, db = pool) {
         `SELECT c.*, o.name AS organization_name, o.slug AS organization_slug, o.logo_path AS organization_logo_path
          FROM conferences c
          INNER JOIN organizations o ON o.id = c.organization_id
-         WHERE c.slug = ? AND c.status = 'published' AND c.deleted_at IS NULL
+         WHERE c.slug = $1 AND c.status = 'published' AND c.deleted_at IS NULL
            AND c.is_publicly_listed = TRUE AND o.is_publicly_listed = TRUE`,
         [slug]
     );
@@ -279,7 +276,7 @@ async function findPublicBySlug(slug, db = pool) {
 }
 
 module.exports = {
-    create, findById, listByOrganizer, listByAccessEmail, listByOrganization, listOpenForRegistration, update, remove,
+    create, findById, listByAccessProfile, listByOrganization, listOpenForRegistration, update, remove,
     updatePaymentConfig, publishResults, getStats, getAnalytics, listPublic, findPublicBySlug,
     restore, listTrashedByOrganization
 };

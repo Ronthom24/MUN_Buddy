@@ -4,21 +4,23 @@ async function create(
     { certificateNumber, conferenceId, delegateId, templateId, awardId, certificateType, issuedByAccessId },
     db = pool
 ) {
-    const [result] = await db.execute(
+    const [rows] = await db.execute(
         `INSERT INTO certificates (certificate_number, conference_id, delegate_id, template_id, award_id, certificate_type, issued_by_organizer_access_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id`,
         [certificateNumber, conferenceId, delegateId, templateId, awardId || null, certificateType || "participation", issuedByAccessId || null]
     );
-    return findById(result.insertId, db);
+    return findById(rows[0].id, db);
 }
 
 async function findById(id, db = pool) {
     const [rows] = await db.query(
-        `SELECT cert.*, d.full_name AS delegate_name, d.email AS delegate_email, ct.name AS template_name
+        `SELECT cert.*, pr.full_name AS delegate_name, pr.email AS delegate_email, ct.name AS template_name
          FROM certificates cert
          INNER JOIN delegates d ON d.id = cert.delegate_id
+         JOIN profiles pr ON pr.id = d.profile_id
          INNER JOIN certificate_templates ct ON ct.id = cert.template_id
-         WHERE cert.id = ?`,
+         WHERE cert.id = $1`,
         [id]
     );
     return rows[0] || null;
@@ -26,11 +28,12 @@ async function findById(id, db = pool) {
 
 async function findByNumber(certificateNumber, db = pool) {
     const [rows] = await db.query(
-        `SELECT cert.*, d.full_name AS delegate_name, c.name AS conference_name
+        `SELECT cert.*, pr.full_name AS delegate_name, c.name AS conference_name
          FROM certificates cert
          INNER JOIN delegates d ON d.id = cert.delegate_id
+         JOIN profiles pr ON pr.id = d.profile_id
          INNER JOIN conferences c ON c.id = cert.conference_id
-         WHERE cert.certificate_number = ?`,
+         WHERE cert.certificate_number = $1`,
         [certificateNumber]
     );
     return rows[0] || null;
@@ -46,7 +49,7 @@ async function findRenderContext(id, db = pool) {
     const [rows] = await db.query(
         `SELECT
             cert.*,
-            d.full_name AS delegate_full_name,
+            pr.full_name AS delegate_full_name,
             c.name AS conference_name, c.start_date AS conference_start_date, c.end_date AS conference_end_date,
             ct.title AS template_title, ct.body_text AS template_body_text, ct.accent_color AS template_accent_color,
             ct.signatory_name AS template_signatory_name, ct.signatory_title AS template_signatory_title,
@@ -55,12 +58,13 @@ async function findRenderContext(id, db = pool) {
             aw_committee.name AS award_committee_name, aw_portfolio.name AS award_portfolio_name
          FROM certificates cert
          INNER JOIN delegates d ON d.id = cert.delegate_id
+         JOIN profiles pr ON pr.id = d.profile_id
          INNER JOIN conferences c ON c.id = cert.conference_id
          INNER JOIN certificate_templates ct ON ct.id = cert.template_id
          LEFT JOIN awards a ON a.id = cert.award_id
          LEFT JOIN committees aw_committee ON aw_committee.id = a.committee_id
          LEFT JOIN portfolios aw_portfolio ON aw_portfolio.id = a.portfolio_id
-         WHERE cert.id = ?`,
+         WHERE cert.id = $1`,
         [id]
     );
     return rows[0] || null;
@@ -68,11 +72,12 @@ async function findRenderContext(id, db = pool) {
 
 async function listByConference(conferenceId, db = pool) {
     const [rows] = await db.query(
-        `SELECT cert.*, d.full_name AS delegate_name, d.email AS delegate_email, ct.name AS template_name
+        `SELECT cert.*, pr.full_name AS delegate_name, pr.email AS delegate_email, ct.name AS template_name
          FROM certificates cert
          INNER JOIN delegates d ON d.id = cert.delegate_id
+         JOIN profiles pr ON pr.id = d.profile_id
          INNER JOIN certificate_templates ct ON ct.id = cert.template_id
-         WHERE cert.conference_id = ?
+         WHERE cert.conference_id = $1
          ORDER BY cert.issued_at DESC`,
         [conferenceId]
     );
@@ -84,7 +89,7 @@ async function listByDelegate(delegateId, db = pool) {
         `SELECT cert.*, ct.name AS template_name, ct.title AS template_title
          FROM certificates cert
          INNER JOIN certificate_templates ct ON ct.id = cert.template_id
-         WHERE cert.delegate_id = ?
+         WHERE cert.delegate_id = $1
          ORDER BY cert.issued_at DESC`,
         [delegateId]
     );
@@ -93,15 +98,15 @@ async function listByDelegate(delegateId, db = pool) {
 
 async function recordDownload(id, db = pool) {
     await db.execute(
-        `UPDATE certificates SET download_count = download_count + 1, last_downloaded_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        `UPDATE certificates SET download_count = download_count + 1, last_downloaded_at = CURRENT_TIMESTAMP WHERE id = $1`,
         [id]
     );
 }
 
 async function getStatsForConference(conferenceId, db = pool) {
     const [[row]] = await db.query(
-        `SELECT COUNT(*) AS total_certificates, SUM(download_count > 0) AS downloaded_count, SUM(download_count) AS total_downloads
-         FROM certificates WHERE conference_id = ?`,
+        `SELECT COUNT(*) AS total_certificates, COUNT(*) FILTER (WHERE download_count > 0) AS downloaded_count, SUM(download_count) AS total_downloads
+         FROM certificates WHERE conference_id = $1`,
         [conferenceId]
     );
     return {

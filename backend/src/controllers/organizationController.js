@@ -5,7 +5,7 @@ const conferenceModel = require("../models/conferenceModel");
 const authService = require("../services/authService");
 
 const listMine = asyncHandler(async (req, res) => {
-    const organizations = await organizationModel.listByMemberEmail(req.user.email);
+    const organizations = await organizationModel.listByMemberProfile(req.user.id);
     res.status(200).json({ success: true, organizations });
 });
 

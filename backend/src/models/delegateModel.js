@@ -1,78 +1,92 @@
 const pool = require("../config/database");
 
+// Display fields (full_name, email, phone) now live on `profiles`, not
+// `delegates` -- every read joins profiles. `phone` moved off this table
+// entirely (it's identity-level, not per-conference); update it via
+// profileModel instead of delegateModel.updateOwnProfile.
+const SELECT_WITH_PROFILE = `
+    SELECT d.*, p.full_name, p.email, p.phone
+    FROM delegates d
+    JOIN profiles p ON p.id = d.profile_id
+`;
+
 async function create(
-    { conferenceId, fullName, email, phone, passwordHash, school, grade, munExperience, profileText, specialNotes },
+    { conferenceId, profileId, school, grade, munExperience, profileText, specialNotes },
     db = pool
 ) {
-    const [result] = await db.execute(
+    const [rows] = await db.execute(
         `INSERT INTO delegates
-            (conference_id, full_name, email, phone, password_hash, school, grade, mun_experience, profile_text, special_notes)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            (conference_id, profile_id, school, grade, mun_experience, profile_text, special_notes)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
         [
-            conferenceId, fullName, email, phone || null, passwordHash, school || null, grade || null,
+            conferenceId, profileId, school || null, grade || null,
             munExperience || "beginner", profileText || null, specialNotes || null
         ]
     );
-    return result.insertId;
+    return rows[0].id;
 }
 
 async function findById(id, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM delegates WHERE id = ?`, [id]);
+    const [rows] = await db.execute(`${SELECT_WITH_PROFILE} WHERE d.id = $1`, [id]);
     return rows[0] || null;
 }
 
-async function findByEmail(email, db = pool) {
-    const [rows] = await db.execute(`SELECT * FROM delegates WHERE email = ? LIMIT 1`, [email]);
-    return rows[0] || null;
-}
-
-async function findLatestByEmail(email, db = pool) {
+/** The delegate row (if any) this profile holds for a specific conference. */
+async function findByConferenceAndProfile(conferenceId, profileId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM delegates WHERE email = ? ORDER BY created_at DESC LIMIT 1`,
-        [email]
+        `${SELECT_WITH_PROFILE} WHERE d.conference_id = $1 AND d.profile_id = $2`,
+        [conferenceId, profileId]
     );
     return rows[0] || null;
 }
 
+/** Every conference this profile has applied to as a delegate. */
+async function listByProfile(profileId, db = pool) {
+    const [rows] = await db.execute(`${SELECT_WITH_PROFILE} WHERE d.profile_id = $1 ORDER BY d.created_at DESC`, [profileId]);
+    return rows;
+}
+
 async function listByConference(conferenceId, filters = {}, db = pool) {
-    const clauses = ["conference_id = ?"];
+    const clauses = ["d.conference_id = $1"];
     const params = [conferenceId];
+    let i = 2;
 
     if (filters.status) {
-        clauses.push("status = ?");
+        clauses.push(`d.status = $${i++}`);
         params.push(filters.status);
     }
     if (filters.munExperience) {
-        clauses.push("mun_experience = ?");
+        clauses.push(`d.mun_experience = $${i++}`);
         params.push(filters.munExperience);
     }
     if (filters.search) {
-        clauses.push("(full_name LIKE ? OR email LIKE ? OR school LIKE ?)");
-        const like = `%${filters.search}%`;
-        params.push(like, like, like);
+        clauses.push(`(p.full_name ILIKE $${i} OR p.email ILIKE $${i} OR d.school ILIKE $${i})`);
+        params.push(`%${filters.search}%`);
+        i++;
     }
 
     const [rows] = await db.execute(
-        `SELECT * FROM delegates WHERE ${clauses.join(" AND ")} ORDER BY created_at DESC`,
+        `${SELECT_WITH_PROFILE} WHERE ${clauses.join(" AND ")} ORDER BY d.created_at DESC`,
         params
     );
     return rows;
 }
 
 async function updateStatus(id, status, db = pool) {
-    await db.execute(`UPDATE delegates SET status = ? WHERE id = ?`, [status, id]);
+    await db.execute(`UPDATE delegates SET status = $1 WHERE id = $2`, [status, id]);
     return findById(id, db);
 }
 
-const SELF_UPDATABLE_FIELDS = { phone: "phone", school: "school", grade: "grade" };
+const SELF_UPDATABLE_FIELDS = { school: "school", grade: "grade" };
 
 async function updateOwnProfile(id, data, db = pool) {
     const setClauses = [];
     const params = [];
+    let i = 1;
 
     for (const [key, column] of Object.entries(SELF_UPDATABLE_FIELDS)) {
         if (data[key] !== undefined) {
-            setClauses.push(`${column} = ?`);
+            setClauses.push(`${column} = $${i++}`);
             params.push(data[key]);
         }
     }
@@ -80,14 +94,14 @@ async function updateOwnProfile(id, data, db = pool) {
     if (setClauses.length === 0) return findById(id, db);
 
     params.push(id);
-    await db.execute(`UPDATE delegates SET ${setClauses.join(", ")} WHERE id = ?`, params);
+    await db.execute(`UPDATE delegates SET ${setClauses.join(", ")} WHERE id = $${i}`, params);
     return findById(id, db);
 }
 
 async function bulkUpdateStatus(ids, status, db = pool) {
     if (!ids.length) return [];
-    await db.query(`UPDATE delegates SET status = ? WHERE id IN (?)`, [status, ids]);
-    const [rows] = await db.query(`SELECT * FROM delegates WHERE id IN (?)`, [ids]);
+    await db.query(`UPDATE delegates SET status = $1 WHERE id = ANY($2::bigint[])`, [status, ids]);
+    const [rows] = await db.query(`${SELECT_WITH_PROFILE} WHERE d.id = ANY($1::bigint[])`, [ids]);
     return rows;
 }
 
@@ -99,8 +113,9 @@ async function bulkUpdateStatus(ids, status, db = pool) {
  */
 async function findPossibleDuplicateIds(conferenceId, db = pool) {
     const [rows] = await db.query(
-        `SELECT id, LOWER(TRIM(email)) AS norm_email, TRIM(phone) AS norm_phone, LOWER(TRIM(full_name)) AS norm_name
-         FROM delegates WHERE conference_id = ?`,
+        `SELECT d.id, LOWER(TRIM(p.email)) AS norm_email, TRIM(p.phone) AS norm_phone, LOWER(TRIM(p.full_name)) AS norm_name
+         FROM delegates d JOIN profiles p ON p.id = d.profile_id
+         WHERE d.conference_id = $1`,
         [conferenceId]
     );
 
@@ -120,18 +135,10 @@ async function findPossibleDuplicateIds(conferenceId, db = pool) {
     return duplicateIds;
 }
 
-async function updatePasswordHash(id, passwordHash, db = pool) {
-    await db.execute(`UPDATE delegates SET password_hash = ? WHERE id = ?`, [passwordHash, id]);
-}
-
-async function setEmailVerified(id, db = pool) {
-    await db.execute(`UPDATE delegates SET email_verified = TRUE WHERE id = ?`, [id]);
-}
-
 async function addCommitteePreferences(delegateId, committeePreferences, db = pool) {
     for (const pref of committeePreferences || []) {
         await db.execute(
-            `INSERT INTO delegate_committee_preferences (delegate_id, committee_id, preference_rank) VALUES (?, ?, ?)`,
+            `INSERT INTO delegate_committee_preferences (delegate_id, committee_id, preference_rank) VALUES ($1, $2, $3)`,
             [delegateId, pref.committeeId, pref.rank]
         );
     }
@@ -140,7 +147,7 @@ async function addCommitteePreferences(delegateId, committeePreferences, db = po
 async function addCountryPreferences(delegateId, countryPreferences, db = pool) {
     for (const pref of countryPreferences || []) {
         await db.execute(
-            `INSERT INTO delegate_country_preferences (delegate_id, country_name, preference_rank) VALUES (?, ?, ?)`,
+            `INSERT INTO delegate_country_preferences (delegate_id, country_name, preference_rank) VALUES ($1, $2, $3)`,
             [delegateId, pref.countryName, pref.rank]
         );
     }
@@ -151,7 +158,7 @@ async function getCommitteePreferences(delegateId, db = pool) {
         `SELECT dcp.preference_rank, c.id AS committee_id, c.name AS committee_name
          FROM delegate_committee_preferences dcp
          INNER JOIN committees c ON c.id = dcp.committee_id
-         WHERE dcp.delegate_id = ? ORDER BY dcp.preference_rank ASC`,
+         WHERE dcp.delegate_id = $1 ORDER BY dcp.preference_rank ASC`,
         [delegateId]
     );
     return rows;
@@ -160,14 +167,14 @@ async function getCommitteePreferences(delegateId, db = pool) {
 async function getCountryPreferences(delegateId, db = pool) {
     const [rows] = await db.execute(
         `SELECT preference_rank, country_name FROM delegate_country_preferences
-         WHERE delegate_id = ? ORDER BY preference_rank ASC`,
+         WHERE delegate_id = $1 ORDER BY preference_rank ASC`,
         [delegateId]
     );
     return rows;
 }
 
 module.exports = {
-    create, findById, findByEmail, findLatestByEmail, listByConference, updateStatus, bulkUpdateStatus,
-    updateOwnProfile, updatePasswordHash, setEmailVerified, addCommitteePreferences, addCountryPreferences,
+    create, findById, findByConferenceAndProfile, listByProfile, listByConference, updateStatus, bulkUpdateStatus,
+    updateOwnProfile, addCommitteePreferences, addCountryPreferences,
     getCommitteePreferences, getCountryPreferences, findPossibleDuplicateIds
 };

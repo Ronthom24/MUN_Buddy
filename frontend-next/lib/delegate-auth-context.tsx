@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { api, clearToken, getToken, setToken } from "./api";
+import { api, clearDelegateToken, getDelegateToken, setDelegateToken } from "./api";
 import type { DelegateSelf } from "./types";
 
 interface DelegateAuthState {
@@ -43,13 +43,13 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const token = getToken();
+    const token = getDelegateToken();
     const stored = window.localStorage.getItem(DELEGATE_KEY);
     if (token && stored) {
       try {
         setDelegate(JSON.parse(stored));
       } catch {
-        clearToken();
+        clearDelegateToken();
       }
     }
     setLoading(false);
@@ -57,7 +57,7 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     const result = await api.post<DelegateAuthResponse>("/auth/delegate/login", { email, password });
-    setToken(result.token);
+    setDelegateToken(result.token);
     const self: DelegateSelf = { ...result.delegate, status: result.delegate.status as DelegateSelf["status"] };
     window.localStorage.setItem(DELEGATE_KEY, JSON.stringify(self));
     setDelegate(self);
@@ -70,7 +70,7 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
     if (result.token) {
       // Verification is temporarily disabled backend-side -- behaves like
       // pre-verification registration (immediate usable session).
-      setToken(result.token);
+      setDelegateToken(result.token);
       const self: DelegateSelf = { ...result.delegate, status: result.delegate.status as DelegateSelf["status"] };
       window.localStorage.setItem(DELEGATE_KEY, JSON.stringify(self));
       setDelegate(self);
@@ -82,7 +82,7 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
   }
 
   function logout() {
-    clearToken();
+    clearDelegateToken();
     window.localStorage.removeItem(DELEGATE_KEY);
     setDelegate(null);
     router.push("/delegate/login");

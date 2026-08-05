@@ -1,11 +1,25 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 const TOKEN_KEY = "mb_token";
+const DELEGATE_TOKEN_KEY = "mb_delegate_token";
 
 const ADMIN_VIEW_TOKEN_KEY = "mb_admin_view_token";
 
+/**
+ * Organizer and delegate sessions are separate identities that can be live
+ * in the same browser at once (e.g. testing both roles), so they can't share
+ * one localStorage slot -- request() picks the right one by route, since
+ * every delegate page lives under /delegate and everything else is
+ * organizer-facing.
+ */
+function isDelegateRoute(): boolean {
+  return typeof window !== "undefined" && window.location.pathname.startsWith("/delegate");
+}
+
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(ADMIN_VIEW_TOKEN_KEY) || window.localStorage.getItem(TOKEN_KEY);
+  const adminView = window.localStorage.getItem(ADMIN_VIEW_TOKEN_KEY);
+  if (adminView) return adminView;
+  return window.localStorage.getItem(isDelegateRoute() ? DELEGATE_TOKEN_KEY : TOKEN_KEY);
 }
 
 /**
@@ -26,6 +40,19 @@ export function setToken(token: string) {
 
 export function clearToken() {
   window.localStorage.removeItem(TOKEN_KEY);
+}
+
+export function getDelegateToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(DELEGATE_TOKEN_KEY);
+}
+
+export function setDelegateToken(token: string) {
+  window.localStorage.setItem(DELEGATE_TOKEN_KEY, token);
+}
+
+export function clearDelegateToken() {
+  window.localStorage.removeItem(DELEGATE_TOKEN_KEY);
 }
 
 export class ApiRequestError extends Error {

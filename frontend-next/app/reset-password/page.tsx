@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogoBadge } from "@/components/logo";
-import { api, ApiRequestError } from "@/lib/api";
+import { createSupabaseBrowserClient } from "@/lib/supabase";
 
 const PASSWORD_RULE = /^(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,}$/;
 
@@ -28,8 +27,9 @@ const schema = z
 type FormValues = z.infer<typeof schema>;
 
 export default function ResetPasswordPage() {
-  const params = useSearchParams();
-  const token = params.get("token");
+  const [supabase] = useState(() => createSupabaseBrowserClient());
+  const [checkingLink, setCheckingLink] = useState(true);
+  const [hasRecoverySession, setHasRecoverySession] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,18 +39,37 @@ export default function ResetPasswordPage() {
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
+  useEffect(() => {
+    // Supabase's browser client parses the recovery tokens out of the URL
+    // (appended by the emailed link) on init and exchanges them for a
+    // session -- by the time PASSWORD_RECOVERY fires, or a session already
+    // exists, the link is valid and updateUser() will work.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setHasRecoverySession(true);
+        setCheckingLink(false);
+      }
+    });
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setHasRecoverySession(true);
+      setCheckingLink(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
   async function onSubmit(values: FormValues) {
-    if (!token) {
-      setError("This reset link is missing a token.");
-      return;
-    }
     setSubmitting(true);
     setError(null);
     try {
-      await api.post("/auth/password-reset/confirm", { token, newPassword: values.newPassword });
+      const { error: updateError } = await supabase.auth.updateUser({ password: values.newPassword });
+      if (updateError) throw updateError;
       setDone(true);
     } catch (err) {
-      setError(err instanceof ApiRequestError ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setSubmitting(false);
     }
@@ -67,12 +86,23 @@ export default function ResetPasswordPage() {
           {!done && <CardDescription>Choose a new password for your account.</CardDescription>}
         </CardHeader>
         <CardContent>
-          {done ? (
+          {checkingLink ? (
+            <p className="text-center text-sm text-muted-foreground">Checking your reset link...</p>
+          ) : done ? (
             <div className="space-y-4 text-center">
               <CheckCircle2 className="mx-auto h-10 w-10 text-success" />
               <p className="text-sm text-muted-foreground">Your password has been reset.</p>
               <Button className="w-full" render={<Link href="/login" />} nativeButton={false}>
                 Go to sign in
+              </Button>
+            </div>
+          ) : !hasRecoverySession ? (
+            <div className="space-y-4 text-center">
+              <p className="text-sm text-destructive">
+                This reset link is invalid or has expired. Request a new one to continue.
+              </p>
+              <Button className="w-full" render={<Link href="/forgot-password" />} nativeButton={false}>
+                Request a new link
               </Button>
             </div>
           ) : (

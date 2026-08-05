@@ -14,7 +14,7 @@ async function uniqueSlug(db, name) {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-        const [rows] = await db.execute(`SELECT id FROM organizations WHERE slug = ?`, [candidate]);
+        const [rows] = await db.execute(`SELECT id FROM organizations WHERE slug = $1`, [candidate]);
         if (rows.length === 0) return candidate;
         suffix += 1;
         candidate = `${base}-${suffix}`;

@@ -1,4 +1,4 @@
-const { required, isEmail, minLength, isOneOf, strongPassword } = require("./rules");
+const { required, isEmail, strongPassword } = require("./rules");
 
 function organizerRegister(body) {
     const errors = [];
@@ -75,28 +75,7 @@ function passwordResetRequest(body) {
     return errors;
 }
 
-function passwordResetConfirm(body) {
-    const errors = [];
-    required(body.token, "token", errors);
-    if (required(body.newPassword, "newPassword", errors)) strongPassword(body.newPassword, "newPassword", errors);
-    return errors;
-}
-
-function verifyEmail(body) {
-    const errors = [];
-    required(body.token, "token", errors);
-    return errors;
-}
-
-function resendVerification(body) {
-    const errors = [];
-    if (required(body.email, "email", errors)) isEmail(body.email, "email", errors);
-    if (required(body.accountType, "accountType", errors)) isOneOf(body.accountType, "accountType", ["organizer", "delegate"], errors);
-    return errors;
-}
-
 module.exports = {
     organizerRegister, organizerLogin, delegateRegister, delegateLogin,
-    organizerAccessClaim, passwordResetRequest, passwordResetConfirm,
-    verifyEmail, resendVerification
+    organizerAccessClaim, passwordResetRequest
 };

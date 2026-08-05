@@ -12,6 +12,10 @@ async function listForUser(userType, userId, options) {
     return loginHistoryModel.listForUser(userType, userId, options);
 }
 
+async function listForEmail(email, options) {
+    return loginHistoryModel.listForEmail(email, options);
+}
+
 /**
  * Lockout enforcement (Security Center, spec ch.22): reuses the same
  * threshold/window as the "suspicious activity" report
@@ -27,4 +31,4 @@ async function assertNotLocked(email) {
     }
 }
 
-module.exports = { record, listForUser, assertNotLocked };
+module.exports = { record, listForUser, listForEmail, assertNotLocked };

@@ -1,6 +1,7 @@
-const { verifyToken } = require("../utils/jwt");
+const jwt = require("jsonwebtoken");
+const { verifySupabaseToken } = require("../utils/supabaseAuth");
+const { BRIDGE_TOKEN_ISSUER } = require("../services/platformAdminViewService");
 const ApiError = require("../utils/ApiError");
-const organizerModel = require("../models/organizerModel");
 const delegateModel = require("../models/delegateModel");
 const conferenceModel = require("../models/conferenceModel");
 const committeeModel = require("../models/committeeModel");
@@ -16,34 +17,25 @@ const organizerAccessModel = require("../models/organizerAccessModel");
 const organizationModel = require("../models/organizationModel");
 const organizationMemberModel = require("../models/organizationMemberModel");
 const permissionModel = require("../models/permissionModel");
+const profileModel = require("../models/profileModel");
 
 /**
- * Force-logout support (Platform Administration spec ch.13): organizer and
- * delegate JWTs carry a `tv` (token_version) claim at issue time; every
- * request re-checks it against the account's current token_version. A
- * platform admin suspending a user bumps that column, which invalidates
- * every token issued before the bump on this very next request -- no
- * session store needed. Tokens without a `tv` claim (the admin-view bridge
- * token, and platform_admin tokens verified elsewhere) skip this check.
+ * Two token families hit this middleware: real Supabase Auth access tokens
+ * (verified against Supabase's JWKS, see utils/supabaseAuth.js), and the
+ * platform-admin "view as organizer" bridge token (a scoped capability
+ * grant, not a real identity -- see platformAdminViewService.js -- signed
+ * with our own JWT_SECRET). `jwt.decode` here is UNVERIFIED, used only to
+ * pick which real verifier to run; nothing from this decode is trusted
+ * until the matching verify call below succeeds.
+ *
+ * Force-logout (Platform Administration spec ch.13): Supabase has no admin
+ * API to instantly kill an already-issued access token short of banning the
+ * account (blocks future logins too -- wrong semantic) or waiting for
+ * natural expiry. `profiles.sessions_revoked_at` restores the old
+ * token_version bump-to-revoke immediacy with a timestamp instead of a
+ * counter -- any token whose `iat` predates the last revocation is rejected
+ * on this very next request, same as before.
  */
-async function checkTokenVersion(user) {
-    if (user.tv === undefined || user.adminView) return true;
-
-    if (user.role === "organizer" && user.staffAccess) {
-        const access = await organizerAccessModel.findById(user.id);
-        return !!access && access.token_version === user.tv;
-    }
-    if (user.role === "organizer") {
-        const organizer = await organizerModel.findById(user.id);
-        return !!organizer && organizer.token_version === user.tv;
-    }
-    if (user.role === "delegate") {
-        const delegate = await delegateModel.findById(user.id);
-        return !!delegate && delegate.token_version === user.tv;
-    }
-    return true;
-}
-
 async function authenticate(req, res, next) {
     const header = req.headers.authorization || "";
     const [scheme, token] = header.split(" ");
@@ -52,37 +44,101 @@ async function authenticate(req, res, next) {
         return next(new ApiError(401, "Missing or invalid Authorization header"));
     }
 
-    let decoded;
-    try {
-        decoded = verifyToken(token);
-    } catch (err) {
-        return next(new ApiError(401, "Invalid or expired token"));
-    }
+    const unverified = jwt.decode(token) || {};
 
     try {
-        if (!(await checkTokenVersion(decoded))) {
-            return next(new ApiError(401, "This session has been revoked. Please log in again."));
+        if (unverified.iss === BRIDGE_TOKEN_ISSUER) {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            req.user = decoded;
+        } else {
+            const payload = await verifySupabaseToken(token);
+
+            const profile = await profileModel.findById(payload.sub);
+            if (profile?.sessions_revoked_at && payload.iat * 1000 < new Date(profile.sessions_revoked_at).getTime()) {
+                return next(new ApiError(401, "This session has been revoked. Please log in again."));
+            }
+
+            req.user = { id: payload.sub, email: payload.email };
         }
-        req.user = decoded;
         next();
     } catch (err) {
-        next(err);
+        next(new ApiError(401, "Invalid or expired token"));
     }
 }
 
+async function hasOrganizerCapacity(profileId) {
+    const accessRows = await organizerAccessModel.listByProfile(profileId);
+    if (accessRows.some((row) => row.status === "active")) return true;
+
+    const orgRows = await organizationMemberModel.listByProfile(profileId);
+    return orgRows.some((row) => row.status === "active" && ["owner", "admin"].includes(row.org_role));
+}
+
+/**
+ * There's no static "role" on a Supabase Auth token -- one identity can be
+ * both an organizer and a delegate. `requireRole` resolves capacity from our
+ * own tables instead, in the order the route listed its allowed roles (a
+ * route written as `requireRole("delegate", "organizer")` is declaring which
+ * capacity should win if the caller happens to have both -- rare, but
+ * deterministic rather than arbitrary).
+ *
+ * For "delegate", this also rebinds req.user.id from the profile uuid to
+ * the resolved delegate row's id (and sets req.user.conferenceId) -- the
+ * original profile id survives as req.user.profileId. This restores the
+ * exact req.user.id/conferenceId shape every delegate-facing controller
+ * already expects (unchanged from the old per-conference delegate JWT),
+ * so none of those call sites needed to change. A profile with delegate
+ * rows in more than one conference (new, possible only since the one-
+ * account-per-email migration) resolves to the most recently created one,
+ * same tiebreak the old findLatestByEmail used.
+ */
 function requireRole(...roles) {
-    return (req, res, next) => {
-        if (!req.user || !roles.includes(req.user.role)) {
+    return async (req, res, next) => {
+        try {
+            if (!req.user) return next(new ApiError(403, "You do not have access to this resource"));
+
+            if (req.user.adminView) {
+                if (!roles.includes(req.user.role)) return next(new ApiError(403, "You do not have access to this resource"));
+                return next();
+            }
+
+            for (const role of roles) {
+                if (role === "delegate") {
+                    const delegateRows = await delegateModel.listByProfile(req.user.id);
+                    // Prefer the most recent non-suspended application (old
+                    // delegateLogin's tiebreak, plus honoring per-conference
+                    // suspension instead of blindly picking a suspended one).
+                    const active = delegateRows.find((row) => row.account_status !== "suspended") || delegateRows[0];
+                    if (active) {
+                        if (active.account_status === "suspended") {
+                            return next(new ApiError(403, "This account has been suspended. Contact your platform administrator."));
+                        }
+                        req.user.profileId = req.user.id;
+                        req.user.id = active.id;
+                        req.user.conferenceId = active.conference_id;
+                        req.user.role = "delegate";
+                        return next();
+                    }
+                } else if (role === "organizer") {
+                    if (await hasOrganizerCapacity(req.user.id)) {
+                        req.user.role = "organizer";
+                        return next();
+                    }
+                }
+            }
+
             return next(new ApiError(403, "You do not have access to this resource"));
+        } catch (err) {
+            next(err);
         }
-        next();
     };
 }
 
 /**
  * Every organizer-side authorization question reduces to: what row does this
- * email have in organizer_access for this conference (the owner's own email
- * always has a row there too, with role='owner', created at registration).
+ * profile have in organizer_access for this conference (the owner's own
+ * profile always has a row there too, with role='owner', created at
+ * registration).
  *
  * As of the Organization tier: if there is no direct organizer_access row,
  * an Organization owner/admin still gets full ('owner'-equivalent) access to
@@ -104,34 +160,30 @@ function requireRole(...roles) {
  * below (id: null, role: 'owner') -- a proven pattern, not new surface area.
  */
 async function resolveConferenceAccess(conference, user) {
-    const email = user.email;
-
     if (user.adminView && user.conferenceId === conference.id) {
         return {
             id: null,
             conference_id: conference.id,
-            email,
             role: "owner",
             committee_id: null,
-            password_hash: null,
             via_platform_admin: true
         };
     }
 
-    const direct = await organizerAccessModel.findByConferenceAndEmail(conference.id, email);
+    const profileId = user.profileId || user.id;
+
+    const direct = await organizerAccessModel.findByConferenceAndProfile(conference.id, profileId);
     if (direct) return direct;
 
     if (!conference.organization_id) return null;
 
-    const membership = await organizationMemberModel.findByOrganizationAndEmail(conference.organization_id, email);
+    const membership = await organizationMemberModel.findByOrganizationAndProfile(conference.organization_id, profileId);
     if (membership && membership.status === "active" && ["owner", "admin"].includes(membership.org_role)) {
         return {
             id: null,
             conference_id: conference.id,
-            email,
             role: "owner",
             committee_id: null,
-            password_hash: null,
             via_organization: true
         };
     }
@@ -334,6 +386,13 @@ async function requireResolutionOwnership(req, res, next) {
     }
 }
 
+/**
+ * "Own" resolution/note/document checks compare against req.user.id, which
+ * for a `requireRole("delegate")`-gated route is already the resolved
+ * delegate row's id for the caller's current conference context (see
+ * requireRole above) -- so this comparison is unchanged from before the
+ * identity migration despite delegates now being profile-keyed underneath.
+ */
 async function requireOwnResolution(req, res, next) {
     try {
         const resolution = await resolutionModel.findById(req.params.id);
@@ -416,7 +475,7 @@ function requireOrganizationAccess(...allowedOrgRoles) {
             const organization = await organizationModel.findById(organizationId);
             if (!organization) return next(new ApiError(404, "Organization not found"));
 
-            const membership = await organizationMemberModel.findByOrganizationAndEmail(organizationId, req.user.email);
+            const membership = await organizationMemberModel.findByOrganizationAndProfile(organizationId, req.user.profileId || req.user.id);
             if (!membership || membership.status !== "active" || !allowedOrgRoles.includes(membership.org_role)) {
                 return next(new ApiError(403, "You do not have access to this organization"));
             }

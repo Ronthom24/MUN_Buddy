@@ -1,7 +1,8 @@
-const platformJwt = require("../utils/platformJwt");
+const { verifySupabaseToken } = require("../utils/supabaseAuth");
 const ApiError = require("../utils/ApiError");
+const platformAdminModel = require("../models/platformAdminModel");
 
-function platformAuthenticate(req, res, next) {
+async function platformAuthenticate(req, res, next) {
     const header = req.headers.authorization || "";
     const [scheme, token] = header.split(" ");
 
@@ -10,11 +11,12 @@ function platformAuthenticate(req, res, next) {
     }
 
     try {
-        const decoded = platformJwt.verifyToken(token);
-        if (decoded.role !== "platform_admin") {
+        const payload = await verifySupabaseToken(token);
+        const isAdmin = await platformAdminModel.isPlatformAdmin(payload.sub);
+        if (!isAdmin) {
             return next(new ApiError(403, "This endpoint requires platform administrator access"));
         }
-        req.platformAdmin = decoded;
+        req.platformAdmin = { id: payload.sub, email: payload.email, name: payload.user_metadata?.full_name || null };
         next();
     } catch (err) {
         next(new ApiError(401, "Invalid or expired token"));

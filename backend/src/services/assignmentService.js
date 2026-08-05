@@ -123,10 +123,10 @@ async function getAnalytics(conferenceId) {
 
     const [committeeDemand] = await pool.query(
         `SELECT c.id, c.name, c.capacity,
-                SUM(a.status = 'assigned' AND a.committee_id = c.id) AS assigned_count
+                COUNT(*) FILTER (WHERE a.status = 'assigned' AND a.committee_id = c.id) AS assigned_count
          FROM committees c
          LEFT JOIN assignments a ON a.committee_id = c.id
-         WHERE c.conference_id = ?
+         WHERE c.conference_id = $1
          GROUP BY c.id, c.name, c.capacity`,
         [conferenceId]
     );

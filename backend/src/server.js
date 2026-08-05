@@ -1,9 +1,7 @@
 require("dotenv").config();
 
-console.log("DB_HOST:", process.env.DB_HOST);
-console.log("DB_USER:", process.env.DB_USER);
-console.log("DB_NAME:", process.env.DB_NAME);
-console.log("DB_PASSWORD:", process.env.DB_PASSWORD ? "Loaded" : "Missing");
+console.log("SUPABASE_URL:", process.env.SUPABASE_URL);
+console.log("SUPABASE_DB_URL:", process.env.SUPABASE_DB_URL ? "Loaded" : "Missing");
 
 const app = require("./app");
 const pool = require("./config/database");
@@ -15,7 +13,7 @@ async function startServer() {
         const connection = await pool.getConnection();
 
         console.log("====================================");
-        console.log("✅ Connected to MySQL");
+        console.log("✅ Connected to Postgres (Supabase)");
         console.log("====================================");
 
         connection.release();

@@ -1,11 +1,9 @@
-const bcrypt = require("bcrypt");
 const ApiError = require("../utils/ApiError");
 const delegateModel = require("../models/delegateModel");
 const assignmentModel = require("../models/assignmentModel");
 const conferenceModel = require("../models/conferenceModel");
 const paymentModel = require("../models/paymentModel");
-
-const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
+const { authClient, adminClient } = require("../utils/supabaseClients");
 
 async function updateOwnProfile(delegateId, data) {
     const updated = await delegateModel.updateOwnProfile(delegateId, data);
@@ -15,15 +13,18 @@ async function updateOwnProfile(delegateId, data) {
     };
 }
 
-async function changeOwnPassword(delegateId, currentPassword, newPassword) {
-    const delegate = await delegateModel.findById(delegateId);
-    if (!delegate) throw new ApiError(404, "Delegate not found");
+/**
+ * Password is Supabase's now, not ours -- verify the current one the same
+ * way login does (signInWithPassword against the anon client), then use the
+ * admin client to set the new one. profileId is the Supabase auth user id
+ * (req.user.profileId), NOT the delegate row id this function used to take.
+ */
+async function changeOwnPassword(profileId, email, currentPassword, newPassword) {
+    const { error: verifyError } = await authClient.auth.signInWithPassword({ email, password: currentPassword });
+    if (verifyError) throw new ApiError(401, "Current password is incorrect");
 
-    const matches = await bcrypt.compare(currentPassword, delegate.password_hash);
-    if (!matches) throw new ApiError(401, "Current password is incorrect");
-
-    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-    await delegateModel.updatePasswordHash(delegateId, passwordHash);
+    const { error: updateError } = await adminClient.auth.admin.updateUserById(profileId, { password: newPassword });
+    if (updateError) throw new ApiError(400, updateError.message);
 }
 
 async function listForConference(conferenceId, filters) {

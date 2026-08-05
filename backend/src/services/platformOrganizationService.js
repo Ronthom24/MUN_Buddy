@@ -5,12 +5,13 @@ const organizationModel = require("../models/organizationModel");
 async function listOrganizations({ search, status } = {}, db = pool) {
     const clauses = ["deleted_at IS NULL"];
     const params = [];
+    let i = 1;
     if (search) {
-        clauses.push("name LIKE ?");
+        clauses.push(`name ILIKE $${i++}`);
         params.push(`%${search}%`);
     }
     if (status) {
-        clauses.push("status = ?");
+        clauses.push(`status = $${i++}`);
         params.push(status);
     }
 
@@ -31,7 +32,7 @@ async function getOrganization(id, db = pool) {
     const stats = await organizationModel.getStats(id, db);
     const [conferences] = await db.query(
         `SELECT id, name, status, registration_status, start_date, end_date, admin_disabled
-         FROM conferences WHERE organization_id = ? ORDER BY start_date DESC`,
+         FROM conferences WHERE organization_id = $1 ORDER BY start_date DESC`,
         [id]
     );
 

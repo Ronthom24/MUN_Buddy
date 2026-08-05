@@ -21,7 +21,7 @@ async function getCommitteeAnalytics(conferenceId, db = pool) {
             (SELECT COUNT(*) FROM delegate_committee_preferences dcp WHERE dcp.committee_id = c.id) AS preference_count
          FROM committees c
          LEFT JOIN assignments a ON a.committee_id = c.id AND a.status = 'assigned'
-         WHERE c.conference_id = ? AND c.deleted_at IS NULL
+         WHERE c.conference_id = $1 AND c.deleted_at IS NULL
          GROUP BY c.id, c.name, c.capacity, c.type, c.status
          ORDER BY assigned_count DESC`,
         [conferenceId]
@@ -43,24 +43,24 @@ async function getCommitteeAnalytics(conferenceId, db = pool) {
 async function getResourceAnalytics(conferenceId, db = pool) {
     const [[totals]] = await db.query(
         `SELECT COUNT(*) AS total_resources, SUM(download_count) AS total_downloads
-         FROM resources WHERE conference_id = ? AND deleted_at IS NULL`,
+         FROM resources WHERE conference_id = $1 AND deleted_at IS NULL`,
         [conferenceId]
     );
     const [mostDownloaded] = await db.query(
         `SELECT id, title, download_count FROM resources
-         WHERE conference_id = ? AND deleted_at IS NULL
+         WHERE conference_id = $1 AND deleted_at IS NULL
          ORDER BY download_count DESC LIMIT 5`,
         [conferenceId]
     );
     const [recentlyUploaded] = await db.query(
         `SELECT id, title, created_at FROM resources
-         WHERE conference_id = ? AND deleted_at IS NULL
+         WHERE conference_id = $1 AND deleted_at IS NULL
          ORDER BY created_at DESC LIMIT 5`,
         [conferenceId]
     );
     const [[unused]] = await db.query(
         `SELECT COUNT(*) AS unused_count FROM resources
-         WHERE conference_id = ? AND deleted_at IS NULL AND status = 'published' AND download_count = 0`,
+         WHERE conference_id = $1 AND deleted_at IS NULL AND status = 'published' AND download_count = 0`,
         [conferenceId]
     );
 
@@ -76,16 +76,16 @@ async function getResourceAnalytics(conferenceId, db = pool) {
 async function getCommunicationAnalytics(conferenceId, db = pool) {
     const [[announcementStats]] = await db.query(
         `SELECT COUNT(*) AS published_count FROM announcements
-         WHERE conference_id = ? AND status = 'published' AND deleted_at IS NULL`,
+         WHERE conference_id = $1 AND status = 'published' AND deleted_at IS NULL`,
         [conferenceId]
     );
     const [readRateRows] = await db.query(
         `SELECT a.id, (SELECT COUNT(*) FROM announcement_reads r WHERE r.announcement_id = a.id) AS read_count
-         FROM announcements a WHERE a.conference_id = ? AND a.status = 'published' AND a.deleted_at IS NULL`,
+         FROM announcements a WHERE a.conference_id = $1 AND a.status = 'published' AND a.deleted_at IS NULL`,
         [conferenceId]
     );
     const [[approvedCount]] = await db.query(
-        `SELECT COUNT(*) AS count FROM delegates WHERE conference_id = ? AND status = 'approved'`,
+        `SELECT COUNT(*) AS count FROM delegates WHERE conference_id = $1 AND status = 'approved'`,
         [conferenceId]
     );
     const audience = Number(approvedCount.count) || 0;
@@ -96,15 +96,15 @@ async function getCommunicationAnalytics(conferenceId, db = pool) {
     const [[faqStats]] = await db.query(
         `SELECT
             COUNT(*) AS total_faqs,
-            SUM(status = 'pending') AS pending_faqs,
-            AVG(CASE WHEN answered_at IS NOT NULL THEN TIMESTAMPDIFF(HOUR, created_at, answered_at) END) AS avg_resolution_hours
-         FROM faqs WHERE conference_id = ?`,
+            COUNT(*) FILTER (WHERE status = 'pending') AS pending_faqs,
+            AVG(CASE WHEN answered_at IS NOT NULL THEN EXTRACT(EPOCH FROM (answered_at - created_at)) / 3600 END) AS avg_resolution_hours
+         FROM faqs WHERE conference_id = $1`,
         [conferenceId]
     );
 
     const [[notificationStats]] = await db.query(
-        `SELECT COUNT(*) AS total_sent, SUM(read_at IS NOT NULL) AS total_read
-         FROM notifications WHERE conference_id = ?`,
+        `SELECT COUNT(*) AS total_sent, COUNT(*) FILTER (WHERE read_at IS NOT NULL) AS total_read
+         FROM notifications WHERE conference_id = $1`,
         [conferenceId]
     );
 
@@ -112,10 +112,10 @@ async function getCommunicationAnalytics(conferenceId, db = pool) {
         `SELECT
             COUNT(DISTINCT b.id) AS total_broadcasts,
             COUNT(r.id) AS total_recipients,
-            SUM(r.status = 'sent') AS total_delivered
+            COUNT(*) FILTER (WHERE r.status = 'sent') AS total_delivered
          FROM email_broadcasts b
          LEFT JOIN email_broadcast_recipients r ON r.broadcast_id = b.id
-         WHERE b.conference_id = ?`,
+         WHERE b.conference_id = $1`,
         [conferenceId]
     );
 

@@ -17,7 +17,7 @@ const list = asyncHandler(async (req, res) => {
             departmentId: row.department_id,
             positionTitle: row.position_title,
             fullName: row.full_name,
-            claimed: Boolean(row.password_hash),
+            claimed: Boolean(row.profile_id),
             createdAt: row.created_at
         }))
     });

@@ -1,10 +1,11 @@
 const pool = require("../config/database");
 
-async function create({ conferenceId, email, role, committeeId, departmentId, positionTitle }, db = pool) {
+/** `profileId` is set immediately for the conference owner's own row (their profile already exists at creation time); left null for invites until claimed. */
+async function create({ conferenceId, email, profileId, role, committeeId, departmentId, positionTitle }, db = pool) {
     const [rows] = await db.execute(
-        `INSERT INTO organizer_access (conference_id, invite_email, role, committee_id, department_id, position_title)
-         VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-        [conferenceId, email, role || "organizer", committeeId || null, departmentId || null, positionTitle || null]
+        `INSERT INTO organizer_access (conference_id, invite_email, profile_id, role, committee_id, department_id, position_title)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+        [conferenceId, email, profileId || null, role || "organizer", committeeId || null, departmentId || null, positionTitle || null]
     );
     return rows[0].id;
 }
@@ -14,9 +15,13 @@ async function findById(id, db = pool) {
     return rows[0] || null;
 }
 
+/** LEFT JOIN profiles: unclaimed invites have no profile_id yet, so full_name/email fall back to invite_email. */
 async function listByConference(conferenceId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT * FROM organizer_access WHERE conference_id = $1 ORDER BY created_at ASC`,
+        `SELECT oa.*, COALESCE(p.full_name, NULL) AS full_name, COALESCE(p.email, oa.invite_email) AS email
+         FROM organizer_access oa
+         LEFT JOIN profiles p ON p.id = oa.profile_id
+         WHERE oa.conference_id = $1 ORDER BY oa.created_at ASC`,
         [conferenceId]
     );
     return rows;

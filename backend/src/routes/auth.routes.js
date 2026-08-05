@@ -27,15 +27,10 @@ router.post(
     validateBody(authValidation.passwordResetRequest),
     controller.passwordResetRequest
 );
-router.post(
-    "/password-reset/confirm", authLimiter,
-    validateBody(authValidation.passwordResetConfirm),
-    controller.passwordResetConfirm
-);
+// Password reset confirmation and email verification are handled by Supabase
+// Auth directly on the frontend now (supabase.auth.updateUser / the emailed
+// confirmation link) -- no backend confirm step needed, see authService.js.
 
 router.get("/me/login-history", authenticate, controller.myLoginHistory);
-
-router.post("/email/verify", authLimiter, validateBody(authValidation.verifyEmail), controller.verifyEmail);
-router.post("/email/resend", authLimiter, validateBody(authValidation.resendVerification), controller.resendVerification);
 
 module.exports = router;

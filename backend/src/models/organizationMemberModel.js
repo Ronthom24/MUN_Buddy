@@ -38,6 +38,12 @@ async function findByOrganizationAndProfile(organizationId, profileId, db = pool
     return rows[0] || null;
 }
 
+/** Every organization membership this profile holds, across all organizations. */
+async function listByProfile(profileId, db = pool) {
+    const [rows] = await db.execute(`SELECT * FROM organization_members WHERE profile_id = $1`, [profileId]);
+    return rows;
+}
+
 async function listByOrganization(organizationId, db = pool) {
     const [rows] = await db.execute(
         `SELECT * FROM organization_members WHERE organization_id = $1 ORDER BY created_at ASC`,
@@ -77,6 +83,6 @@ async function remove(id, db = pool) {
 }
 
 module.exports = {
-    create, findById, findByOrganizationAndEmail, findByOrganizationAndProfile, listByOrganization,
+    create, findById, findByOrganizationAndEmail, findByOrganizationAndProfile, listByProfile, listByOrganization,
     claimInvite, update, remove
 };

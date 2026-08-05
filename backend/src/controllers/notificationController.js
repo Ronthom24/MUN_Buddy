@@ -4,17 +4,19 @@ const organizerAccessModel = require("../models/organizerAccessModel");
 
 /**
  * Notifications are recipient-scoped by (recipientType, recipientId). For
- * delegates, recipientId is delegates.id (== req.user.id). For organizers,
- * recipientId is the caller's organizer_access.id for the conference they're
- * currently viewing notifications from -- since one organizer email can hold
- * several organizer_access rows across conferences, "my notifications" for
- * an organizer means every organizer_access row that belongs to their email.
+ * delegates, recipientId is delegates.id (== req.user.id, rebound by
+ * requireRole("delegate") to the caller's resolved delegate row -- see
+ * middleware/auth.js). For organizers, recipientId is the caller's
+ * organizer_access.id for the conference they're currently viewing
+ * notifications from -- since one profile can hold several organizer_access
+ * rows across conferences, "my notifications" for an organizer means every
+ * organizer_access row that belongs to their profile.
  */
 async function resolveRecipient(req) {
     if (req.user.role === "delegate") {
         return { recipientType: "delegate", recipientIds: [req.user.id] };
     }
-    const rows = await organizerAccessModel.listByEmail(req.user.email);
+    const rows = await organizerAccessModel.listByProfile(req.user.profileId || req.user.id);
     return { recipientType: "organizer", recipientIds: rows.map((r) => r.id) };
 }
 

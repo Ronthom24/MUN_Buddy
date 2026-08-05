@@ -5,17 +5,18 @@ const conferenceModel = require("../models/conferenceModel");
 async function listConferences({ search, organizationId, status } = {}, db = pool) {
     const clauses = ["c.deleted_at IS NULL"];
     const params = [];
+    let i = 1;
     if (search) {
-        clauses.push("(c.name LIKE ? OR c.acronym LIKE ?)");
-        const like = `%${search}%`;
-        params.push(like, like);
+        clauses.push(`(c.name ILIKE $${i} OR c.acronym ILIKE $${i})`);
+        params.push(`%${search}%`);
+        i++;
     }
     if (organizationId) {
-        clauses.push("c.organization_id = ?");
+        clauses.push(`c.organization_id = $${i++}`);
         params.push(organizationId);
     }
     if (status) {
-        clauses.push("c.status = ?");
+        clauses.push(`c.status = $${i++}`);
         params.push(status);
     }
 
@@ -41,14 +42,14 @@ async function getConference(id, db = pool) {
 async function setArchived(id, db = pool) {
     const conference = await conferenceModel.findById(id, db);
     if (!conference) throw new ApiError(404, "Conference not found");
-    await db.execute(`UPDATE conferences SET status = 'archived' WHERE id = ?`, [id]);
+    await db.execute(`UPDATE conferences SET status = 'archived' WHERE id = $1`, [id]);
     return conferenceModel.findById(id, db);
 }
 
 async function setDisabled(id, disabled, db = pool) {
     const conference = await conferenceModel.findById(id, db);
     if (!conference) throw new ApiError(404, "Conference not found");
-    await db.execute(`UPDATE conferences SET admin_disabled = ? WHERE id = ?`, [disabled ? 1 : 0, id]);
+    await db.execute(`UPDATE conferences SET admin_disabled = $1 WHERE id = $2`, [Boolean(disabled), id]);
     return conferenceModel.findById(id, db);
 }
 

@@ -5,12 +5,13 @@ const loginHistoryModel = require("../models/loginHistoryModel");
 const listAuditLogs = asyncHandler(async (req, res) => {
     const clauses = [];
     const params = [];
+    let i = 1;
     if (req.query.actorType) {
-        clauses.push("actor_type = ?");
+        clauses.push(`actor_type = $${i++}`);
         params.push(req.query.actorType);
     }
     if (req.query.resourceType) {
-        clauses.push("resource_type = ?");
+        clauses.push(`resource_type = $${i++}`);
         params.push(req.query.resourceType);
     }
     const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
@@ -18,7 +19,7 @@ const listAuditLogs = asyncHandler(async (req, res) => {
     params.push(limit);
 
     const [rows] = await pool.query(
-        `SELECT * FROM audit_logs ${where} ORDER BY created_at DESC LIMIT ?`,
+        `SELECT * FROM audit_logs ${where} ORDER BY created_at DESC LIMIT $${i}`,
         params
     );
     res.status(200).json({ success: true, logs: rows });

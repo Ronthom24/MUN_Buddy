@@ -1,13 +1,14 @@
 const asyncHandler = require("../utils/asyncHandler");
 const authService = require("../services/authService");
 const loginHistoryService = require("../services/loginHistoryService");
-const organizerModel = require("../models/organizerModel");
-const delegateModel = require("../models/delegateModel");
 
 /**
  * Records spec 22.17's Login History regardless of outcome. Session
  * management itself stays short-lived-JWT-only by design (see
  * docs/Architecture.md) -- this is the audit trail, not a session store.
+ * userId is null on failure: Supabase Auth owns credential verification now,
+ * so there's no local password_hash lookup to resolve an id from without an
+ * extra admin API call per failed attempt.
  */
 async function recordLogin(req, { userType, userId, email, success }) {
     await loginHistoryService.record({
@@ -28,8 +29,7 @@ const organizerLogin = asyncHandler(async (req, res) => {
         await recordLogin(req, { userType: "organizer", userId: result.organizer.id, email: req.body.email, success: true });
         res.status(200).json({ success: true, ...result });
     } catch (err) {
-        const organizer = await organizerModel.findByEmail(req.body.email);
-        await recordLogin(req, { userType: "organizer", userId: organizer?.id || null, email: req.body.email, success: false });
+        await recordLogin(req, { userType: "organizer", userId: null, email: req.body.email, success: false });
         throw err;
     }
 });
@@ -46,8 +46,7 @@ const delegateLogin = asyncHandler(async (req, res) => {
         await recordLogin(req, { userType: "delegate", userId: result.delegate.id, email: req.body.email, success: true });
         res.status(200).json({ success: true, ...result });
     } catch (err) {
-        const delegate = await delegateModel.findLatestByEmail(req.body.email);
-        await recordLogin(req, { userType: "delegate", userId: delegate?.id || null, email: req.body.email, success: false });
+        await recordLogin(req, { userType: "delegate", userId: null, email: req.body.email, success: false });
         throw err;
     }
 });
@@ -58,7 +57,7 @@ const organizerAccessClaim = asyncHandler(async (req, res) => {
 });
 
 const myLoginHistory = asyncHandler(async (req, res) => {
-    const history = await loginHistoryService.listForUser(req.user.role, req.user.id);
+    const history = await loginHistoryService.listForEmail(req.user.email);
     res.status(200).json({ success: true, history });
 });
 
@@ -67,23 +66,7 @@ const passwordResetRequest = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, ...result });
 });
 
-const passwordResetConfirm = asyncHandler(async (req, res) => {
-    const result = await authService.confirmPasswordReset(req.body);
-    res.status(200).json({ success: true, ...result });
-});
-
-const verifyEmail = asyncHandler(async (req, res) => {
-    const result = await authService.verifyEmail(req.body);
-    res.status(200).json({ success: true, ...result });
-});
-
-const resendVerification = asyncHandler(async (req, res) => {
-    const result = await authService.resendVerificationEmail(req.body);
-    res.status(200).json({ success: true, ...result });
-});
-
 module.exports = {
     organizerRegister, organizerLogin, delegateRegister, delegateLogin,
-    organizerAccessClaim, passwordResetRequest, passwordResetConfirm, myLoginHistory,
-    verifyEmail, resendVerification
+    organizerAccessClaim, passwordResetRequest, myLoginHistory
 };

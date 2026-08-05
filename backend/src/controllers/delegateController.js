@@ -85,7 +85,9 @@ const updateMe = asyncHandler(async (req, res) => {
 });
 
 const changePassword = asyncHandler(async (req, res) => {
-    await delegateService.changeOwnPassword(req.user.id, req.body.currentPassword, req.body.newPassword);
+    await delegateService.changeOwnPassword(
+        req.user.profileId || req.user.id, req.user.email, req.body.currentPassword, req.body.newPassword
+    );
     res.status(200).json({ success: true, message: "Password updated" });
 });
 

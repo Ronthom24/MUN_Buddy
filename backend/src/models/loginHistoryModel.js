@@ -16,6 +16,20 @@ async function listForUser(userType, userId, { limit = 20 } = {}, db = pool) {
     return rows;
 }
 
+/**
+ * One Supabase Auth identity per email can now be both an organizer and a
+ * delegate, so "my login history" is keyed by email (already recorded on
+ * every row) rather than a single user_type -- unlike listForUser above,
+ * which still serves the "history for a specific past account" use case.
+ */
+async function listForEmail(email, { limit = 20 } = {}, db = pool) {
+    const [rows] = await db.query(
+        `SELECT * FROM login_history WHERE email = $1 ORDER BY created_at DESC LIMIT $2`,
+        [email, limit]
+    );
+    return rows;
+}
+
 async function listRecent({ limit = 100, success } = {}, db = pool) {
     const clauses = [];
     const params = [];

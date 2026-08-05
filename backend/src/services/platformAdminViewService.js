@@ -4,6 +4,10 @@ const conferenceModel = require("../models/conferenceModel");
 const auditLogModel = require("../models/auditLogModel");
 
 const ADMIN_VIEW_EXPIRES_IN = "2h";
+// Distinguishes this bridge token from a real Supabase Auth access token in
+// the `authenticate` middleware, which peeks at `iss` (unverified) to decide
+// which verifier to use before actually verifying the signature.
+const BRIDGE_TOKEN_ISSUER = "mun-buddy-admin-bridge";
 
 /**
  * Mints a short-lived, conference-scoped token in the NORMAL organizer JWT
@@ -29,7 +33,7 @@ async function mintAdminViewToken(admin, conferenceId) {
     });
 
     const token = jwt.sign(
-        { id: null, role: "organizer", email: admin.email, adminView: true, conferenceId: conference.id },
+        { iss: BRIDGE_TOKEN_ISSUER, id: null, role: "organizer", email: admin.email, adminView: true, conferenceId: conference.id },
         process.env.JWT_SECRET,
         { expiresIn: ADMIN_VIEW_EXPIRES_IN }
     );
@@ -37,4 +41,4 @@ async function mintAdminViewToken(admin, conferenceId) {
     return { token, conference };
 }
 
-module.exports = { mintAdminViewToken };
+module.exports = { mintAdminViewToken, BRIDGE_TOKEN_ISSUER };

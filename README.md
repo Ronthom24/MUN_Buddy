@@ -1,62 +1,47 @@
 # MUN Buddy
 
-![Project Status](https://img.shields.io/badge/status-building%20V1-brightgreen?style=flat-square)
-![Frontend](https://img.shields.io/badge/frontend-migrating%20to%20Next.js-blue?style=flat-square)
-![Backend](https://img.shields.io/badge/backend-node%2Fexpress%2Fmysql-orange?style=flat-square)
+![Frontend](https://img.shields.io/badge/frontend-Next.js%20%2B%20TypeScript-blue?style=flat-square)
+![Backend](https://img.shields.io/badge/backend-node%2Fexpress-orange?style=flat-square)
+![Database](https://img.shields.io/badge/database-postgres%20(supabase)-3ecf8e?style=flat-square)
 
-> See [`docs/Architecture.md`](docs/Architecture.md) for the current, accurate architecture and
-> build roadmap. Other files under `docs/` are historical/superseded planning notes.
-
-MUN Buddy is a web-based platform for managing Model United Nations conferences. It is designed to help organizers run events smoothly while giving delegates a central place to access their committee information, assignments, notes, and conference resources.
+MUN Buddy is a web-based platform for managing Model United Nations conferences — organizers run
+the event end to end (registration, committees, payments, communication, results/certificates,
+attendance, analytics), and delegates get a single workspace for their committee, assignments,
+notes, and conference resources.
 
 ## What the app is
 
-MUN Buddy brings the main parts of a conference experience into one digital workspace:
+- **Organizations** are the top-level tenant: an organization can run multiple conferences over
+  time, with its own team, branding, and members.
+- **Conference organizers** manage committees, agendas, registrations, delegate assignments,
+  payments, communication (announcements/resources/FAQs/email broadcasts), team members, results
+  and certificates, attendance/QR check-in, and analytics/reporting for their conference.
+- **Delegates** register for a conference, get assigned a committee/country, and use their
+  workspace to view schedule, resources, announcements, notes, resolutions, payments, and their
+  certificates.
+- **Platform administrators** get a separate super-admin view across all organizations: suspend
+  accounts, view-as-organizer, audit logs, and platform-wide analytics.
+- A public, unauthenticated site (`/discover`, `/organizations`, `/verify/[certificateNumber]`)
+  lets anyone browse publicly-listed conferences/organizations and verify an issued certificate.
 
-- Conference organizers can manage committees, agendas, announcements, resources, and delegate information.
-- Delegates can view their assigned committee, country portfolio, agenda details, resolutions, and notes.
-- The system is structured to support the flow of a real MUN event from planning to participation.
+## Technology stack
 
-## How it works
+### Frontend (`frontend-next/`)
+- Next.js (App Router) + TypeScript
+- Tailwind CSS + shadcn/ui (Base UI)
+- `react-hook-form` + `zod` for forms
+- `@supabase/supabase-js` for the Supabase-direct password-reset flow (everything else goes
+  through the backend API, see below)
 
-The application is split into two main experiences:
-
-### 1. Organizer experience
-Organizers use the dashboard-style pages to:
-- create and manage conference-related content
-- oversee committees and countries
-- manage delegate assignments and portfolios
-- publish announcements and resources
-- organize agendas and conference settings
-
-### 2. Delegate experience
-Delegates use the delegate portal to:
-- access their conference dashboard
-- view committee and country information
-- review resolutions, notes, and conference guidance
-- stay updated with announcements and materials
-
-The frontend is built as a polished static prototype, while the backend is being structured as a real service that can eventually power authentication, persistence, and API-driven data.
-
-## Actual technology stack
-
-The project currently uses the following technologies:
-
-### Frontend
-- HTML5 for page structure
-- CSS3 for styling
-- JavaScript for interactivity
-- Bootstrap 5 for layout and components
-- Font Awesome icons
-- Custom JavaScript modules under the frontend assets folder
-
-### Backend
-- Node.js
-- Express.js
-- MySQL database support via mysql2
-- CORS, Helmet, Morgan, and dotenv for API and security setup
-- JSON Web Token support for future authentication flows
-- bcrypt for password hashing
+### Backend (`backend/`)
+- Node.js + Express
+- **Postgres via Supabase**, accessed through `pg` (hand-written SQL, no ORM)
+- **Supabase Auth** for credentials — the backend is still the login/register gateway (not
+  frontend-direct), so login-attempt history and lockout enforcement keep working; Supabase just
+  owns password storage/verification and issues the JWTs
+- **Supabase Storage** (S3-compatible) for file uploads
+- `helmet` / `cors` / `morgan` / `express-rate-limit` / `dotenv`, `multer` for upload handling,
+  `pdfkit` + `qrcode` for certificate/check-in generation, `exceljs` for report exports
 
 ### Project structure
 ```text
@@ -64,94 +49,64 @@ backend/
   src/
     app.js
     server.js
-    config/
+    config/         # pg pool (Supabase)
     controllers/
     middleware/
     models/
     routes/
     services/
-    utils/
+    utils/          # Supabase Auth JWKS verification, Supabase clients, etc.
     validations/
-frontend/
-  index.html
-  login.html
-  register.html
-  delegate/
-  organizer/
-  assets/
-    css/
-    js/
+  scripts/          # runSchemaSupabase.js, seedPlatformAdmin.js, ...
+frontend-next/
+  app/              # Next.js App Router pages (organizer, delegate, platform, public)
+  components/
+  lib/              # API clients, auth contexts, Supabase browser client
+database/
+  schema-postgres/  # current Postgres schema, applied via backend/scripts/runSchemaSupabase.js
+  schema-mysql-archive/  # retired MySQL schema, kept for reference only
 ```
-
-## Current status
-
-This repository currently contains:
-- a working Node.js/Express + MySQL backend with JWT auth, role-based access control, and full
-  CRUD for conferences, committees, agendas, portfolios, delegates, assignments, resources,
-  announcements, resolutions, notes, feedback, and documents
-- a static Bootstrap/vanilla-JS frontend prototype (being migrated to Next.js — see
-  `docs/Architecture.md`)
-
-What is being actively built toward full Version 1 (per the product spec):
-- an Organization tier above Conference (multi-tenant, currently missing entirely)
-- Payments & Finance, Results & Certificates, Attendance/QR
-- Communication Center (FAQs, notifications, email broadcasts; announcements/resources exist and
-  are being extended)
-- Team Center, real Analytics & exports, audit logs, soft deletes, rate limiting
 
 ## Running the project locally
 
 ### Prerequisites
 - Node.js 18 or newer
 - npm
-- MySQL server (for the backend database connection)
+- A Supabase project (Postgres + Auth + Storage) — no local database needed
 
 ### 1. Install dependencies
 ```bash
-cd backend
-npm install
+cd backend && npm install
+cd ../frontend-next && npm install
 ```
 
 ### 2. Configure environment variables
-Create a `.env` file inside the backend folder with values similar to:
-```env
-PORT=5000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=mun_buddy
-```
+Copy `backend/.env.example` to `backend/.env` and fill in your Supabase project's URL, database
+connection string, and API keys (`SUPABASE_URL`, `SUPABASE_DB_URL`, `SUPABASE_PUBLISHABLE_KEY`,
+`SUPABASE_SECRET_KEY`), plus `JWT_SECRET` and, if you want file uploads working, the `S3_*`
+Storage config (see the comments in `.env.example` for exact values). Copy
+`frontend-next/.env.local.example` to `frontend-next/.env.local` similarly.
 
-### 3. Start the backend
+### 3. Apply the database schema
 ```bash
 cd backend
-npm run dev
+npm run db:migrate   # runs database/schema-postgres/*.sql against your Supabase project
 ```
 
-### 4. Open the frontend
-You can open the HTML files directly in the browser, or serve the frontend locally with a simple static server such as:
+### 4. Start both apps
 ```bash
-cd frontend
-python -m http.server 8000
+# backend, from backend/
+npm run dev   # http://localhost:5000
+
+# frontend, from frontend-next/
+npm run dev   # http://localhost:3000
 ```
-Then visit:
-```text
-http://localhost:8000
+
+### 5. (Optional) Seed a platform administrator
+```bash
+cd backend
+npm run seed:production   # creates/updates the account from SUPER_ADMIN_* env vars
 ```
-
-## Development notes
-
-- Keep frontend pages and shared scripts organized under the frontend folders.
-- Backend logic should stay modular under the backend src structure.
-- New features should be added incrementally and tested before integrating with the database.
-
-## Roadmap
-
-- complete authentication for organizers and delegates
-- connect the frontend to real backend APIs
-- implement database-backed conference and delegate management
-- add resource uploads and announcement workflows
-- expand analytics and AI-assisted conference features
 
 ## License
 

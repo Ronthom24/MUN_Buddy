@@ -17,7 +17,10 @@ const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
-const MONTH_ITEMS = Object.fromEntries([["all", "Any month"], ...MONTHS.map((m, i) => [String(i + 1), m])]);
+const MONTH_ITEMS: Record<string, string> = Object.fromEntries([
+  ["all", "Any month"],
+  ...MONTHS.map((m, i) => [String(i + 1), m]),
+]);
 const STATUS_ITEMS = { all: "Any status", open: "Open", closed: "Closed", invite_only: "Invite only" };
 
 export default function ConferencesDirectoryPage() {

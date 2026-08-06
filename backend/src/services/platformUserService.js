@@ -31,7 +31,7 @@ async function listUsers({ search, type, status } = {}, db = pool) {
             unionParams.push(status);
         }
         queries.push(
-            `SELECT p.id, 'organizer' AS user_type, p.full_name, p.email, p.status AS account_status,
+            `SELECT p.id::text AS id, 'organizer' AS user_type, p.full_name, p.email, p.status AS account_status,
                     p.suspended_at, NULL::bigint AS conference_id, p.created_at
              FROM profiles p WHERE ${clauses.join(" AND ")}`
         );
@@ -48,7 +48,7 @@ async function listUsers({ search, type, status } = {}, db = pool) {
             unionParams.push(status);
         }
         queries.push(
-            `SELECT d.id, 'delegate' AS user_type, p.full_name, p.email, d.account_status,
+            `SELECT d.id::text AS id, 'delegate' AS user_type, p.full_name, p.email, d.account_status,
                     d.suspended_at, d.conference_id, d.created_at
              FROM delegates d JOIN profiles p ON p.id = d.profile_id WHERE ${clauses.join(" AND ")}`
         );

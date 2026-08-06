@@ -1,19 +1,17 @@
 {
   "name": "mun-buddy-backend",
   "version": "1.0.0",
-  "description": "Backend scaffold for MUN Buddy using Node.js, Express and MySQL.",
+  "description": "Backend scaffold for MUN Buddy using Node.js, Express and Postgres (Supabase).",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "db:migrate": "node scripts/runSchema.js",
-    "db:migrate:orgs": "node scripts/migrateOrganizersToOrganizations.js",
+    "db:migrate": "node scripts/runSchemaSupabase.js",
     "seed:production": "node scripts/seedPlatformAdmin.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1089.0",
     "@supabase/supabase-js": "^2.111.0",
-    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "exceljs": "^4.4.0",
@@ -24,7 +22,6 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^2.2.0",
-    "mysql2": "^3.6.0",
     "nodemailer": "^9.0.3",
     "pdfkit": "^0.19.1",
     "pg": "^8.22.0",

@@ -2,6 +2,8 @@
 
 This folder contains database-related artifacts for the project.
 
-- `schema/` - SQL schema files and migrations.
-- `seeds/` - Seed data files for populating the database.
+- `schema-postgres/` - Current Postgres schema (Supabase), applied via
+  `backend/scripts/runSchemaSupabase.js`.
+- `schema-mysql-archive/` - Retired MySQL schema, kept for reference only
+  (pre-Supabase-migration). Not applied anywhere.
 - `README.md` - This overview file.

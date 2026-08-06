@@ -1,24 +1,43 @@
 const pool = require("../config/database");
 
+/**
+ * Never converted during the Phase 2 mysql2->pg model conversion since it
+ * queries the db directly instead of going through a model -- MySQL-only
+ * syntax here (SUM(bool_expr), the old `organizers` table, DATE_SUB/
+ * DATE_FORMAT/CURDATE) all fail against Postgres. Rewritten to Postgres
+ * idioms: COUNT(*) FILTER (WHERE ...) instead of SUM(bool_expr), profiles
+ * (joined via organization_members/organizer_access) instead of the
+ * retired `organizers` table, and date_trunc/TO_CHAR/CURRENT_DATE instead
+ * of the MySQL date functions.
+ */
 async function getDashboardStats(db = pool) {
     const [[organizations]] = await db.query(
-        `SELECT COUNT(*) AS total, SUM(status = 'active') AS active, SUM(status = 'suspended') AS suspended
+        `SELECT COUNT(*) AS total,
+                COUNT(*) FILTER (WHERE status = 'active') AS active,
+                COUNT(*) FILTER (WHERE status = 'suspended') AS suspended
          FROM organizations WHERE deleted_at IS NULL`
     );
     const [[conferences]] = await db.query(
-        `SELECT COUNT(*) AS total, SUM(status = 'published') AS published, SUM(status = 'draft') AS draft,
-                SUM(status = 'archived') AS archived, SUM(admin_disabled = 1) AS disabled
+        `SELECT COUNT(*) AS total,
+                COUNT(*) FILTER (WHERE status = 'published') AS published,
+                COUNT(*) FILTER (WHERE status = 'draft') AS draft,
+                COUNT(*) FILTER (WHERE status = 'archived') AS archived,
+                COUNT(*) FILTER (WHERE admin_disabled) AS disabled
          FROM conferences WHERE deleted_at IS NULL`
     );
     const [[organizers]] = await db.query(
-        `SELECT COUNT(*) AS total, SUM(status = 'suspended') AS suspended FROM organizers`
+        `SELECT COUNT(DISTINCT p.id) AS total,
+                COUNT(DISTINCT p.id) FILTER (WHERE p.status = 'suspended') AS suspended
+         FROM profiles p
+         WHERE EXISTS (SELECT 1 FROM organization_members om WHERE om.profile_id = p.id)
+            OR EXISTS (SELECT 1 FROM organizer_access oa WHERE oa.profile_id = p.id)`
     );
     const [[delegates]] = await db.query(
-        `SELECT COUNT(*) AS total, SUM(account_status = 'suspended') AS suspended FROM delegates`
+        `SELECT COUNT(*) AS total, COUNT(*) FILTER (WHERE account_status = 'suspended') AS suspended FROM delegates`
     );
     const [[certificates]] = await db.query(`SELECT COUNT(*) AS total FROM certificates`);
     const [[payments]] = await db.query(
-        `SELECT COUNT(*) AS total, COALESCE(SUM(amount), 0) AS totalAmount FROM payments WHERE status = 'verified'`
+        `SELECT COUNT(*) AS total, COALESCE(SUM(amount), 0) AS "totalAmount" FROM payments WHERE status = 'verified'`
     );
 
     return {
@@ -39,19 +58,19 @@ async function getDashboardStats(db = pool) {
 
 async function getGrowthSeries(db = pool) {
     const [dailyRegistrations] = await db.query(
-        `SELECT DATE(created_at) AS date, COUNT(*) AS count FROM delegates
-         WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-         GROUP BY DATE(created_at) ORDER BY date ASC`
+        `SELECT created_at::date AS date, COUNT(*) AS count FROM delegates
+         WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
+         GROUP BY created_at::date ORDER BY date ASC`
     );
     const [monthlyConferences] = await db.query(
-        `SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS count FROM conferences
-         WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-         GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY month ASC`
+        `SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, COUNT(*) AS count FROM conferences
+         WHERE created_at >= CURRENT_DATE - INTERVAL '12 months'
+         GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY month ASC`
     );
     const [organizationGrowth] = await db.query(
-        `SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS count FROM organizations
-         WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-         GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY month ASC`
+        `SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, COUNT(*) AS count FROM organizations
+         WHERE created_at >= CURRENT_DATE - INTERVAL '12 months'
+         GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY month ASC`
     );
 
     return { dailyRegistrations, monthlyConferences, organizationGrowth };

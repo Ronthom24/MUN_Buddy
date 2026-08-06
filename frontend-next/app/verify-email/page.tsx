@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, XCircle } from "lucide-react";
@@ -11,6 +11,32 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api, ApiRequestError } from "@/lib/api";
 
 export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<VerifyEmailFallback />}>
+      <VerifyEmailContent />
+    </Suspense>
+  );
+}
+
+function VerifyEmailFallback() {
+  return (
+    <div className="flex min-h-screen flex-1 items-center justify-center bg-gradient-to-b from-brand-navy/5 to-background px-4 py-12">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="text-center">
+          <Link href="/" className="mx-auto mb-2 block w-fit transition-opacity hover:opacity-80">
+            <LogoBadge size={72} />
+          </Link>
+          <CardTitle className="text-2xl font-semibold">Email verification</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 text-center">
+          <Skeleton className="mx-auto h-24 w-full" />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function VerifyEmailContent() {
   const params = useSearchParams();
   const token = params.get("token");
   const type = params.get("type") === "delegate" ? "delegate" : "organizer";

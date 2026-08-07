@@ -39,6 +39,7 @@ export interface Conference {
   registration_status: "open" | "closed" | "invite_only";
   max_delegates: number | null;
   conference_code: string;
+  is_publicly_listed: 0 | 1;
   payment_required: 0 | 1;
   currency: string;
   results_published: 0 | 1;

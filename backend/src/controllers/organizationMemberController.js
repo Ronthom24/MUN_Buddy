@@ -18,7 +18,7 @@ const invite = asyncHandler(async (req, res) => {
         email: req.body.email,
         fullName: req.body.fullName,
         orgRole: req.body.orgRole || "member",
-        invitedBy: req.user.email
+        invitedBy: req.user.id
     });
 
     const member = await organizationMemberModel.findById(memberId);

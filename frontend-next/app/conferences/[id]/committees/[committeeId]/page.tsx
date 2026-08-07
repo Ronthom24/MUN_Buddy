@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ArrowLeft, FileText, Flag, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ import type { Agenda, Committee, CommitteeStats, Portfolio } from "@/lib/types";
 
 export default function CommitteeDetailPage() {
   const params = useParams<{ id: string; committeeId: string }>();
+  const router = useRouter();
 
   const [committee, setCommittee] = useState<Committee | null>(null);
   const [stats, setStats] = useState<CommitteeStats | null>(null);
@@ -182,14 +183,29 @@ export default function CommitteeDetailPage() {
       await api.put(`/committees/${committee.id}`, {
         chair: form.get("chair") || null,
         viceChair: form.get("viceChair") || null,
+        capacity: form.get("capacity") ? Number(form.get("capacity")) : null,
       });
-      toast.success("Committee leadership updated");
+      toast.success("Committee updated");
       setChairDialogOpen(false);
       await load();
     } catch (err) {
-      const message = err instanceof ApiRequestError ? err.message : "Could not update committee leadership";
+      const message = err instanceof ApiRequestError ? err.message : "Could not update committee";
       toast.error(message);
     } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleDeleteCommittee() {
+    if (!committee) return;
+    setSubmitting(true);
+    try {
+      await api.delete(`/committees/${committee.id}`);
+      toast.success("Committee deleted");
+      router.push(`/conferences/${params.id}/committees`);
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not delete committee";
+      toast.error(message);
       setSubmitting(false);
     }
   }
@@ -229,7 +245,7 @@ export default function CommitteeDetailPage() {
                 <DialogContent>
                   <form onSubmit={handleUpdateChairs}>
                     <DialogHeader>
-                      <DialogTitle>Committee leadership</DialogTitle>
+                      <DialogTitle>Edit committee</DialogTitle>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="space-y-2">
@@ -239,6 +255,13 @@ export default function CommitteeDetailPage() {
                       <div className="space-y-2">
                         <Label htmlFor="viceChair">Vice Chair</Label>
                         <Input id="viceChair" name="viceChair" defaultValue={committee.vice_chair || ""} placeholder="Vice chair name" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="capacity">Capacity</Label>
+                        <Input
+                          id="capacity" name="capacity" type="number" min={1}
+                          defaultValue={committee.capacity ?? ""} placeholder="20"
+                        />
                       </div>
                     </div>
                     <DialogFooter>
@@ -251,22 +274,31 @@ export default function CommitteeDetailPage() {
               </Dialog>
             </p>
           </div>
-          <div className="flex gap-6 text-center">
-            <div>
-              <p className="text-2xl font-semibold">
-                {stats?.assignedCount ?? 0}
-                {committee.capacity ? `/${committee.capacity}` : ""}
-              </p>
-              <p className="text-xs text-muted-foreground">Delegates</p>
+          <div className="flex items-center gap-6">
+            <div className="flex gap-6 text-center">
+              <div>
+                <p className="text-2xl font-semibold">
+                  {stats?.assignedCount ?? 0}
+                  {committee.capacity ? `/${committee.capacity}` : ""}
+                </p>
+                <p className="text-xs text-muted-foreground">Delegates</p>
+              </div>
+              <div>
+                <p className="text-2xl font-semibold">{stats?.totalPortfolios ?? 0}</p>
+                <p className="text-xs text-muted-foreground">Portfolios</p>
+              </div>
+              <div>
+                <p className="text-2xl font-semibold">{stats?.preferenceCount ?? 0}</p>
+                <p className="text-xs text-muted-foreground">Preferences</p>
+              </div>
             </div>
-            <div>
-              <p className="text-2xl font-semibold">{stats?.totalPortfolios ?? 0}</p>
-              <p className="text-xs text-muted-foreground">Portfolios</p>
-            </div>
-            <div>
-              <p className="text-2xl font-semibold">{stats?.preferenceCount ?? 0}</p>
-              <p className="text-xs text-muted-foreground">Preferences</p>
-            </div>
+            <Button
+              size="icon-sm" variant="ghost"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={handleDeleteCommittee} disabled={submitting}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </CardContent>
       </Card>

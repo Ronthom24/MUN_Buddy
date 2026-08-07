@@ -26,6 +26,51 @@ import { PublicNav, PublicFooter } from "@/components/public-nav";
 import { api } from "@/lib/api";
 import type { PublicConference, PublicOrganization } from "@/lib/types";
 
+/**
+ * Deterministic (seeded) pseudo-random streaks for the hero backdrop --
+ * plain Math.random() would produce different values on the server render
+ * vs. the client render and break hydration, so this needs to be stable
+ * across both. Wide-ranging angles/positions/timing so the streaks read
+ * as scattered and chaotic rather than parallel lanes; delays are kept
+ * small relative to duration (all under ~5s) so several are always
+ * mid-flight and crossing paths at once instead of firing one after
+ * another.
+ */
+function seededRandom(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+
+const HERO_STREAKS = Array.from({ length: 14 }, (_, i) => {
+  const rand = seededRandom(i * 7919 + 13);
+  const angle = -55 + rand() * 110;
+  const midAngle = angle + (-25 + rand() * 50);
+  const startX = -60 - rand() * 20;
+  const startY = -35 + rand() * 70;
+  const endX = 55 + rand() * 25;
+  const endY = -35 + rand() * 70;
+  const midX = (startX + endX) / 2 + (-20 + rand() * 40);
+  const midY = (startY + endY) / 2 + (-25 + rand() * 50);
+  return {
+    startX: `${startX.toFixed(1)}vw`,
+    startY: `${startY.toFixed(1)}vh`,
+    midX: `${midX.toFixed(1)}vw`,
+    midY: `${midY.toFixed(1)}vh`,
+    endX: `${endX.toFixed(1)}vw`,
+    endY: `${endY.toFixed(1)}vh`,
+    angle: `${angle.toFixed(1)}deg`,
+    midAngle: `${midAngle.toFixed(1)}deg`,
+    duration: `${(4 + rand() * 7).toFixed(1)}s`,
+    delay: `${(-1 * rand() * 5).toFixed(1)}s`,
+    opacity: (0.75 + rand() * 0.25).toFixed(2),
+    length: `${Math.round(260 + rand() * 340)}px`,
+    thickness: `${(2 + rand() * 2.5).toFixed(1)}px`,
+  };
+});
+
 const FEATURES = [
   {
     icon: ClipboardList,
@@ -123,14 +168,7 @@ export default function Home() {
           }}
         />
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          {[
-            { startX: "-45vw", startY: "-6vh", endX: "55vw", endY: "10vh", angle: "12deg", duration: "6s", delay: "0s", opacity: 0.9, length: "480px" },
-            { startX: "-40vw", startY: "18vh", endX: "50vw", endY: "-14vh", angle: "-22deg", duration: "8.5s", delay: "1.8s", opacity: 0.75, length: "400px" },
-            { startX: "-50vw", startY: "-16vh", endX: "45vw", endY: "4vh", angle: "8deg", duration: "7s", delay: "3.4s", opacity: 0.95, length: "520px" },
-            { startX: "-38vw", startY: "8vh", endX: "48vw", endY: "-20vh", angle: "-18deg", duration: "9s", delay: "0.9s", opacity: 0.7, length: "360px" },
-            { startX: "-42vw", startY: "-20vh", endX: "52vw", endY: "20vh", angle: "20deg", duration: "7.8s", delay: "2.6s", opacity: 0.85, length: "460px" },
-            { startX: "-46vw", startY: "22vh", endX: "44vw", endY: "-4vh", angle: "-10deg", duration: "6.6s", delay: "4.2s", opacity: 0.8, length: "420px" },
-          ].map((streak, i) => (
+          {HERO_STREAKS.map((streak, i) => (
             <div
               key={i}
               className="hero-streak"
@@ -138,13 +176,17 @@ export default function Home() {
                 top: "50%",
                 "--streak-start-x": streak.startX,
                 "--streak-start-y": streak.startY,
+                "--streak-mid-x": streak.midX,
+                "--streak-mid-y": streak.midY,
                 "--streak-end-x": streak.endX,
                 "--streak-end-y": streak.endY,
                 "--streak-duration": streak.duration,
                 "--streak-delay": streak.delay,
                 "--streak-angle": streak.angle,
+                "--streak-mid-angle": streak.midAngle,
                 "--streak-opacity": streak.opacity,
                 "--streak-length": streak.length,
+                "--streak-thickness": streak.thickness,
               } as CSSProperties}
             />
           ))}

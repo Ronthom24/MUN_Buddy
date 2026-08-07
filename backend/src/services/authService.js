@@ -14,22 +14,74 @@ const { generateConferenceCode } = require("../utils/conferenceCode");
 const { uniqueSlug } = require("../utils/slug");
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const REQUIRE_EMAIL_VERIFICATION = process.env.REQUIRE_EMAIL_VERIFICATION === "true";
+const VERIFICATION_EXEMPT_EMAILS = new Set(
+    (process.env.VERIFICATION_EXEMPT_EMAILS || "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean)
+);
 
 /**
- * Creates the Supabase Auth identity for a brand-new registration and signs
- * them straight in, returning a real access token -- mirrors the old
- * "immediate usable account, no email verification wait" behavior
- * (REQUIRE_EMAIL_VERIFICATION=false) exactly, since email_confirm: true
- * marks the address confirmed at creation instead of sending a link.
+ * Creates the Supabase Auth identity for a brand-new registration.
  *
- * If the email already has an account, this is instead treated as "apply
- * with your existing account" (spec: one Supabase identity per email,
- * platform-wide) -- the caller must supply that account's correct password,
- * verified the same way login does. Wrong password -> 409, matching the
- * old "email already in use" rejection but phrased so the person knows to
- * log in with their existing password instead of retrying registration.
+ * Delegates never need verification regardless of REQUIRE_EMAIL_VERIFICATION
+ * -- a delegate account is inert (no committee/resource/conference access)
+ * until the organizer approves the application, so a fake or mistyped
+ * email just means a permanently-pending, functionally useless account,
+ * not a security gap. Organizers are the ones who get real, immediate
+ * power (create/run a conference) with no approval step above them, so
+ * verification is worth the friction there -- except for
+ * VERIFICATION_EXEMPT_EMAILS (comma-separated), which always skip it; use
+ * that for trusted accounts (e.g. your own) while the rate-limited
+ * built-in mailer would otherwise get in the way of testing.
+ *
+ * When verification applies and is required, this uses the regular
+ * (anon-key) signUp() instead of admin.createUser -- admin.createUser is
+ * an admin-privileged API that creates the row directly and never sends
+ * any email, confirmation or otherwise, even with email_confirm: false.
+ * signUp() is what actually triggers Supabase's own confirmation email
+ * (via whatever mailer is configured in Auth > Emails > SMTP Settings). No
+ * session comes back in this case -- Supabase won't sign in an unconfirmed
+ * user -- so the caller must return a "check your email" response instead
+ * of a token.
+ *
+ * Either way, if the email already has an account, this is treated as
+ * "apply with your existing account" (spec: one Supabase identity per
+ * email, platform-wide) -- the caller must supply that account's correct
+ * password, verified the same way login does. Wrong password -> 409,
+ * matching the old "email already in use" rejection but phrased so the
+ * person knows to log in with their existing password instead of retrying
+ * registration.
  */
-async function getOrCreateProfile({ email, password, fullName }) {
+async function getOrCreateProfile({ email, password, fullName, entityType = "organizer" }) {
+    const needsVerification = entityType === "organizer"
+        && REQUIRE_EMAIL_VERIFICATION
+        && !VERIFICATION_EXEMPT_EMAILS.has(email.toLowerCase());
+
+    if (needsVerification) {
+        const { data, error } = await authClient.auth.signUp({
+            email, password,
+            options: { data: { full_name: fullName }, emailRedirectTo: `${FRONTEND_URL}/verify-email` }
+        });
+        if (error) {
+            // "User already registered" (Confirm email disabled project-wide) is the
+            // only signUp error that should read as "you already have an account" --
+            // anything else (rate limit, invalid email format, SMTP down, ...) is a
+            // real failure and must surface as such, not get mislabeled.
+            if (error.message?.includes("already registered")) {
+                throw new ApiError(409, "An account with this email already exists. Log in instead, or check your password.");
+            }
+            throw new ApiError(error.status && error.status < 500 ? 400 : 502, error.message);
+        }
+        // With Confirm email enabled (the normal case), signUp on an
+        // already-registered, already-confirmed email doesn't error at all
+        // (avoids leaking which emails exist) -- it returns a user with an
+        // empty identities array instead. Treat that as "existing account"
+        // same as the error case above.
+        if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+            throw new ApiError(409, "An account with this email already exists. Log in instead, or check your password.");
+        }
+        return { profileId: data.user.id, session: null, isNewAccount: true, verificationRequired: true };
+    }
+
     const { data: created, error: createError } = await adminClient.auth.admin.createUser({
         email, password, email_confirm: true, user_metadata: { full_name: fullName }
     });
@@ -37,7 +89,7 @@ async function getOrCreateProfile({ email, password, fullName }) {
     if (!createError) {
         const { data: signedIn, error: signInError } = await authClient.auth.signInWithPassword({ email, password });
         if (signInError) throw new ApiError(500, "Account created but sign-in failed: " + signInError.message);
-        return { profileId: created.user.id, session: signedIn.session, isNewAccount: true };
+        return { profileId: created.user.id, session: signedIn.session, isNewAccount: true, verificationRequired: false };
     }
 
     // createUser fails with a 422/"already registered" style error when the email exists.
@@ -45,11 +97,18 @@ async function getOrCreateProfile({ email, password, fullName }) {
     if (signInError) {
         throw new ApiError(409, "An account with this email already exists. Log in instead, or check your password.");
     }
-    return { profileId: signedIn.user.id, session: signedIn.session, isNewAccount: false };
+    return { profileId: signedIn.user.id, session: signedIn.session, isNewAccount: false, verificationRequired: false };
+}
+
+/** Shared by every register/claim endpoint: token when the session is immediately usable, a "check your email" message otherwise. */
+function sessionOrVerificationMessage(session, verificationRequired) {
+    return verificationRequired
+        ? { verificationRequired: true, message: "Account created. Check your email for a confirmation link before logging in." }
+        : { token: session.access_token };
 }
 
 async function organizerRegister(body) {
-    const { profileId, session, isNewAccount } = await getOrCreateProfile({
+    const { profileId, session, isNewAccount, verificationRequired } = await getOrCreateProfile({
         email: body.email, password: body.password, fullName: body.fullName
     });
 
@@ -114,7 +173,7 @@ async function organizerRegister(body) {
         const organization = await organizationModel.findById(organizationId);
 
         return {
-            token: session.access_token,
+            ...sessionOrVerificationMessage(session, verificationRequired),
             organizer: { id: profileId, fullName: body.fullName, email: body.email },
             organization,
             conference,
@@ -199,6 +258,9 @@ async function organizerLogin({ email, password }) {
         if (error.code === "user_banned") {
             throw new ApiError(403, "This account has been suspended. Contact your platform administrator.");
         }
+        if (error.code === "email_not_confirmed") {
+            throw new ApiError(403, "Please verify your email before logging in -- check your inbox for the confirmation link.");
+        }
         throw new ApiError(401, "Invalid email or password");
     }
 
@@ -243,11 +305,11 @@ async function organizerAccessClaim({ conferenceId, email, password, fullName })
     }
     await assertOwningOrganizerNotSuspended(conferenceId);
 
-    const { profileId, session } = await getOrCreateProfile({ email, password, fullName });
+    const { profileId, session, verificationRequired } = await getOrCreateProfile({ email, password, fullName });
     const updated = await organizerAccessModel.claimInvite(access.id, { profileId });
 
     return {
-        token: session.access_token,
+        ...sessionOrVerificationMessage(session, verificationRequired),
         organizer: { id: profileId, fullName, email },
         conferenceId: updated.conference_id,
         accessRole: updated.role
@@ -258,8 +320,8 @@ async function delegateRegister(body) {
     const conference = await conferenceModel.findById(body.conferenceId);
     if (!conference) throw new ApiError(404, "Selected conference was not found");
 
-    const { profileId, session } = await getOrCreateProfile({
-        email: body.email, password: body.password, fullName: body.fullName
+    const { profileId, session, verificationRequired } = await getOrCreateProfile({
+        email: body.email, password: body.password, fullName: body.fullName, entityType: "delegate"
     });
 
     const existing = await delegateModel.findByConferenceAndProfile(body.conferenceId, profileId);
@@ -295,7 +357,7 @@ async function delegateRegister(body) {
         const delegate = await delegateModel.findById(delegateId);
 
         return {
-            token: session.access_token,
+            ...sessionOrVerificationMessage(session, verificationRequired),
             delegate: { id: delegate.id, fullName: delegate.full_name, email: delegate.email, status: delegate.status },
             conference: { id: conference.id, name: conference.name }
         };
@@ -312,7 +374,12 @@ async function delegateRegister(body) {
 
 async function delegateLogin({ email, password }) {
     const { data, error } = await authClient.auth.signInWithPassword({ email, password });
-    if (error) throw new ApiError(401, "Invalid email or password");
+    if (error) {
+        if (error.code === "email_not_confirmed") {
+            throw new ApiError(403, "Please verify your email before logging in -- check your inbox for the confirmation link.");
+        }
+        throw new ApiError(401, "Invalid email or password");
+    }
 
     const profileId = data.user.id;
     const delegateRows = await delegateModel.listByProfile(profileId);

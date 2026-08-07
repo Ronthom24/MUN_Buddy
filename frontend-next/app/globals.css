@@ -174,3 +174,34 @@
     @apply font-heading;
   }
 }
+
+/* Homepage hero: the 4 feature icons orbiting the logo badge, and the
+   surrounding rings breathing -- .orbit-spin rotates the ring the icon is
+   pinned to, .orbit-spin-reverse counter-rotates the icon inside it at the
+   same speed so the icon itself stays upright instead of tumbling. */
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes orbit-spin-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes ring-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.orbit-spin {
+  animation: orbit-spin 24s linear infinite;
+}
+.orbit-spin-reverse {
+  animation: orbit-spin-reverse 24s linear infinite;
+}
+.ring-pulse {
+  animation: ring-pulse 4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-spin, .orbit-spin-reverse, .ring-pulse {
+    animation: none;
+  }
+}

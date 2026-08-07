@@ -152,23 +152,30 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
-            <div className="absolute inset-0 rounded-full border border-white/10" />
-            <div className="absolute inset-8 rounded-full border border-brand-gold/20" />
-            <div className="absolute inset-16 rounded-full border border-white/10" />
+          <div className="relative mx-auto hidden aspect-square w-full max-w-lg lg:block">
+            <div className="ring-pulse absolute inset-0 rounded-full border border-white/10" />
+            <div className="ring-pulse absolute inset-10 rounded-full border border-brand-gold/20" style={{ animationDelay: "1.3s" }} />
+            <div className="ring-pulse absolute inset-20 rounded-full border border-white/10" style={{ animationDelay: "2.6s" }} />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex h-72 w-72 items-center justify-center rounded-full bg-white/[0.03] shadow-2xl ring-1 ring-white/10 backdrop-blur">
-                <LogoBadge size={220} className="drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]" />
+              <div className="flex h-80 w-80 items-center justify-center rounded-full bg-white/[0.03] shadow-2xl ring-1 ring-white/10 backdrop-blur">
+                <LogoBadge size={260} className="drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]" />
               </div>
             </div>
             {[
-              { Icon: Globe2, pos: "left-2 top-6" },
-              { Icon: Gavel, pos: "right-0 top-1/3" },
-              { Icon: Award, pos: "left-0 bottom-10" },
-              { Icon: Users2, pos: "right-6 bottom-2" },
-            ].map(({ Icon, pos }, i) => (
-              <div key={i} className={`absolute ${pos} flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-brand-gold ring-1 ring-white/15 backdrop-blur`}>
-                <Icon className="h-5 w-5" />
+              { Icon: Globe2, angle: 0 },
+              { Icon: Gavel, angle: 90 },
+              { Icon: Award, angle: 180 },
+              { Icon: Users2, angle: 270 },
+            ].map(({ Icon, angle }, i) => (
+              <div key={i} className="orbit-spin absolute inset-0" style={{ animationDelay: `${-i * 6}s` }}>
+                <div
+                  className="absolute top-1/2 left-1/2"
+                  style={{ transform: `rotate(${angle}deg) translateY(-208px)` }}
+                >
+                  <div className="orbit-spin-reverse flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-white/10 text-brand-gold ring-1 ring-white/15 backdrop-blur" style={{ animationDelay: `${-i * 6}s` }}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                </div>
               </div>
             ))}
           </div>

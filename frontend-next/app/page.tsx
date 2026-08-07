@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -108,20 +108,41 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-brand-navy text-white">
         <div
-          className="hero-glow-animate pointer-events-none absolute inset-0 opacity-[0.08]"
+          className="pointer-events-none absolute inset-0 opacity-[0.08]"
           style={{
             backgroundImage:
               "radial-gradient(circle at 12% 15%, white 0, transparent 40%), radial-gradient(circle at 88% 8%, white 0, transparent 35%), radial-gradient(circle at 50% 100%, var(--brand-gold) 0, transparent 45%)",
           }}
         />
         <div
-          className="hero-grid-animate pointer-events-none absolute inset-0 opacity-[0.05]"
+          className="pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
             backgroundSize: "56px 56px",
           }}
         />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {[
+            { top: "8%", duration: "6.5s", delay: "0s", angle: "-16deg", opacity: 0.6 },
+            { top: "22%", duration: "8s", delay: "1.4s", angle: "-20deg", opacity: 0.4 },
+            { top: "40%", duration: "7s", delay: "3.1s", angle: "-14deg", opacity: 0.55 },
+            { top: "63%", duration: "9s", delay: "0.6s", angle: "-22deg", opacity: 0.35 },
+            { top: "80%", duration: "7.5s", delay: "2.3s", angle: "-17deg", opacity: 0.5 },
+          ].map((streak, i) => (
+            <div
+              key={i}
+              className="hero-streak"
+              style={{
+                top: streak.top,
+                "--streak-duration": streak.duration,
+                "--streak-delay": streak.delay,
+                "--streak-angle": streak.angle,
+                "--streak-opacity": streak.opacity,
+              } as CSSProperties}
+            />
+          ))}
+        </div>
         <div className="relative mx-auto grid max-w-[1440px] items-center gap-12 px-6 py-20 sm:py-24 lg:min-h-[min(90vh,760px)] lg:grid-cols-[1.15fr_0.85fr] lg:py-0">
           <div className="text-center lg:text-left">
             <Badge className="mb-5 border-brand-gold/40 bg-white/10 text-brand-gold-soft" variant="outline">
@@ -152,13 +173,13 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="relative mx-auto hidden aspect-square w-full max-w-lg lg:block">
+          <div className="relative mx-auto hidden aspect-square w-full max-w-xl lg:block">
             <div className="ring-pulse absolute inset-0 rounded-full border border-white/10" />
             <div className="ring-pulse absolute inset-10 rounded-full border border-brand-gold/20" style={{ animationDelay: "1.3s" }} />
             <div className="ring-pulse absolute inset-20 rounded-full border border-white/10" style={{ animationDelay: "2.6s" }} />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex h-80 w-80 items-center justify-center rounded-full bg-white/[0.03] shadow-2xl ring-1 ring-white/10 backdrop-blur">
-                <LogoBadge size={260} className="drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]" />
+              <div className="flex h-96 w-96 items-center justify-center rounded-full bg-white/[0.03] shadow-2xl ring-1 ring-white/10 backdrop-blur">
+                <LogoBadge size={300} className="drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]" />
               </div>
             </div>
             {[

@@ -175,33 +175,32 @@
   }
 }
 
-/* Homepage hero: the 4 feature icons orbiting the logo badge, and the
-   surrounding rings breathing -- .orbit-spin rotates the ring the icon is
-   pinned to, .orbit-spin-reverse counter-rotates the icon inside it at the
-   same speed so the icon itself stays upright instead of tumbling. */
-@keyframes orbit-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-@keyframes orbit-spin-reverse {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-360deg); }
-}
+/* Homepage hero: the rings around the logo breathing, and the navy
+   backdrop itself alive -- the grid layer slowly drifts diagonally, the
+   glow-spot layer slowly drifts and breathes. Icons stay static. */
 @keyframes ring-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
-.orbit-spin {
-  animation: orbit-spin 24s linear infinite;
+@keyframes hero-grid-drift {
+  from { background-position: 0 0; }
+  to { background-position: 56px 56px; }
 }
-.orbit-spin-reverse {
-  animation: orbit-spin-reverse 24s linear infinite;
+@keyframes hero-glow-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-3%, 3%) scale(1.1); }
 }
 .ring-pulse {
   animation: ring-pulse 4s ease-in-out infinite;
 }
+.hero-grid-animate {
+  animation: hero-grid-drift 8s linear infinite;
+}
+.hero-glow-animate {
+  animation: hero-glow-drift 14s ease-in-out infinite;
+}
 @media (prefers-reduced-motion: reduce) {
-  .orbit-spin, .orbit-spin-reverse, .ring-pulse {
+  .ring-pulse, .hero-grid-animate, .hero-glow-animate {
     animation: none;
   }
 }

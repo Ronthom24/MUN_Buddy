@@ -108,14 +108,14 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-brand-navy text-white">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.08]"
+          className="hero-glow-animate pointer-events-none absolute inset-0 opacity-[0.08]"
           style={{
             backgroundImage:
               "radial-gradient(circle at 12% 15%, white 0, transparent 40%), radial-gradient(circle at 88% 8%, white 0, transparent 35%), radial-gradient(circle at 50% 100%, var(--brand-gold) 0, transparent 45%)",
           }}
         />
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
+          className="hero-grid-animate pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
@@ -162,20 +162,13 @@ export default function Home() {
               </div>
             </div>
             {[
-              { Icon: Globe2, angle: 0 },
-              { Icon: Gavel, angle: 90 },
-              { Icon: Award, angle: 180 },
-              { Icon: Users2, angle: 270 },
-            ].map(({ Icon, angle }, i) => (
-              <div key={i} className="orbit-spin absolute inset-0" style={{ animationDelay: `${-i * 6}s` }}>
-                <div
-                  className="absolute top-1/2 left-1/2"
-                  style={{ transform: `rotate(${angle}deg) translateY(-208px)` }}
-                >
-                  <div className="orbit-spin-reverse flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-white/10 text-brand-gold ring-1 ring-white/15 backdrop-blur" style={{ animationDelay: `${-i * 6}s` }}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                </div>
+              { Icon: Globe2, pos: "left-2 top-6" },
+              { Icon: Gavel, pos: "right-0 top-1/3" },
+              { Icon: Award, pos: "left-0 bottom-10" },
+              { Icon: Users2, pos: "right-6 bottom-2" },
+            ].map(({ Icon, pos }, i) => (
+              <div key={i} className={`absolute ${pos} flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-brand-gold ring-1 ring-white/15 backdrop-blur`}>
+                <Icon className="h-5 w-5" />
               </div>
             ))}
           </div>

@@ -124,21 +124,27 @@ export default function Home() {
         />
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           {[
-            { top: "8%", duration: "6.5s", delay: "0s", angle: "-16deg", opacity: 0.6 },
-            { top: "22%", duration: "8s", delay: "1.4s", angle: "-20deg", opacity: 0.4 },
-            { top: "40%", duration: "7s", delay: "3.1s", angle: "-14deg", opacity: 0.55 },
-            { top: "63%", duration: "9s", delay: "0.6s", angle: "-22deg", opacity: 0.35 },
-            { top: "80%", duration: "7.5s", delay: "2.3s", angle: "-17deg", opacity: 0.5 },
+            { startX: "-45vw", startY: "-6vh", endX: "55vw", endY: "10vh", angle: "12deg", duration: "6s", delay: "0s", opacity: 0.9, length: "480px" },
+            { startX: "-40vw", startY: "18vh", endX: "50vw", endY: "-14vh", angle: "-22deg", duration: "8.5s", delay: "1.8s", opacity: 0.75, length: "400px" },
+            { startX: "-50vw", startY: "-16vh", endX: "45vw", endY: "4vh", angle: "8deg", duration: "7s", delay: "3.4s", opacity: 0.95, length: "520px" },
+            { startX: "-38vw", startY: "8vh", endX: "48vw", endY: "-20vh", angle: "-18deg", duration: "9s", delay: "0.9s", opacity: 0.7, length: "360px" },
+            { startX: "-42vw", startY: "-20vh", endX: "52vw", endY: "20vh", angle: "20deg", duration: "7.8s", delay: "2.6s", opacity: 0.85, length: "460px" },
+            { startX: "-46vw", startY: "22vh", endX: "44vw", endY: "-4vh", angle: "-10deg", duration: "6.6s", delay: "4.2s", opacity: 0.8, length: "420px" },
           ].map((streak, i) => (
             <div
               key={i}
               className="hero-streak"
               style={{
-                top: streak.top,
+                top: "50%",
+                "--streak-start-x": streak.startX,
+                "--streak-start-y": streak.startY,
+                "--streak-end-x": streak.endX,
+                "--streak-end-y": streak.endY,
                 "--streak-duration": streak.duration,
                 "--streak-delay": streak.delay,
                 "--streak-angle": streak.angle,
                 "--streak-opacity": streak.opacity,
+                "--streak-length": streak.length,
               } as CSSProperties}
             />
           ))}

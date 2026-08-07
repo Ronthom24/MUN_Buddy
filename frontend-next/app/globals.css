@@ -184,10 +184,16 @@
   50% { opacity: 0.4; }
 }
 @keyframes hero-streak {
-  0% { transform: translate(-40vw, 0) rotate(var(--streak-angle, -18deg)); opacity: 0; }
-  12% { opacity: var(--streak-opacity, 0.55); }
-  85% { opacity: var(--streak-opacity, 0.55); }
-  100% { transform: translate(60vw, 0) rotate(var(--streak-angle, -18deg)); opacity: 0; }
+  0% {
+    transform: translate(var(--streak-start-x, -40vw), var(--streak-start-y, 0)) rotate(var(--streak-angle, -18deg));
+    opacity: 0;
+  }
+  15% { opacity: var(--streak-opacity, 0.9); }
+  80% { opacity: var(--streak-opacity, 0.9); }
+  100% {
+    transform: translate(var(--streak-end-x, 60vw), var(--streak-end-y, 0)) rotate(var(--streak-angle, -18deg));
+    opacity: 0;
+  }
 }
 .ring-pulse {
   animation: ring-pulse 4s ease-in-out infinite;
@@ -195,11 +201,14 @@
 .hero-streak {
   position: absolute;
   left: 0;
-  height: 2px;
-  width: 260px;
+  height: 3px;
+  width: var(--streak-length, 440px);
   border-radius: 999px;
-  background: linear-gradient(90deg, transparent, var(--brand-gold) 45%, #fff6d8 50%, var(--brand-gold) 55%, transparent);
-  filter: blur(0.5px) drop-shadow(0 0 6px var(--brand-gold));
+  background: linear-gradient(90deg, transparent, var(--brand-gold) 30%, #fffdf0 50%, var(--brand-gold) 70%, transparent);
+  filter:
+    drop-shadow(0 0 6px var(--brand-gold))
+    drop-shadow(0 0 14px var(--brand-gold))
+    drop-shadow(0 0 24px color-mix(in oklab, var(--brand-gold) 70%, transparent));
   animation: hero-streak linear infinite;
   animation-duration: var(--streak-duration, 7s);
   animation-delay: var(--streak-delay, 0s);

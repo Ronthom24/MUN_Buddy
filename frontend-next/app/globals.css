@@ -210,10 +210,8 @@
   background: linear-gradient(90deg, transparent, var(--brand-gold) 18%, #fffef5 50%, var(--brand-gold) 82%, transparent);
   mix-blend-mode: screen;
   filter:
-    drop-shadow(0 0 8px #fff)
-    drop-shadow(0 0 18px var(--brand-gold))
-    drop-shadow(0 0 34px var(--brand-gold))
-    drop-shadow(0 0 50px color-mix(in oklab, var(--brand-gold) 70%, transparent));
+    drop-shadow(0 0 3px #fff)
+    drop-shadow(0 0 8px var(--brand-gold));
   animation: hero-streak linear infinite;
   animation-duration: var(--streak-duration, 7s);
   animation-delay: var(--streak-delay, 0s);

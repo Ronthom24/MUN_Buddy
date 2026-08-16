@@ -175,52 +175,17 @@
   }
 }
 
-/* Homepage hero: the rings around the logo breathing, and thin golden
-   light streaks sweeping across the navy backdrop on a loop. Icons and
-   the grid/glow backdrop layers themselves stay static -- only the
-   streaks move. */
+/* Homepage hero: the rings around the logo breathing. Icons and the
+   grid/glow backdrop layers themselves stay static. */
 @keyframes ring-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
-@keyframes hero-streak {
-  0% {
-    transform: translate(var(--streak-start-x, -40vw), var(--streak-start-y, 0)) rotate(var(--streak-angle, -18deg));
-    opacity: 0;
-  }
-  15% { opacity: var(--streak-opacity, 0.95); }
-  50% {
-    transform: translate(var(--streak-mid-x, 0vw), var(--streak-mid-y, 0vh)) rotate(var(--streak-mid-angle, 0deg));
-  }
-  85% { opacity: var(--streak-opacity, 0.95); }
-  100% {
-    transform: translate(var(--streak-end-x, 60vw), var(--streak-end-y, 0)) rotate(var(--streak-angle, -18deg));
-    opacity: 0;
-  }
-}
 .ring-pulse {
   animation: ring-pulse 4s ease-in-out infinite;
 }
-.hero-streak {
-  position: absolute;
-  left: 0;
-  height: var(--streak-thickness, 3px);
-  width: var(--streak-length, 440px);
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, var(--brand-gold) 18%, #fffef5 50%, var(--brand-gold) 82%, transparent);
-  mix-blend-mode: screen;
-  filter:
-    drop-shadow(0 0 3px #fff)
-    drop-shadow(0 0 8px var(--brand-gold));
-  animation: hero-streak linear infinite;
-  animation-duration: var(--streak-duration, 7s);
-  animation-delay: var(--streak-delay, 0s);
-}
 @media (prefers-reduced-motion: reduce) {
-  .ring-pulse, .hero-streak {
+  .ring-pulse {
     animation: none;
-  }
-  .hero-streak {
-    display: none;
   }
 }

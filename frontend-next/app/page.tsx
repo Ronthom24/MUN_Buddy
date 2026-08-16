@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -25,51 +25,6 @@ import { LogoBadge } from "@/components/logo";
 import { PublicNav, PublicFooter } from "@/components/public-nav";
 import { api } from "@/lib/api";
 import type { PublicConference, PublicOrganization } from "@/lib/types";
-
-/**
- * Deterministic (seeded) pseudo-random streaks for the hero backdrop --
- * plain Math.random() would produce different values on the server render
- * vs. the client render and break hydration, so this needs to be stable
- * across both. Wide-ranging angles/positions/timing so the streaks read
- * as scattered and chaotic rather than parallel lanes; delays are kept
- * small relative to duration (all under ~5s) so several are always
- * mid-flight and crossing paths at once instead of firing one after
- * another.
- */
-function seededRandom(seed: number) {
-  let s = seed;
-  return () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
-}
-
-const HERO_STREAKS = Array.from({ length: 14 }, (_, i) => {
-  const rand = seededRandom(i * 7919 + 13);
-  const angle = -55 + rand() * 110;
-  const midAngle = angle + (-25 + rand() * 50);
-  const startX = -60 - rand() * 20;
-  const startY = -35 + rand() * 70;
-  const endX = 55 + rand() * 25;
-  const endY = -35 + rand() * 70;
-  const midX = (startX + endX) / 2 + (-20 + rand() * 40);
-  const midY = (startY + endY) / 2 + (-25 + rand() * 50);
-  return {
-    startX: `${startX.toFixed(1)}vw`,
-    startY: `${startY.toFixed(1)}vh`,
-    midX: `${midX.toFixed(1)}vw`,
-    midY: `${midY.toFixed(1)}vh`,
-    endX: `${endX.toFixed(1)}vw`,
-    endY: `${endY.toFixed(1)}vh`,
-    angle: `${angle.toFixed(1)}deg`,
-    midAngle: `${midAngle.toFixed(1)}deg`,
-    duration: `${(14 + rand() * 16).toFixed(1)}s`,
-    delay: `${(-1 * rand() * 12).toFixed(1)}s`,
-    opacity: (0.75 + rand() * 0.25).toFixed(2),
-    length: `${Math.round(260 + rand() * 340)}px`,
-    thickness: `${(2 + rand() * 2.5).toFixed(1)}px`,
-  };
-});
 
 const FEATURES = [
   {
@@ -167,30 +122,6 @@ export default function Home() {
             backgroundSize: "56px 56px",
           }}
         />
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          {HERO_STREAKS.map((streak, i) => (
-            <div
-              key={i}
-              className="hero-streak"
-              style={{
-                top: "50%",
-                "--streak-start-x": streak.startX,
-                "--streak-start-y": streak.startY,
-                "--streak-mid-x": streak.midX,
-                "--streak-mid-y": streak.midY,
-                "--streak-end-x": streak.endX,
-                "--streak-end-y": streak.endY,
-                "--streak-duration": streak.duration,
-                "--streak-delay": streak.delay,
-                "--streak-angle": streak.angle,
-                "--streak-mid-angle": streak.midAngle,
-                "--streak-opacity": streak.opacity,
-                "--streak-length": streak.length,
-                "--streak-thickness": streak.thickness,
-              } as CSSProperties}
-            />
-          ))}
-        </div>
         <div className="relative mx-auto grid max-w-[1440px] items-center gap-12 px-6 py-20 sm:py-24 lg:min-h-[min(90vh,760px)] lg:grid-cols-[1.15fr_0.85fr] lg:py-0">
           <div className="text-center lg:text-left">
             <Badge className="mb-5 border-brand-gold/40 bg-white/10 text-brand-gold-soft" variant="outline">

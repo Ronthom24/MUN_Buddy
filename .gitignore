@@ -8,6 +8,7 @@ env/
 instance/
 
 .env
+DEPLOYMENT_AND_CREDENTIALS.md
 
 .vscode/
 .idea/

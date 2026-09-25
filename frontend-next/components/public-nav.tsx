@@ -194,6 +194,9 @@ export function PublicFooter() {
             <Link href="/delegate/login" className="hover:text-brand-gold">Delegate login</Link>
           </span>
         </div>
+        <div className="mt-3 text-center text-[11px] text-brand-gold-soft/40 sm:text-left">
+          Built by an ISE student at MSRIT. Still under active development.
+        </div>
       </div>
     </footer>
   );

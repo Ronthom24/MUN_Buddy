@@ -31,5 +31,9 @@ router.post(
     "/:id/portfolios", ...asOrganizer, requireCommitteeAccess(...MANAGE_COMMITTEE_CONTENT),
     validateBody(entityValidation.portfolio), portfolioController.create
 );
+router.post(
+    "/:id/portfolios/bulk", ...asOrganizer, requireCommitteeAccess(...MANAGE_COMMITTEE_CONTENT),
+    portfolioController.bulkCreate
+);
 
 module.exports = router;

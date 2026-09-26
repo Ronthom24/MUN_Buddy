@@ -22,8 +22,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api, ApiRequestError } from "@/lib/api";
+import { UN_COUNTRIES } from "@/lib/countries";
 import type { Agenda, Committee, CommitteeStats, Portfolio } from "@/lib/types";
 
 export default function CommitteeDetailPage() {
@@ -41,6 +43,9 @@ export default function CommitteeDetailPage() {
   const [chairDialogOpen, setChairDialogOpen] = useState(false);
   const [editingAgenda, setEditingAgenda] = useState<Agenda | null>(null);
   const [editingPortfolio, setEditingPortfolio] = useState<Portfolio | null>(null);
+  const [portfolioTab, setPortfolioTab] = useState<"countries" | "custom">("countries");
+  const [countrySearch, setCountrySearch] = useState("");
+  const [selectedCountries, setSelectedCountries] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -136,6 +141,47 @@ export default function CommitteeDetailPage() {
       await load();
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Could not add portfolio";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const existingPortfolioNames = new Set(portfolios.map((p) => p.name.toLowerCase()));
+
+  function openPortfolioDialog() {
+    setPortfolioTab("countries");
+    setCountrySearch("");
+    setSelectedCountries(new Set(UN_COUNTRIES.filter((c) => existingPortfolioNames.has(c.toLowerCase()))));
+    setPortfolioDialogOpen(true);
+  }
+
+  function toggleCountry(name: string) {
+    setSelectedCountries((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  }
+
+  async function handleAddCountries() {
+    const newNames = [...selectedCountries].filter((name) => !existingPortfolioNames.has(name.toLowerCase()));
+    if (newNames.length === 0) {
+      setPortfolioDialogOpen(false);
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await api.post<{ success: true; addedCount: number }>(
+        `/committees/${params.committeeId}/portfolios/bulk`,
+        { names: newNames, type: "country" }
+      );
+      toast.success(`Added ${res.addedCount} ${res.addedCount === 1 ? "country" : "countries"}`);
+      setPortfolioDialogOpen(false);
+      await load();
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not add countries";
       toast.error(message);
     } finally {
       setSubmitting(false);
@@ -381,27 +427,100 @@ export default function CommitteeDetailPage() {
               </CardTitle>
               <CardDescription>Countries and roles delegates can represent.</CardDescription>
             </div>
+            <Button size="xs" variant="outline" onClick={openPortfolioDialog}>
+              <Plus className="h-3.5 w-3.5" />
+            </Button>
             <Dialog open={portfolioDialogOpen} onOpenChange={setPortfolioDialogOpen}>
-              <DialogTrigger render={<Button size="xs" variant="outline" />}>
-                <Plus className="h-3.5 w-3.5" />
-              </DialogTrigger>
               <DialogContent>
-                <form onSubmit={handleCreatePortfolio}>
-                  <DialogHeader>
-                    <DialogTitle>Add portfolio</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="portfolioName">Name</Label>
-                      <Input id="portfolioName" name="name" required placeholder="Brazil" />
+                <DialogHeader>
+                  <DialogTitle>Add portfolios</DialogTitle>
+                  <DialogDescription>
+                    Pick which countries this committee has, or add a custom position/observer seat.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="flex gap-1 rounded-md bg-muted p-1 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setPortfolioTab("countries")}
+                    className={`flex-1 rounded px-2 py-1 ${portfolioTab === "countries" ? "bg-background font-medium shadow-sm" : "text-muted-foreground"}`}
+                  >
+                    Countries
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPortfolioTab("custom")}
+                    className={`flex-1 rounded px-2 py-1 ${portfolioTab === "custom" ? "bg-background font-medium shadow-sm" : "text-muted-foreground"}`}
+                  >
+                    Custom (position / observer)
+                  </button>
+                </div>
+
+                {portfolioTab === "countries" ? (
+                  <div className="space-y-3 py-2">
+                    <Input
+                      placeholder="Search countries..."
+                      value={countrySearch}
+                      onChange={(e) => setCountrySearch(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      {selectedCountries.size} selected
+                      {existingPortfolioNames.size > 0 ? ` (${existingPortfolioNames.size} already added, checked below)` : ""}
+                    </p>
+                    <div className="grid max-h-72 grid-cols-2 gap-x-4 gap-y-1.5 overflow-y-auto rounded-md border p-3 sm:grid-cols-3">
+                      {UN_COUNTRIES.filter((c) => c.toLowerCase().includes(countrySearch.toLowerCase())).map((country) => {
+                        const alreadyAdded = existingPortfolioNames.has(country.toLowerCase());
+                        return (
+                          <label key={country} className="flex items-center gap-2 text-sm">
+                            <Checkbox
+                              checked={selectedCountries.has(country)}
+                              disabled={alreadyAdded}
+                              onCheckedChange={() => toggleCountry(country)}
+                            />
+                            <span className={alreadyAdded ? "text-muted-foreground" : ""}>{country}</span>
+                          </label>
+                        );
+                      })}
                     </div>
+                    <DialogFooter>
+                      <Button onClick={handleAddCountries} disabled={submitting}>
+                        {submitting
+                          ? "Adding..."
+                          : `Add ${[...selectedCountries].filter((n) => !existingPortfolioNames.has(n.toLowerCase())).length} countr${[...selectedCountries].filter((n) => !existingPortfolioNames.has(n.toLowerCase())).length === 1 ? "y" : "ies"}`}
+                      </Button>
+                    </DialogFooter>
                   </div>
-                  <DialogFooter>
-                    <Button type="submit" disabled={submitting}>
-                      {submitting ? "Adding..." : "Add portfolio"}
-                    </Button>
-                  </DialogFooter>
-                </form>
+                ) : (
+                  <form onSubmit={handleCreatePortfolio}>
+                    <div className="grid gap-4 py-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="portfolioName">Name</Label>
+                        <Input id="portfolioName" name="name" required placeholder="Press Corps" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="portfolioType">Type</Label>
+                        <Select
+                          name="type" defaultValue="position"
+                          items={{ country: "Country", position: "Position", observer: "Observer" }}
+                        >
+                          <SelectTrigger id="portfolioType">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="country">Country</SelectItem>
+                            <SelectItem value="position">Position</SelectItem>
+                            <SelectItem value="observer">Observer</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" disabled={submitting}>
+                        {submitting ? "Adding..." : "Add portfolio"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                )}
               </DialogContent>
             </Dialog>
           </CardHeader>

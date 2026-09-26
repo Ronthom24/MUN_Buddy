@@ -9,6 +9,31 @@ async function create({ committeeId, name, type, description, status }, db = poo
     return rows[0].id;
 }
 
+/**
+ * Used by the country-checklist picker in the committee UI: adding a dozen+
+ * countries one at a time each meant a full request round trip (slow enough
+ * against the hosted DB to be annoying), so this inserts them all in a
+ * single request. There's no unique constraint on (committee_id, name), so
+ * dedup against already-existing names happens here rather than via
+ * ON CONFLICT, since the picker pre-checks countries already added and the
+ * caller may resubmit a selection that overlaps them.
+ */
+async function bulkCreate(committeeId, names, type, db = pool) {
+    const existing = await listByCommittee(committeeId, db);
+    const existingNames = new Set(existing.map((p) => p.name.toLowerCase()));
+    const toInsert = [...new Set(names)].filter((name) => !existingNames.has(name.toLowerCase()));
+
+    const created = [];
+    for (const name of toInsert) {
+        const [rows] = await db.execute(
+            `INSERT INTO portfolios (committee_id, name, type, status) VALUES ($1, $2, $3, 'available') RETURNING id`,
+            [committeeId, name, type || "country"]
+        );
+        created.push(rows[0].id);
+    }
+    return created;
+}
+
 async function findById(id, db = pool) {
     const [rows] = await db.execute(`SELECT * FROM portfolios WHERE id = $1 AND deleted_at IS NULL`, [id]);
     return rows[0] || null;
@@ -62,4 +87,4 @@ async function listTrashedByConference(conferenceId, db = pool) {
     return rows;
 }
 
-module.exports = { create, findById, listByCommittee, update, remove, restore, listTrashedByConference };
+module.exports = { create, bulkCreate, findById, listByCommittee, update, remove, restore, listTrashedByConference };

@@ -66,6 +66,25 @@ export class ApiRequestError extends Error {
   }
 }
 
+/**
+ * A 401 with no token attached is a normal failed-login response ("Invalid
+ * email or password", authService.js) and must NOT redirect -- only a 401
+ * on a request that DID send a token means an actual session (Supabase
+ * access token, ~1hr expiry, never refreshed -- see lib/api.ts module docs)
+ * has expired or been revoked. Without this check, redirectOnSessionExpiry
+ * would fire on every wrong-password attempt on the login form itself.
+ */
+function redirectOnSessionExpiry(status: number, hadToken: boolean) {
+  if (status !== 401 || !hadToken || typeof window === "undefined") return;
+  const loginPath = isDelegateRoute() ? "/delegate/login" : "/login";
+  if (window.location.pathname === loginPath) return;
+
+  if (isDelegateRoute()) clearDelegateToken();
+  else clearToken();
+  window.localStorage.removeItem(ADMIN_VIEW_TOKEN_KEY);
+  window.location.href = `${loginPath}?sessionExpired=1`;
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers = new Headers(options.headers);
@@ -83,6 +102,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     window.location.href = "/maintenance";
   }
 
+  redirectOnSessionExpiry(res.status, Boolean(token));
+
   const body = await res.json().catch(() => ({}));
 
   if (!res.ok) {
@@ -98,6 +119,7 @@ async function postForm<T>(path: string, formData: FormData, method: "POST" | "P
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   const res = await fetch(`${API_BASE_URL}${path}`, { method, headers, body: formData });
+  redirectOnSessionExpiry(res.status, Boolean(token));
   const body = await res.json().catch(() => ({}));
 
   if (!res.ok) {
@@ -112,6 +134,7 @@ async function getBlob(path: string): Promise<Blob> {
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   const res = await fetch(`${API_BASE_URL}${path}`, { headers });
+  redirectOnSessionExpiry(res.status, Boolean(token));
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new ApiRequestError(res.status, body.message || "Request failed");

@@ -33,7 +33,7 @@ const createConference = asyncHandler(async (req, res) => {
         throw new ApiError(400, "conferenceName, startDate, endDate, and registrationDeadline are required");
     }
 
-    const conference = await authService.createConferenceForOrganization(req.organization.id, req.body, req.user.email);
+    const conference = await authService.createConferenceForOrganization(req.organization.id, req.body, req.user.id, req.user.email);
     res.status(201).json({ success: true, conference });
 });
 

@@ -42,7 +42,20 @@ export default function SchedulePage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get<{ success: true; days: ScheduleDay[] }>(`/conferences/${conferenceId}/schedule`);
+      let res = await api.get<{ success: true; days: ScheduleDay[] }>(`/conferences/${conferenceId}/schedule`);
+      // First time this conference's schedule is opened, there are no days
+      // yet -- seed them from the conference's own start/end dates (set in
+      // Settings) instead of making the organizer add each day by hand.
+      // Safe to call every time the list comes back empty: it's a no-op
+      // once days exist, and does nothing if start/end dates aren't set.
+      if (res.days.length === 0) {
+        try {
+          res = await api.post<{ success: true; days: ScheduleDay[] }>(`/conferences/${conferenceId}/schedule/auto-generate`);
+        } catch {
+          // No start/end date yet, or some other reason it couldn't seed --
+          // fall through to the normal empty state rather than blocking load.
+        }
+      }
       setDays(res.days);
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Failed to load schedule";

@@ -28,6 +28,7 @@ export default function ConferenceSettingsPage() {
   const [status, setStatus] = useState<Conference["status"]>("draft");
   const [registrationStatus, setRegistrationStatus] = useState<Conference["registration_status"]>("closed");
   const [isPubliclyListed, setIsPubliclyListed] = useState(true);
+  const [allowReapplication, setAllowReapplication] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -37,6 +38,7 @@ export default function ConferenceSettingsPage() {
       setStatus(res.conference.status);
       setRegistrationStatus(res.conference.registration_status);
       setIsPubliclyListed(!!res.conference.is_publicly_listed);
+      setAllowReapplication(!!res.conference.allow_reapplication);
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Failed to load conference";
       toast.error(message);
@@ -67,6 +69,7 @@ export default function ConferenceSettingsPage() {
         status,
         registrationStatus,
         isPubliclyListed,
+        allowReapplication,
       });
       toast.success("Conference settings saved");
       await load();
@@ -171,6 +174,16 @@ export default function ConferenceSettingsPage() {
               <p className="text-xs text-muted-foreground">Show this conference on the public Discover page.</p>
             </div>
             <Switch checked={isPubliclyListed} onCheckedChange={setIsPubliclyListed} />
+          </div>
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div>
+              <p className="text-sm font-medium">Allow rejected delegates to reapply</p>
+              <p className="text-xs text-muted-foreground">
+                A rejected delegate can submit the registration form again with corrected details — their old
+                application is replaced, not edited.
+              </p>
+            </div>
+            <Switch checked={allowReapplication} onCheckedChange={setAllowReapplication} />
           </div>
         </CardContent>
       </Card>

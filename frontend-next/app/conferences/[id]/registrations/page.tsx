@@ -3,17 +3,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { CheckCircle2, Clock, TriangleAlert, Users, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, ClipboardCheck, TriangleAlert, Users, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, ApiRequestError } from "@/lib/api";
-import type { Delegate, DelegateStatus, RegistrationAnalytics } from "@/lib/types";
+import type { Committee, Delegate, DelegateStatus, Portfolio, RegistrationAnalytics } from "@/lib/types";
 
 const STATUS_OPTIONS: { value: DelegateStatus; label: string }[] = [
   { value: "pending", label: "Pending" },
@@ -43,6 +45,14 @@ export default function RegistrationsPage() {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [bulkSubmitting, setBulkSubmitting] = useState(false);
 
+  const [committees, setCommittees] = useState<Committee[]>([]);
+  const [portfoliosByCommittee, setPortfoliosByCommittee] = useState<Record<number, Portfolio[]>>({});
+  const [assignTarget, setAssignTarget] = useState<Delegate | null>(null);
+  const [assignCommitteeId, setAssignCommitteeId] = useState<number | undefined>();
+  const [assignPortfolioId, setAssignPortfolioId] = useState<number | undefined>();
+  const [publishNow, setPublishNow] = useState(true);
+  const [confirming, setConfirming] = useState(false);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -50,13 +60,22 @@ export default function RegistrationsPage() {
       if (statusFilter !== "all") query.set("status", statusFilter);
       if (search) query.set("search", search);
 
-      const [delegatesRes, analyticsRes] = await Promise.all([
+      const [delegatesRes, analyticsRes, committeesRes] = await Promise.all([
         api.get<{ success: true; delegates: Delegate[] }>(`/conferences/${conferenceId}/delegates?${query}`),
         api.get<{ success: true; analytics: RegistrationAnalytics }>(`/conferences/${conferenceId}/registrations/analytics`),
+        api.get<{ success: true; committees: Committee[] }>(`/conferences/${conferenceId}/committees`),
       ]);
       setDelegates(delegatesRes.delegates);
       setAnalytics(analyticsRes.analytics);
       setSelected(new Set());
+      setCommittees(committeesRes.committees);
+
+      const portfolioLists = await Promise.all(
+        committeesRes.committees.map((c) =>
+          api.get<{ success: true; portfolios: Portfolio[] }>(`/committees/${c.id}/portfolios`).then((r) => [c.id, r.portfolios] as const)
+        )
+      );
+      setPortfoliosByCommittee(Object.fromEntries(portfolioLists));
     } catch (err) {
       const message = err instanceof ApiRequestError ? err.message : "Failed to load registrations";
       toast.error(message);
@@ -68,6 +87,40 @@ export default function RegistrationsPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  function openAssignDialog(delegate: Delegate) {
+    setAssignTarget(delegate);
+    setAssignCommitteeId(delegate.preferred_committee_id ?? undefined);
+    setAssignPortfolioId(delegate.preferred_portfolio_id ?? undefined);
+    setPublishNow(true);
+  }
+
+  async function confirmAssignment() {
+    if (!assignTarget || !assignCommitteeId) {
+      toast.error("Select a committee first");
+      return;
+    }
+    setConfirming(true);
+    try {
+      await api.put(`/conferences/${conferenceId}/assignments/${assignTarget.id}`, {
+        committeeId: assignCommitteeId,
+        portfolioId: assignPortfolioId,
+        publish: publishNow,
+      });
+      toast.success(
+        publishNow
+          ? `${assignTarget.full_name}'s committee/portfolio is confirmed and now visible to them`
+          : `${assignTarget.full_name} assigned (not yet published)`
+      );
+      setAssignTarget(null);
+      await load();
+    } catch (err) {
+      const message = err instanceof ApiRequestError ? err.message : "Could not confirm assignment";
+      toast.error(message);
+    } finally {
+      setConfirming(false);
+    }
+  }
 
   function toggleSelected(id: number) {
     setSelected((prev) => {
@@ -201,6 +254,12 @@ export default function RegistrationsPage() {
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground">{delegate.email}</div>
+                      {delegate.preferred_committee_name && (
+                        <div className="mt-0.5 text-xs text-muted-foreground">
+                          Prefers: {delegate.preferred_committee_name}
+                          {delegate.preferred_portfolio_name ? ` (${delegate.preferred_portfolio_name})` : ""}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{delegate.school || "—"}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{delegate.mun_experience}</TableCell>
@@ -222,6 +281,11 @@ export default function RegistrationsPage() {
                         {delegate.status !== "rejected" && (
                           <Button size="xs" variant="ghost" onClick={() => applyStatus("rejected", [delegate.id])}>
                             Reject
+                          </Button>
+                        )}
+                        {delegate.status === "approved" && (
+                          <Button size="xs" variant="outline" onClick={() => openAssignDialog(delegate)}>
+                            <ClipboardCheck className="mr-1 h-3.5 w-3.5" /> Confirm committee
                           </Button>
                         )}
                       </div>
@@ -248,6 +312,86 @@ export default function RegistrationsPage() {
           </CardContent>
         </Card>
       )}
+
+      <Dialog open={assignTarget !== null} onOpenChange={(open) => !open && setAssignTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm committee &amp; portfolio</DialogTitle>
+          </DialogHeader>
+          {assignTarget && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                {assignTarget.full_name}
+                {assignTarget.preferred_committee_name && (
+                  <> — preferred {assignTarget.preferred_committee_name}
+                    {assignTarget.preferred_portfolio_name ? ` (${assignTarget.preferred_portfolio_name})` : ""}
+                  </>
+                )}
+              </p>
+              <div className="space-y-2">
+                <Label>Committee</Label>
+                <Select
+                  items={Object.fromEntries(committees.map((c) => [String(c.id), c.name]))}
+                  value={assignCommitteeId ? String(assignCommitteeId) : ""}
+                  onValueChange={(value) => {
+                    setAssignCommitteeId(value ? Number(value) : undefined);
+                    setAssignPortfolioId(undefined);
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select committee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {committees.map((committee) => (
+                      <SelectItem key={committee.id} value={String(committee.id)}>
+                        {committee.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Portfolio</Label>
+                <Select
+                  items={Object.fromEntries(
+                    (assignCommitteeId ? portfoliosByCommittee[assignCommitteeId] || [] : []).map((p) => [
+                      String(p.id),
+                      p.name + (p.status === "assigned" && p.id !== assignPortfolioId ? " (taken)" : ""),
+                    ])
+                  )}
+                  value={assignPortfolioId ? String(assignPortfolioId) : ""}
+                  onValueChange={(value) => setAssignPortfolioId(value ? Number(value) : undefined)}
+                  disabled={!assignCommitteeId}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select portfolio (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(assignCommitteeId ? portfoliosByCommittee[assignCommitteeId] || [] : []).map((portfolio) => (
+                      <SelectItem key={portfolio.id} value={String(portfolio.id)}>
+                        {portfolio.name}
+                        {portfolio.status === "assigned" && portfolio.id !== assignPortfolioId ? " (taken)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <label className="flex items-center gap-2 text-sm">
+                <Checkbox checked={publishNow} onCheckedChange={(checked) => setPublishNow(checked === true)} />
+                Show this to the delegate immediately
+              </label>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAssignTarget(null)}>
+              Cancel
+            </Button>
+            <Button onClick={confirmAssignment} disabled={confirming || !assignCommitteeId}>
+              {confirming ? "Confirming..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -40,6 +40,7 @@ export interface Conference {
   max_delegates: number | null;
   conference_code: string;
   is_publicly_listed: 0 | 1;
+  allow_reapplication: 0 | 1;
   payment_required: 0 | 1;
   currency: string;
   results_published: 0 | 1;
@@ -84,6 +85,10 @@ export interface Delegate {
   created_at: string;
   updated_at: string;
   possibleDuplicate?: boolean;
+  preferred_committee_id?: number | null;
+  preferred_committee_name?: string | null;
+  preferred_portfolio_id?: number | null;
+  preferred_portfolio_name?: string | null;
 }
 
 export interface Committee {
@@ -157,7 +162,13 @@ export interface DelegateSelf {
 export interface DelegateProfile {
   delegate: DelegateSelf;
   conference: { id: number; name: string; acronym: string | null } | null;
-  committeePreferences: { preference_rank: number; committee_id: number; committee_name: string }[];
+  committeePreferences: {
+    preference_rank: number;
+    committee_id: number;
+    committee_name: string;
+    portfolio_id: number | null;
+    portfolio_name: string | null;
+  }[];
   countryPreferences: { preference_rank: number; country_name: string }[];
   assignment: {
     published: boolean;

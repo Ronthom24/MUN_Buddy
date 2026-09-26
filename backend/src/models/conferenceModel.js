@@ -95,7 +95,7 @@ const UPDATABLE_FIELDS = {
     location: "location", website: "website", description: "description",
     startDate: "start_date", endDate: "end_date", registrationDeadline: "registration_deadline",
     maxDelegates: "max_delegates", status: "status", registrationStatus: "registration_status",
-    isPubliclyListed: "is_publicly_listed"
+    isPubliclyListed: "is_publicly_listed", allowReapplication: "allow_reapplication"
 };
 
 async function update(id, data, db = pool) {

@@ -13,7 +13,7 @@ async function ensureRow(delegateId, db = pool) {
     return findByDelegateId(delegateId, db);
 }
 
-async function assign(delegateId, { committeeId, portfolioId }, db = pool) {
+async function assign(delegateId, { committeeId, portfolioId, publish }, db = pool) {
     await ensureRow(delegateId, db);
 
     const setClauses = [];
@@ -28,6 +28,7 @@ async function assign(delegateId, { committeeId, portfolioId }, db = pool) {
         setClauses.push(`portfolio_id = $${params.length}`);
     }
     setClauses.push("status = 'assigned'");
+    if (publish) setClauses.push("published = TRUE");
 
     params.push(delegateId);
     await db.execute(`UPDATE assignments SET ${setClauses.join(", ")} WHERE delegate_id = $${params.length}`, params);

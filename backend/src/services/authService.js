@@ -325,7 +325,21 @@ async function delegateRegister(body) {
     });
 
     const existing = await delegateModel.findByConferenceAndProfile(body.conferenceId, profileId);
-    if (existing) throw new ApiError(409, "You have already registered for this conference with this account");
+    if (existing) {
+        // A rejected applicant resubmitting is allowed to start over clean --
+        // rather than editing the old row in place, delete it (ON DELETE
+        // CASCADE takes the old committee/country preferences, form
+        // response, and any assignment with it) so this behaves like a
+        // genuinely fresh application built from whatever they just
+        // corrected on the form, not a patch over stale data. Gated by
+        // conference.allow_reapplication so organizers who don't want this
+        // keep today's "one shot" behavior.
+        if (existing.status === "rejected" && conference.allow_reapplication) {
+            await delegateModel.remove(existing.id);
+        } else {
+            throw new ApiError(409, "You have already registered for this conference with this account");
+        }
+    }
 
     const connection = await pool.getConnection();
 

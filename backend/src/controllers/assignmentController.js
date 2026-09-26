@@ -16,6 +16,17 @@ const assign = asyncHandler(async (req, res) => {
         conferenceId: req.conference.id, user: req.user, action: "assignment.assign",
         resourceType: "assignment", resourceId: delegateId, newValue: assignment
     });
+    if (assignment.published) {
+        await notificationService.notify({
+            conferenceId: req.conference.id,
+            recipientType: "delegate",
+            recipientId: delegateId,
+            type: "success",
+            title: "Your committee assignment is ready",
+            message: "Your committee/portfolio assignment has been published.",
+            link: "/delegate"
+        });
+    }
     res.status(200).json({ success: true, assignment });
 });
 

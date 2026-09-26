@@ -5,7 +5,7 @@ const portfolioModel = require("../models/portfolioModel");
 const committeeModel = require("../models/committeeModel");
 const assignmentModel = require("../models/assignmentModel");
 
-async function assign(conferenceId, delegateId, { committeeId, portfolioId, force }, changedByAccessId) {
+async function assign(conferenceId, delegateId, { committeeId, portfolioId, force, publish }, changedByAccessId) {
     const delegate = await delegateModel.findById(delegateId);
     if (!delegate || delegate.conference_id !== conferenceId) {
         throw new ApiError(404, "Delegate not found in this conference");
@@ -61,7 +61,7 @@ async function assign(conferenceId, delegateId, { committeeId, portfolioId, forc
             await portfolioModel.update(portfolio.id, { status: "assigned" }, connection);
         }
 
-        const assignment = await assignmentModel.assign(delegateId, { committeeId, portfolioId }, connection);
+        const assignment = await assignmentModel.assign(delegateId, { committeeId, portfolioId, publish }, connection);
 
         const wasAlreadyAssigned = Boolean(previous && previous.status === "assigned");
         await assignmentModel.logHistory({

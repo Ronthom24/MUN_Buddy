@@ -66,7 +66,22 @@ async function listByConference(conferenceId, filters = {}, db = pool) {
     }
 
     const [rows] = await db.execute(
-        `${SELECT_WITH_PROFILE} WHERE ${clauses.join(" AND ")} ORDER BY d.created_at DESC`,
+        `SELECT d.*, p.full_name, p.email, p.phone,
+                top_pref.committee_id AS preferred_committee_id, top_pref.committee_name AS preferred_committee_name,
+                top_pref.portfolio_id AS preferred_portfolio_id, top_pref.portfolio_name AS preferred_portfolio_name
+         FROM delegates d
+         JOIN profiles p ON p.id = d.profile_id
+         LEFT JOIN LATERAL (
+             SELECT dcp.committee_id, c.name AS committee_name, dcp.portfolio_id, pf.name AS portfolio_name
+             FROM delegate_committee_preferences dcp
+             JOIN committees c ON c.id = dcp.committee_id
+             LEFT JOIN portfolios pf ON pf.id = dcp.portfolio_id
+             WHERE dcp.delegate_id = d.id
+             ORDER BY dcp.preference_rank ASC
+             LIMIT 1
+         ) top_pref ON TRUE
+         WHERE ${clauses.join(" AND ")}
+         ORDER BY d.created_at DESC`,
         params
     );
     return rows;
@@ -138,8 +153,9 @@ async function findPossibleDuplicateIds(conferenceId, db = pool) {
 async function addCommitteePreferences(delegateId, committeePreferences, db = pool) {
     for (const pref of committeePreferences || []) {
         await db.execute(
-            `INSERT INTO delegate_committee_preferences (delegate_id, committee_id, preference_rank) VALUES ($1, $2, $3)`,
-            [delegateId, pref.committeeId, pref.rank]
+            `INSERT INTO delegate_committee_preferences (delegate_id, committee_id, preference_rank, portfolio_id)
+             VALUES ($1, $2, $3, $4)`,
+            [delegateId, pref.committeeId, pref.rank, pref.portfolioId || null]
         );
     }
 }
@@ -155,9 +171,11 @@ async function addCountryPreferences(delegateId, countryPreferences, db = pool) 
 
 async function getCommitteePreferences(delegateId, db = pool) {
     const [rows] = await db.execute(
-        `SELECT dcp.preference_rank, c.id AS committee_id, c.name AS committee_name
+        `SELECT dcp.preference_rank, c.id AS committee_id, c.name AS committee_name,
+                p.id AS portfolio_id, p.name AS portfolio_name
          FROM delegate_committee_preferences dcp
          INNER JOIN committees c ON c.id = dcp.committee_id
+         LEFT JOIN portfolios p ON p.id = dcp.portfolio_id
          WHERE dcp.delegate_id = $1 ORDER BY dcp.preference_rank ASC`,
         [delegateId]
     );
@@ -173,8 +191,20 @@ async function getCountryPreferences(delegateId, db = pool) {
     return rows;
 }
 
+/**
+ * Hard delete -- there's no soft-delete column on delegates. Used when a
+ * rejected delegate resubmits their application on a conference that allows
+ * reapplication: rather than editing the old row in place, the old
+ * application (and everything hung off it via ON DELETE CASCADE -- committee/
+ * country preferences, registration form response, assignment, payments) is
+ * removed so the resubmitted form creates a genuinely fresh delegate row.
+ */
+async function remove(id, db = pool) {
+    await db.execute(`DELETE FROM delegates WHERE id = $1`, [id]);
+}
+
 module.exports = {
     create, findById, findByConferenceAndProfile, listByProfile, listByConference, updateStatus, bulkUpdateStatus,
     updateOwnProfile, addCommitteePreferences, addCountryPreferences,
-    getCommitteePreferences, getCountryPreferences, findPossibleDuplicateIds
+    getCommitteePreferences, getCountryPreferences, findPossibleDuplicateIds, remove
 };

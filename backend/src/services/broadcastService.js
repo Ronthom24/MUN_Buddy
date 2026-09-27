@@ -4,6 +4,18 @@ const delegateModel = require("../models/delegateModel");
 const assignmentModel = require("../models/assignmentModel");
 const emailService = require("../services/emailService");
 
+/**
+ * Turned off for now: real delivery depends on outbound SMTP to Brevo,
+ * which times out from this host (Render's free tier blocks outbound SMTP
+ * ports, a common PaaS restriction) -- broadcasts were marking themselves
+ * "sent" while every recipient silently failed with "Connection timeout".
+ * Re-enable once email sending is switched to Brevo's HTTPS API (port 443,
+ * not blocked) instead of raw SMTP. Until then, organizers should use
+ * Announcements/Notifications, which delegates see in-app and don't
+ * depend on any of this.
+ */
+const EMAIL_BROADCASTS_ENABLED = false;
+
 async function resolveAudience(conferenceId, { audience, committeeId }) {
     if (audience === "committee" && committeeId) {
         const delegates = await delegateModel.listByConference(conferenceId, { status: "approved" });
@@ -16,6 +28,10 @@ async function resolveAudience(conferenceId, { audience, committeeId }) {
 }
 
 async function createBroadcast(conference, data, createdByAccessId) {
+    if (!EMAIL_BROADCASTS_ENABLED) {
+        throw new ApiError(503, "Email broadcasts are temporarily disabled. Use Announcements to reach delegates instead.");
+    }
+
     const recipients = await resolveAudience(conference.id, data);
 
     const broadcastId = await broadcastModel.create({
@@ -34,6 +50,10 @@ async function createBroadcast(conference, data, createdByAccessId) {
 }
 
 async function sendBroadcast(broadcastId, conferenceId) {
+    if (!EMAIL_BROADCASTS_ENABLED) {
+        throw new ApiError(503, "Email broadcasts are temporarily disabled. Use Announcements to reach delegates instead.");
+    }
+
     const broadcast = await broadcastModel.findById(broadcastId);
     if (!broadcast || broadcast.conference_id !== conferenceId) throw new ApiError(404, "Broadcast not found");
     if (broadcast.status === "sent") throw new ApiError(400, "This broadcast has already been sent");

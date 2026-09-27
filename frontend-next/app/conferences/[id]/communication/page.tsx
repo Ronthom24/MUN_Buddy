@@ -346,7 +346,10 @@ export default function CommunicationPage() {
               <Badge variant="destructive" className="ml-1.5">{faqs.filter((f) => f.status === "pending").length}</Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="broadcasts">Email Broadcasts</TabsTrigger>
+          {/* Email Broadcasts tab hidden for now -- delivery depends on outbound
+              SMTP to Brevo, which times out from this host (see broadcastService.js).
+              Organizers should use Announcements/Notifications instead until
+              sending is switched to an HTTPS-based provider API. */}
         </TabsList>
 
         {/* ---------------- Announcements ---------------- */}

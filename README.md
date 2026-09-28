@@ -121,4 +121,5 @@ data. Run them with `node scripts/<name>.js` from `backend/` after the schema is
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+All rights reserved — see [LICENSE](LICENSE). This code is shared for viewing/evaluation only;
+no permission is granted to use, copy, modify, or redistribute it without the author's consent.

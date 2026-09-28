@@ -226,7 +226,10 @@ async function getAnalytics(conferenceId, db = pool) {
 }
 
 async function listPublic({ search, country, month, registrationStatus, organizationSlug } = {}, db = pool) {
-    const clauses = ["c.status = 'published'", "c.deleted_at IS NULL", "c.is_publicly_listed = TRUE", "o.is_publicly_listed = TRUE"];
+    const clauses = [
+        "c.status = 'published'", "c.deleted_at IS NULL", "c.is_publicly_listed = TRUE",
+        "o.is_publicly_listed = TRUE", "o.status = 'active'", "o.deleted_at IS NULL",
+    ];
     const params = [];
     let i = 1;
 
@@ -270,7 +273,8 @@ async function findPublicBySlug(slug, db = pool) {
          FROM conferences c
          INNER JOIN organizations o ON o.id = c.organization_id
          WHERE c.slug = $1 AND c.status = 'published' AND c.deleted_at IS NULL
-           AND c.is_publicly_listed = TRUE AND o.is_publicly_listed = TRUE`,
+           AND c.is_publicly_listed = TRUE AND o.is_publicly_listed = TRUE
+           AND o.status = 'active' AND o.deleted_at IS NULL`,
         [slug]
     );
     return rows[0] || null;

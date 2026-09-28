@@ -91,6 +91,15 @@ const changePassword = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Password updated" });
 });
 
+const myCommitteeRoster = asyncHandler(async (req, res) => {
+    const assignment = await assignmentModel.findByDelegateId(req.user.id);
+    if (!assignment || !assignment.published || !assignment.committee_id) {
+        return res.status(200).json({ success: true, roster: [] });
+    }
+    const roster = await assignmentModel.getRosterForCommittee(assignment.committee_id);
+    res.status(200).json({ success: true, roster });
+});
+
 const myResources = asyncHandler(async (req, res) => {
     const assignment = await assignmentModel.findByDelegateId(req.user.id);
     const isAssignedAndPublished = Boolean(assignment && assignment.published);
@@ -120,5 +129,5 @@ const mySchedule = asyncHandler(async (req, res) => {
 
 module.exports = {
     listForConference, updateStatus, bulkUpdateStatus, registrationAnalytics, reapply, me, updateMe,
-    changePassword, myResources, myAnnouncements, mySchedule
+    changePassword, myResources, myAnnouncements, mySchedule, myCommitteeRoster
 };

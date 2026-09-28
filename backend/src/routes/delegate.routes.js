@@ -30,6 +30,7 @@ router.post(
 router.get("/me/resources", authenticate, requireRole("delegate"), delegateController.myResources);
 router.get("/me/announcements", authenticate, requireRole("delegate"), delegateController.myAnnouncements);
 router.get("/me/schedule", authenticate, requireRole("delegate"), delegateController.mySchedule);
+router.get("/me/committee-roster", authenticate, requireRole("delegate"), delegateController.myCommitteeRoster);
 router.get("/me/results", authenticate, requireRole("delegate"), resultsController.myResults);
 router.get("/me/certificates", authenticate, requireRole("delegate"), certificateController.myCertificates);
 router.get("/me/checkin-token", authenticate, requireRole("delegate"), attendanceController.myCheckinToken);

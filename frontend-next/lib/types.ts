@@ -121,6 +121,16 @@ export interface Agenda {
   publication_date: string | null;
 }
 
+export interface CommitteeRosterEntry {
+  portfolio_id: number;
+  portfolio_name: string;
+  type: "country" | "position" | "observer";
+  delegate_id: number | null;
+  delegate_name: string | null;
+  assigned: boolean;
+  present_today: boolean;
+}
+
 export interface CommitteeStats {
   assignedCount: number;
   totalPortfolios: number;

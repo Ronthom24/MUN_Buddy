@@ -1,11 +1,10 @@
 # MUN Buddy Design System (Version 1)
 
-This is the user-authored design brief for MUN Buddy's visual identity, given verbatim in a
-2026-07-17 session. `docs/Architecture.md` is still the source of truth for build status; this file
-is the source of truth for visual/brand decisions. Update the "Implementation status" section below
-as more of the spec lands — don't let it drift out of sync like the old `docs/*.txt` files did.
+This is the design brief for MUN Buddy's visual identity — the source of truth for visual/brand
+decisions. See the root `README.md` for build status and stack. Update the "Implementation status"
+section below as more of the spec lands.
 
-## Implementation status (as of 2026-07-17, uncommitted)
+## Implementation status (as of 2026-07-17)
 
 Done:
 - Real logo integrated (`frontend-next/public/logo-badge.png`, cropped/cutout from
@@ -47,9 +46,8 @@ Not done yet:
   matching the homepage/directory treatment. Not done: pricing figures are illustrative placeholders
   (no real billing), resources/blog content is static copy (no CMS), testimonials are illustrative
   (not sourced from real users) — flag before treating any of these as real content.
-- Platform Administration Workspace (Super Admin) doesn't exist at all yet — see
-  `docs/Architecture.md`'s "Known follow-ups" — so §13's admin nav entries and any admin-specific
-  chrome are moot until that's built.
+- Platform Administration Workspace (Super Admin) now exists (`app/platform/`) but hasn't had a
+  dedicated visual pass against this design system yet.
 
 ## 1. Overview
 

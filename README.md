@@ -108,6 +108,13 @@ cd backend
 npm run seed:production   # creates/updates the account from SUPER_ADMIN_* env vars
 ```
 
+## Demo content
+
+Optional one-off scripts under `backend/scripts/` seed a full demo organization/conference
+(`seedDemoOrg.js`), a roster of assigned demo delegates (`seedDemoDelegates.js`), and a multi-day
+schedule (`seedDemoSchedule.js`) — useful for showing the app end to end without registering real
+data. Run them with `node scripts/<name>.js` from `backend/` after the schema is applied.
+
 ## License
 
-This project is licensed under the ISC license in the root repository files.
+This project is licensed under the [MIT License](LICENSE).

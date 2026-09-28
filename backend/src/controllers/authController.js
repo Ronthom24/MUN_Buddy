@@ -4,8 +4,8 @@ const loginHistoryService = require("../services/loginHistoryService");
 
 /**
  * Records spec 22.17's Login History regardless of outcome. Session
- * management itself stays short-lived-JWT-only by design (see
- * docs/Architecture.md) -- this is the audit trail, not a session store.
+ * management itself stays short-lived-JWT-only by design -- this is the
+ * audit trail, not a session store.
  * userId is null on failure: Supabase Auth owns credential verification now,
  * so there's no local password_hash lookup to resolve an id from without an
  * extra admin API call per failed attempt.

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { Activity, ArrowUpFromLine, Building2, History, Mail, Plus, ShieldCheck, UserCog, Users } from "lucide-react";
+import { Building2, Mail, Plus, UserCog, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,19 +18,23 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { api, ApiRequestError } from "@/lib/api";
-import type {
-  AuditLogEntry, Committee, Department, OrganizerAccessRow, TeamActivityEntry, TeamDashboard, TrashBin,
-} from "@/lib/types";
+import type { Committee, Department, OrganizerAccessRow, TeamDashboard } from "@/lib/types";
 
-const TRASH_ITEM_LABEL: Record<keyof TrashBin, string> = {
-  committees: "Committee", portfolios: "Portfolio", resources: "Resource", announcements: "Announcement",
-};
+// Real-MUN-terminology grouping of organizer_access.role for the Admin/EB/OC
+// tabs -- distinct from the app's older per-role labels above (which called
+// conference_manager "Executive Board"): in practice EB means the chairs/
+// co-chairs/vice-chairs running each committee (committee_director), not
+// conference-level leadership. Admin covers the conference-level leadership
+// (owner + conference_manager) instead.
+const ADMIN_ROLES = ["owner", "conference_manager"];
+const EB_ROLES = ["committee_director"];
+const OC_ROLES = ["organizer", "admin"];
 
 const ROLES = [
-  { value: "admin", label: "Admin" },
-  { value: "conference_manager", label: "Executive Board" },
+  { value: "admin", label: "Staff Admin" },
+  { value: "conference_manager", label: "Conference Manager" },
   { value: "organizer", label: "Organizing Committee" },
-  { value: "committee_director", label: "Committee Director" },
+  { value: "committee_director", label: "Committee Director (EB)" },
 ];
 const ROLE_ITEMS: Record<string, string> = {
   owner: "Main Organizer",
@@ -45,9 +49,6 @@ export default function TeamPage() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [members, setMembers] = useState<OrganizerAccessRow[]>([]);
   const [committees, setCommittees] = useState<Committee[]>([]);
-  const [activity, setActivity] = useState<TeamActivityEntry[]>([]);
-  const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([]);
-  const [trash, setTrash] = useState<TrashBin | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -66,14 +67,11 @@ export default function TeamPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [dashboardRes, departmentsRes, membersRes, committeesRes, activityRes, auditRes, trashRes] = await Promise.all([
+      const [dashboardRes, departmentsRes, membersRes, committeesRes] = await Promise.all([
         api.get<{ success: true; dashboard: TeamDashboard }>(`/conferences/${conferenceId}/team/dashboard`),
         api.get<{ success: true; departments: Department[] }>(`/conferences/${conferenceId}/departments`),
         api.get<{ success: true; organizerAccess: OrganizerAccessRow[] }>(`/conferences/${conferenceId}/organizer-access`),
         api.get<{ success: true; committees: Committee[] }>(`/conferences/${conferenceId}/committees`),
-        api.get<{ success: true; activity: TeamActivityEntry[] }>(`/conferences/${conferenceId}/team/activity`),
-        api.get<{ success: true; logs: AuditLogEntry[] }>(`/conferences/${conferenceId}/audit-log`),
-        api.get<{ success: true; trash: TrashBin }>(`/conferences/${conferenceId}/trash`),
       ]);
       let departments = departmentsRes.departments;
       let dashboard = dashboardRes.dashboard;
@@ -96,9 +94,6 @@ export default function TeamPage() {
       setDepartments(departments);
       setMembers(membersRes.organizerAccess);
       setCommittees(committeesRes.committees);
-      setActivity(activityRes.activity);
-      setAuditLog(auditRes.logs);
-      setTrash(trashRes.trash);
     } catch (err) {
       toast.error(err instanceof ApiRequestError ? err.message : "Failed to load team data");
     } finally {
@@ -177,38 +172,27 @@ export default function TeamPage() {
     }
   }
 
-  async function handleRestore(type: keyof TrashBin, itemId: number) {
-    const singular = type.slice(0, -1);
-    try {
-      await api.post(`/conferences/${conferenceId}/trash/${singular}/${itemId}/restore`);
-      toast.success(`${TRASH_ITEM_LABEL[type]} restored`);
-      await load();
-    } catch (err) {
-      toast.error(err instanceof ApiRequestError ? err.message : "Could not restore item");
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Team Center</h1>
-        <p className="text-muted-foreground">Departments, organizing team members, and activity.</p>
+        <p className="text-muted-foreground">Admin, Executive Board, Organizing Committee, and departments.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
         <StatCard icon={<Users className="h-4 w-4" />} label="Total members" value={dashboard?.totalMembers} loading={loading} />
         <StatCard icon={<Mail className="h-4 w-4" />} label="Pending invitations" value={dashboard?.pendingInvitations} loading={loading} />
         <StatCard icon={<Building2 className="h-4 w-4" />} label="Departments" value={dashboard?.departmentCount} loading={loading} />
-        <StatCard icon={<UserCog className="h-4 w-4" />} label="Executive Board" value={dashboard?.byRole?.conference_manager || 0} loading={loading} />
+        <StatCard icon={<UserCog className="h-4 w-4" />} label="Executive Board" value={dashboard?.byRole?.committee_director || 0} loading={loading} />
       </div>
 
       <Tabs defaultValue="members">
         <TabsList>
           <TabsTrigger value="members">Team Members</TabsTrigger>
+          <TabsTrigger value="admin">Admin</TabsTrigger>
+          <TabsTrigger value="eb">EB</TabsTrigger>
+          <TabsTrigger value="oc">OC</TabsTrigger>
           <TabsTrigger value="departments">Departments</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
-          <TabsTrigger value="audit">Audit Log</TabsTrigger>
-          <TabsTrigger value="trash">Trash</TabsTrigger>
         </TabsList>
 
         <TabsContent value="members" className="space-y-4 pt-4">
@@ -216,7 +200,7 @@ export default function TeamPage() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <div>
                 <CardTitle>Team members</CardTitle>
-                <CardDescription>Executive Board, Organizing Committee, and Committee Directors.</CardDescription>
+                <CardDescription>Everyone with organizer access to this conference, across every role.</CardDescription>
               </div>
               <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
                 <DialogTrigger render={<Button size="sm" />}>
@@ -289,50 +273,78 @@ export default function TeamPage() {
               {loading ? (
                 <Skeleton className="h-24 w-full" />
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Department</TableHead>
-                      <TableHead>Position</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {members.map((m) => (
-                      <TableRow key={m.id} className="cursor-pointer" onClick={() => setViewingMember(m)}>
-                        <TableCell className="font-medium">{m.email}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{ROLE_ITEMS[m.role] || m.role}</Badge>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {departments.find((d) => d.id === m.departmentId)?.name || "—"}
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{m.positionTitle || "—"}</TableCell>
-                        <TableCell>
-                          <Badge variant={m.role === "owner" || m.claimed ? "default" : "outline"}>
-                            {m.role === "owner" || m.claimed ? "Active" : "Invited"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {m.role !== "owner" && (
-                            <Button
-                              size="xs" variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveMember(m);
-                              }}
-                            >
-                              Revoke
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <MembersTable
+                  list={members}
+                  departments={departments}
+                  onView={setViewingMember}
+                  onRemove={handleRemoveMember}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="admin" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin</CardTitle>
+              <CardDescription>Conference-level leadership — the main organizer and conference managers.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <Skeleton className="h-24 w-full" />
+              ) : (
+                <MembersTable
+                  list={members.filter((m) => ADMIN_ROLES.includes(m.role))}
+                  departments={departments}
+                  onView={setViewingMember}
+                  onRemove={handleRemoveMember}
+                  emptyLabel="No admin-level members yet."
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="eb" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Executive Board</CardTitle>
+              <CardDescription>Committee directors — chairs, co-chairs, and vice-chairs running each committee.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <Skeleton className="h-24 w-full" />
+              ) : (
+                <MembersTable
+                  list={members.filter((m) => EB_ROLES.includes(m.role))}
+                  departments={departments}
+                  onView={setViewingMember}
+                  onRemove={handleRemoveMember}
+                  emptyLabel="No Executive Board members yet."
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="oc" className="space-y-4 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Organizing Committee</CardTitle>
+              <CardDescription>General organizing staff and admins outside the Executive Board.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <Skeleton className="h-24 w-full" />
+              ) : (
+                <MembersTable
+                  list={members.filter((m) => OC_ROLES.includes(m.role))}
+                  departments={departments}
+                  onView={setViewingMember}
+                  onRemove={handleRemoveMember}
+                  emptyLabel="No Organizing Committee members yet."
+                />
               )}
             </CardContent>
           </Card>
@@ -411,119 +423,6 @@ export default function TeamPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="activity" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Team activity</CardTitle>
-              <CardDescription>Recent actions taken by your organizing team.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {activity.length === 0 ? (
-                <div className="flex flex-col items-center gap-2 py-12 text-center">
-                  <Activity className="h-8 w-8 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">No activity recorded yet.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {activity.map((a) => (
-                    <div key={a.id} className="flex items-start gap-3 text-sm">
-                      <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                      <div>
-                        <p>
-                          <span className="font-medium">{a.actor_name || a.actor_email}</span> {a.action}
-                        </p>
-                        <p className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="audit" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Audit log</CardTitle>
-              <CardDescription>
-                Full compliance record of sensitive actions — who did what, and the values before and after. Immutable.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {auditLog.length === 0 ? (
-                <div className="flex flex-col items-center gap-2 py-12 text-center">
-                  <ShieldCheck className="h-8 w-8 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">No audited actions yet.</p>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Actor</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead>Resource</TableHead>
-                      <TableHead>When</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {auditLog.map((log) => (
-                      <TableRow key={log.id}>
-                        <TableCell className="text-sm">{log.actor_name || log.actor_email || "System"}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{log.action}</Badge>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {log.resource_type}{log.resource_id ? ` #${log.resource_id}` : ""}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{new Date(log.created_at).toLocaleString()}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="trash" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="h-4 w-4" /> Trash
-              </CardTitle>
-              <CardDescription>Deleted committees, portfolios, resources, and announcements can be restored here.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {trash && Object.values(trash).every((list) => list.length === 0) ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">Nothing in the trash.</p>
-              ) : (
-                <div className="space-y-4">
-                  {(Object.keys(TRASH_ITEM_LABEL) as (keyof TrashBin)[]).map((type) =>
-                    trash && trash[type].length > 0 ? (
-                      <div key={type} className="space-y-2">
-                        <p className="text-xs font-medium uppercase text-muted-foreground">{TRASH_ITEM_LABEL[type]}s</p>
-                        {trash[type].map((item) => (
-                          <div key={item.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
-                            <div>
-                              <p className="font-medium">{"name" in item ? item.name : item.title}</p>
-                              <p className="text-xs text-muted-foreground">
-                                Deleted {new Date(item.deleted_at).toLocaleString()}
-                              </p>
-                            </div>
-                            <Button size="xs" variant="ghost" onClick={() => handleRestore(type, item.id)}>
-                              <ArrowUpFromLine className="mr-1 h-3.5 w-3.5" /> Restore
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : null
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
 
       <Dialog open={Boolean(viewingMember)} onOpenChange={(open) => !open && setViewingMember(null)}>
@@ -582,6 +481,67 @@ export default function TeamPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+function MembersTable({
+  list, departments, onView, onRemove, emptyLabel,
+}: {
+  list: OrganizerAccessRow[];
+  departments: Department[];
+  onView: (member: OrganizerAccessRow) => void;
+  onRemove: (member: OrganizerAccessRow) => void;
+  emptyLabel?: string;
+}) {
+  if (list.length === 0) {
+    return <p className="py-8 text-center text-sm text-muted-foreground">{emptyLabel || "No members yet."}</p>;
+  }
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Email</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Department</TableHead>
+          <TableHead>Position</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {list.map((m) => (
+          <TableRow key={m.id} className="cursor-pointer" onClick={() => onView(m)}>
+            <TableCell className="font-medium">{m.email}</TableCell>
+            <TableCell>
+              <Badge variant="outline">{ROLE_ITEMS[m.role] || m.role}</Badge>
+            </TableCell>
+            <TableCell className="text-sm text-muted-foreground">
+              {departments.find((d) => d.id === m.departmentId)?.name || "—"}
+            </TableCell>
+            <TableCell className="text-sm text-muted-foreground">{m.positionTitle || "—"}</TableCell>
+            <TableCell>
+              <Badge variant={m.role === "owner" || m.claimed ? "default" : "outline"}>
+                {m.role === "owner" || m.claimed ? "Active" : "Invited"}
+              </Badge>
+            </TableCell>
+            <TableCell className="text-right">
+              {m.role !== "owner" && (
+                <Button
+                  size="xs" variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(m);
+                  }}
+                >
+                  Revoke
+                </Button>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 

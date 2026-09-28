@@ -9,6 +9,9 @@ the event end to end (registration, committees, payments, communication, results
 attendance, analytics), and delegates get a single workspace for their committee, assignments,
 notes, and conference resources.
 
+**Live site:** [mun-buddy-mu.vercel.app](https://mun-buddy-mu.vercel.app/) (frontend on Vercel,
+backend API on Render).
+
 ## What the app is
 
 - **Organizations** are the top-level tenant: an organization can run multiple conferences over

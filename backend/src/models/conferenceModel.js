@@ -4,9 +4,9 @@ async function create(data, db = pool) {
     const [rows] = await db.execute(
         `INSERT INTO conferences
             (created_by, organization_id, name, acronym, short_name, institution, location, website, description,
-             start_date, end_date, registration_deadline, max_delegates, conference_code,
+             start_date, end_date, registration_deadline, max_delegates, conference_code, slug,
              status, registration_status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING id`,
         [
             data.createdBy,
             data.organizationId,
@@ -22,6 +22,7 @@ async function create(data, db = pool) {
             data.registrationDeadline,
             data.maxDelegates || null,
             data.conferenceCode,
+            data.slug || null,
             data.status || "draft",
             data.registrationStatus || "closed"
         ]

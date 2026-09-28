@@ -57,6 +57,11 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     const result = await api.post<DelegateAuthResponse>("/auth/delegate/login", { email, password });
+    // getToken() in lib/api.ts always prefers a leftover admin-view token
+    // over the normal one, on any route -- clear it so a fresh login here
+    // always wins (see lib/auth-context.tsx's login() for the same fix).
+    window.localStorage.removeItem("mb_admin_view_token");
+    window.localStorage.removeItem("mb_admin_view");
     setDelegateToken(result.token);
     const self: DelegateSelf = { ...result.delegate, status: result.delegate.status as DelegateSelf["status"] };
     window.localStorage.setItem(DELEGATE_KEY, JSON.stringify(self));
@@ -70,6 +75,8 @@ export function DelegateAuthProvider({ children }: { children: ReactNode }) {
     if (result.token) {
       // Verification is temporarily disabled backend-side -- behaves like
       // pre-verification registration (immediate usable session).
+      window.localStorage.removeItem("mb_admin_view_token");
+      window.localStorage.removeItem("mb_admin_view");
       setDelegateToken(result.token);
       const self: DelegateSelf = { ...result.delegate, status: result.delegate.status as DelegateSelf["status"] };
       window.localStorage.setItem(DELEGATE_KEY, JSON.stringify(self));

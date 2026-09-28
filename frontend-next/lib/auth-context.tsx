@@ -63,6 +63,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     const result = await api.post<LoginResponse>("/auth/organizer/login", { email, password });
+    // getToken() in lib/api.ts always prefers an admin-view token over the
+    // normal one, with no expiry check on the client side -- without this,
+    // a stale "view as organizer" session from platform admin (valid up to
+    // 2 hours, id: null) silently hijacks every request this fresh login
+    // makes, and /organizations/me etc. come back empty with no error.
+    window.localStorage.removeItem("mb_admin_view_token");
+    window.localStorage.removeItem("mb_admin_view");
     setToken(result.token);
     window.localStorage.setItem(ORGANIZER_KEY, JSON.stringify(result.organizer));
     setOrganizer(result.organizer);
@@ -75,6 +82,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (result.token) {
       // Verification is temporarily disabled backend-side -- behaves like
       // pre-verification registration (immediate usable session).
+      window.localStorage.removeItem("mb_admin_view_token");
+      window.localStorage.removeItem("mb_admin_view");
       setToken(result.token);
       window.localStorage.setItem(ORGANIZER_KEY, JSON.stringify(result.organizer));
       setOrganizer(result.organizer);

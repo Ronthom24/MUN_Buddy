@@ -11,7 +11,7 @@ const organizationMemberModel = require("../models/organizationMemberModel");
 const registrationFormModel = require("../models/registrationFormModel");
 const profileModel = require("../models/profileModel");
 const { generateConferenceCode } = require("../utils/conferenceCode");
-const { uniqueSlug } = require("../utils/slug");
+const { uniqueSlug, uniqueConferenceSlug } = require("../utils/slug");
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 const REQUIRE_EMAIL_VERIFICATION = process.env.REQUIRE_EMAIL_VERIFICATION === "true";
@@ -148,6 +148,7 @@ async function organizerRegister(body) {
             registrationDeadline: body.registrationDeadline,
             maxDelegates: body.maxDelegates,
             conferenceCode: generateConferenceCode(body.conferenceName, body.conferenceAcronym),
+            slug: await uniqueConferenceSlug(connection, body.conferenceName),
             registrationStatus: body.registrationStatus === "open" ? "open" : "closed"
         }, connection);
 
@@ -215,6 +216,7 @@ async function createConferenceForOrganization(organizationId, body, requestingP
             registrationDeadline: body.registrationDeadline,
             maxDelegates: body.maxDelegates,
             conferenceCode: generateConferenceCode(body.conferenceName, body.conferenceAcronym),
+            slug: await uniqueConferenceSlug(connection, body.conferenceName),
             registrationStatus: body.registrationStatus === "open" ? "open" : "closed"
         }, connection);
 

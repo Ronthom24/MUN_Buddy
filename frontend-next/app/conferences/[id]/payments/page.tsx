@@ -452,7 +452,7 @@ export default function PaymentsPage() {
 
         <TabsContent value="transactions" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Transactions</CardTitle>
                 <CardDescription>Every payment recorded for this conference.</CardDescription>
@@ -483,7 +483,7 @@ export default function PaymentsPage() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="amount">Amount</Label>
                           <Input id="amount" name="amount" type="number" min={0.01} step="0.01" required />
@@ -521,7 +521,7 @@ export default function PaymentsPage() {
                           </Select>
                         </div>
                       )}
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="transactionReference">Transaction reference</Label>
                           <Input id="transactionReference" name="transactionReference" placeholder="UTR / cheque no." />
@@ -643,7 +643,7 @@ export default function PaymentsPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Fee structure</CardTitle>
                 <CardDescription>Registration, accommodation, merchandise, or other fee line items.</CardDescription>
@@ -759,7 +759,7 @@ export default function PaymentsPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="text-base">Discounts &amp; waivers</CardTitle>
                 <CardDescription>Early bird, scholarship, or organizer-granted fee reductions.</CardDescription>
@@ -790,7 +790,7 @@ export default function PaymentsPage() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="type">Type</Label>
                           <Select name="type" items={discountTypeSelectItems} defaultValue="scholarship">
@@ -898,7 +898,7 @@ export default function PaymentsPage() {
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="refundAmount">Refund amount</Label>
                     <Input

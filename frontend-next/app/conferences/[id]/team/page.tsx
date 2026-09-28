@@ -206,7 +206,7 @@ export default function TeamPage() {
 
         <TabsContent value="members" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Team members</CardTitle>
                 <CardDescription>Everyone with organizer access to this conference, across every role.</CardDescription>
@@ -226,7 +226,7 @@ export default function TeamPage() {
                         <Label htmlFor="email">Email</Label>
                         <Input id="email" name="email" type="email" required />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="role">Role</Label>
                           <Select name="role" items={ROLE_ITEMS} defaultValue="organizer" onValueChange={(v) => setInviteRole(String(v))}>
@@ -243,7 +243,7 @@ export default function TeamPage() {
                           <Input id="positionTitle" name="positionTitle" placeholder="USG Logistics" />
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="departmentId">Department</Label>
                           <Select name="departmentId" items={departmentItems} defaultValue="none">
@@ -361,7 +361,7 @@ export default function TeamPage() {
 
         <TabsContent value="departments" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Departments</CardTitle>
                 <CardDescription>Group team members by function — Logistics, Finance, Media, and so on.</CardDescription>

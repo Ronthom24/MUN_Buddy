@@ -355,7 +355,7 @@ export default function CommunicationPage() {
         {/* ---------------- Announcements ---------------- */}
         <TabsContent value="announcements" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Announcements</CardTitle>
                 <CardDescription>Official updates, scheduled or published immediately.</CardDescription>
@@ -384,7 +384,7 @@ export default function CommunicationPage() {
                         <Label htmlFor="content">Content</Label>
                         <Textarea id="content" name="content" rows={4} required defaultValue={editingAnnouncement?.content} />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="announcement-category">Category</Label>
                           <Select
@@ -416,7 +416,7 @@ export default function CommunicationPage() {
                           </Select>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="targetAudience">Audience</Label>
                           <Select
@@ -448,7 +448,7 @@ export default function CommunicationPage() {
                           </Select>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="announcement-status">Status</Label>
                           <Select
@@ -540,7 +540,7 @@ export default function CommunicationPage() {
         {/* ---------------- Resources ---------------- */}
         <TabsContent value="resources" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Resources</CardTitle>
                 <CardDescription>Background guides, handbooks, and other conference files.</CardDescription>
@@ -565,7 +565,7 @@ export default function CommunicationPage() {
                         <Label htmlFor="resource-title">Title</Label>
                         <Input id="resource-title" name="title" required defaultValue={editingResource?.title} />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="resource-category">Category</Label>
                           <Select
@@ -590,7 +590,7 @@ export default function CommunicationPage() {
                         <Label htmlFor="description">Description</Label>
                         <Textarea id="description" name="description" rows={2} defaultValue={editingResource?.description || ""} />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="resource-committeeId">Restrict to committee</Label>
                           <Select
@@ -816,7 +816,7 @@ export default function CommunicationPage() {
         {/* ---------------- Email Broadcasts ---------------- */}
         <TabsContent value="broadcasts" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Email Broadcasts</CardTitle>
                 <CardDescription>
@@ -841,7 +841,7 @@ export default function CommunicationPage() {
                         <Label htmlFor="broadcast-body">Body (HTML)</Label>
                         <Textarea id="broadcast-body" name="body" rows={5} required />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="broadcast-audience">Audience</Label>
                           <Select name="audience" items={Object.fromEntries(BROADCAST_AUDIENCES.map((a) => [a, a]))} defaultValue="approved">
@@ -919,7 +919,7 @@ export default function CommunicationPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Email templates</CardTitle>
                 <CardDescription>Reusable across every conference in your organization.</CardDescription>

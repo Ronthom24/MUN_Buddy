@@ -208,7 +208,7 @@ export default function DashboardPage() {
         </div>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Conferences</CardTitle>
               <CardDescription>Every conference hosted by this organization.</CardDescription>
@@ -234,7 +234,7 @@ export default function DashboardPage() {
                       <Label htmlFor="conferenceAcronym">Acronym</Label>
                       <Input id="conferenceAcronym" name="conferenceAcronym" placeholder="CWMUN27" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="startDate">Start date</Label>
                         <Input id="startDate" name="startDate" type="date" required />
@@ -312,7 +312,7 @@ export default function DashboardPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Members</CardTitle>
               <CardDescription>Everyone with access to this organization.</CardDescription>

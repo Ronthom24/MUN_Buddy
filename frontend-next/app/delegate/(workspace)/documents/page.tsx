@@ -116,7 +116,7 @@ export default function DelegateDocumentsPage() {
       </div>
 
       <Tabs value={activeType} onValueChange={(value) => setActiveType((value as DocType) ?? "position_paper")}>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <TabsList>
             <TabsTrigger value="position_paper">Position Papers</TabsTrigger>
             <TabsTrigger value="speech">Speeches</TabsTrigger>

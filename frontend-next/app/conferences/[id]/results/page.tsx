@@ -330,7 +330,7 @@ export default function ResultsPage() {
 
         <TabsContent value="awards" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Awards</CardTitle>
                 <CardDescription>Best Delegate, Outstanding Delegate, and other recognitions.</CardDescription>
@@ -434,7 +434,7 @@ export default function ResultsPage() {
 
         <TabsContent value="templates" className="space-y-4 pt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Certificate templates</CardTitle>
                 <CardDescription>Reusable across every conference in your organization.</CardDescription>
@@ -459,7 +459,7 @@ export default function ResultsPage() {
                     </DialogHeader>
                     <div className="grid gap-6 py-4 lg:grid-cols-2">
                       <div className="grid gap-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <div className="space-y-2">
                             <Label htmlFor="name">Internal name</Label>
                             <Input id="name" name="name" required defaultValue={editingTemplate?.name} placeholder="Delegate Participation" />
@@ -499,7 +499,7 @@ export default function ResultsPage() {
                             onChange={(e) => setPreviewTemplate((p) => ({ ...p, bodyText: e.target.value }))}
                           />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <div className="space-y-2">
                             <Label htmlFor="signatoryName">Signatory name</Label>
                             <Input
@@ -620,7 +620,7 @@ export default function ResultsPage() {
           </div>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>Issued certificates</CardTitle>
                 <CardDescription>Individually or in bulk, by template.</CardDescription>
@@ -636,7 +636,7 @@ export default function ResultsPage() {
                       <DialogDescription>Select delegates and a template. Certificates are generated instantly.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="templateId">Template</Label>
                           <Select name="templateId" items={templateSelectItems}>

@@ -160,7 +160,7 @@ export default function AssignmentsPage() {
       )}
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>Assignments</CardTitle>
             <CardDescription>Assign approved delegates to a committee and portfolio.</CardDescription>

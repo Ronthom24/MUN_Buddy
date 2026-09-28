@@ -84,7 +84,7 @@ export default function CommitteesPage() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>Committees</CardTitle>
             <CardDescription>Create and manage the academic bodies of this conference.</CardDescription>
@@ -104,7 +104,7 @@ export default function CommitteesPage() {
                     <Label htmlFor="name">Committee name</Label>
                     <Input id="name" name="name" required placeholder="UNSC" />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="chair">Chair</Label>
                       <Input id="chair" name="chair" placeholder="Full name" />

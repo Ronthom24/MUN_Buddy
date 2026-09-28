@@ -126,7 +126,7 @@ export default function SchedulePage() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>Conference schedule</CardTitle>
             <CardDescription>Build the day-by-day agenda delegates will see.</CardDescription>
@@ -178,7 +178,7 @@ export default function SchedulePage() {
         <div className="space-y-4">
           {days.map((day) => (
             <Card key={day.id}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <CardTitle className="text-base">
                     {day.label || "Untitled day"}
@@ -201,7 +201,7 @@ export default function SchedulePage() {
                             <Label htmlFor="title">Title</Label>
                             <Input id="title" name="title" required placeholder="Committee Session I" />
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div className="space-y-2">
                               <Label htmlFor="startTime">Start time</Label>
                               <Input id="startTime" name="startTime" type="time" required />

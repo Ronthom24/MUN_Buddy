@@ -146,7 +146,7 @@ export default function DelegatePaymentPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle className="text-base">Fees</CardTitle>
                 <CardDescription>What this conference charges.</CardDescription>
@@ -164,7 +164,7 @@ export default function DelegatePaymentPage() {
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="amount">Amount ({currency})</Label>
                           <Input
@@ -213,7 +213,7 @@ export default function DelegatePaymentPage() {
                           </Select>
                         </div>
                       )}
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="transactionReference">Transaction reference</Label>
                           <Input id="transactionReference" name="transactionReference" placeholder="UTR / cheque no." />

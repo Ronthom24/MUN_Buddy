@@ -30,7 +30,7 @@ const NAV_ITEMS = [
   { href: "/delegate", label: "Overview", icon: Landmark, exact: true },
   { href: "/delegate/committee", label: "My Committee", icon: Gavel },
   { href: "/delegate/schedule", label: "Schedule", icon: CalendarClock },
-  { href: "/delegate/payment", label: "Payment", icon: Wallet },
+  { href: "/delegate/payment", label: "Payment", icon: Wallet, disabled: true },
   { href: "/delegate/resources", label: "Resources", icon: BookOpen },
   { href: "/delegate/announcements", label: "Announcements", icon: Bell },
   { href: "/delegate/faqs", label: "FAQs", icon: HelpCircle },
@@ -72,6 +72,22 @@ function DelegateShell({ children }: { children: React.ReactNode }) {
 
         <nav className="flex-1 space-y-0.5 p-3">
           {NAV_ITEMS.map((item) => {
+            if (item.disabled) {
+              return (
+                <div
+                  key={item.href}
+                  aria-disabled="true"
+                  className="flex cursor-not-allowed items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/40"
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                  <span className="ml-auto rounded-full bg-sidebar-foreground/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                    Soon
+                  </span>
+                </div>
+              );
+            }
+
             const isActive = item.exact ? pathname === item.href : pathname?.startsWith(item.href);
             return (
               <Link

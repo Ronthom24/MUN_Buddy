@@ -20,6 +20,7 @@ export interface WorkspaceNavItem {
   label: string;
   icon: LucideIcon;
   exact?: boolean;
+  disabled?: boolean;
 }
 
 interface WorkspaceMobileNavProps {
@@ -56,22 +57,36 @@ export function WorkspaceMobileNav({ subtitle, items, pathname, isActive, footer
         </SheetHeader>
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
-          {items.map((item) => (
-            <SheetClose
-              key={item.href}
-              render={<Link href={item.href} />}
-              nativeButton={false}
-              className={cn(
-                "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                active(item)
-                  ? "bg-sidebar-accent text-sidebar-primary"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </SheetClose>
-          ))}
+          {items.map((item) =>
+            item.disabled ? (
+              <div
+                key={item.href}
+                aria-disabled="true"
+                className="flex cursor-not-allowed items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/40"
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+                <span className="ml-auto rounded-full bg-sidebar-foreground/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                  Soon
+                </span>
+              </div>
+            ) : (
+              <SheetClose
+                key={item.href}
+                render={<Link href={item.href} />}
+                nativeButton={false}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  active(item)
+                    ? "bg-sidebar-accent text-sidebar-primary"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </SheetClose>
+            )
+          )}
         </nav>
 
         {footer && <div className="border-t border-sidebar-border p-3">{footer}</div>}

@@ -21,7 +21,7 @@ const NAV_ITEMS = [
   { href: "assignments", label: "Assignments", icon: Users2 },
   { href: "committees", label: "Committees", icon: Gavel },
   { href: "schedule", label: "Schedule", icon: CalendarClock },
-  { href: "payments", label: "Payments", icon: Wallet },
+  { href: "payments", label: "Payments", icon: Wallet, disabled: true },
   { href: "attendance", label: "Attendance", icon: QrCode },
   { href: "results", label: "Results", icon: Award },
   { href: "communication", label: "Communication", icon: Megaphone },
@@ -99,6 +99,31 @@ export default function ConferenceLayout({ children }: { children: React.ReactNo
           {NAV_ITEMS.map((item) => {
             const href = `/conferences/${conferenceId}/${item.href}`;
             const isActive = pathname?.startsWith(href);
+
+            if (item.disabled) {
+              return (
+                <div
+                  key={item.href}
+                  aria-disabled="true"
+                  title={collapsed ? `${item.label} (coming soon)` : undefined}
+                  className={cn(
+                    "flex cursor-not-allowed items-center gap-2.5 rounded-lg border-l-2 border-transparent px-3 py-2 text-sm font-medium text-sidebar-foreground/40",
+                    collapsed && "justify-center px-0"
+                  )}
+                >
+                  <item.icon className="h-4 w-4 shrink-0" />
+                  {!collapsed && (
+                    <>
+                      {item.label}
+                      <span className="ml-auto rounded-full bg-sidebar-foreground/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                        Soon
+                      </span>
+                    </>
+                  )}
+                </div>
+              );
+            }
+
             return (
               <Link
                 key={item.href}

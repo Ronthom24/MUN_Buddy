@@ -75,8 +75,25 @@ export default function TeamPage() {
         api.get<{ success: true; logs: AuditLogEntry[] }>(`/conferences/${conferenceId}/audit-log`),
         api.get<{ success: true; trash: TrashBin }>(`/conferences/${conferenceId}/trash`),
       ]);
-      setDashboard(dashboardRes.dashboard);
-      setDepartments(departmentsRes.departments);
+      let departments = departmentsRes.departments;
+      let dashboard = dashboardRes.dashboard;
+      // First time the Departments tab is opened, there are none yet --
+      // seed a standard starting set (Logistics, Finance, ...) instead of
+      // leaving organizers to type each one from scratch. No-op once any
+      // department exists (renamed, deleted, or otherwise).
+      if (departments.length === 0) {
+        try {
+          const seeded = await api.post<{ success: true; departments: Department[] }>(
+            `/conferences/${conferenceId}/departments/auto-generate`
+          );
+          departments = seeded.departments;
+          dashboard = { ...dashboard, departmentCount: departments.length };
+        } catch {
+          // Not critical -- organizer can still add departments manually.
+        }
+      }
+      setDashboard(dashboard);
+      setDepartments(departments);
       setMembers(membersRes.organizerAccess);
       setCommittees(committeesRes.committees);
       setActivity(activityRes.activity);

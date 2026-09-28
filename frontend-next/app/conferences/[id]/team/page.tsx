@@ -30,16 +30,25 @@ const ADMIN_ROLES = ["owner", "conference_manager"];
 const EB_ROLES = ["committee_director"];
 const OC_ROLES = ["organizer", "admin"];
 
-const ROLES = [
-  { value: "admin", label: "Staff Admin" },
-  { value: "conference_manager", label: "Conference Manager" },
-  { value: "organizer", label: "Organizing Committee" },
-  { value: "committee_director", label: "Committee Director (EB)" },
-];
+// Every role that can appear on an existing member (for badges/labels) --
+// admin and conference_manager are legacy/leadership designations that
+// aren't offered through the invite flow below, but still need a label if
+// a member already has one of those roles.
 const ROLE_ITEMS: Record<string, string> = {
   owner: "Main Organizer",
-  ...Object.fromEntries(ROLES.map((r) => [r.value, r.label])),
+  admin: "Staff Admin",
+  conference_manager: "Conference Manager",
+  organizer: "Organizing Committee",
+  committee_director: "Committee Director (EB)",
 };
+
+// Only OC and EB are actually offered when inviting someone new -- Admin
+// (owner/conference_manager) is conference-level leadership, not something
+// granted through a casual invite.
+const ROLES = [
+  { value: "organizer", label: "Organizing Committee (OC)" },
+  { value: "committee_director", label: "Committee Director (EB)" },
+];
 
 export default function TeamPage() {
   const params = useParams<{ id: string }>();

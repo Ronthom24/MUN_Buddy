@@ -17,11 +17,12 @@ backend API on Render).
 - **Organizations** are the top-level tenant: an organization can run multiple conferences over
   time, with its own team, branding, and members.
 - **Conference organizers** manage committees, agendas, registrations, delegate assignments,
-  payments, communication (announcements/resources/FAQs/email broadcasts), team members, results
-  and certificates, attendance/QR check-in, and analytics/reporting for their conference.
+  payments *(under development)*, communication (announcements/resources/FAQs/email broadcasts),
+  team members, results and certificates, attendance/QR check-in, and analytics/reporting for
+  their conference.
 - **Delegates** register for a conference, get assigned a committee/country, and use their
-  workspace to view schedule, resources, announcements, notes, resolutions, payments, and their
-  certificates.
+  workspace to view schedule, resources, announcements, notes, resolutions, payments *(under
+  development)*, and their certificates.
 - **Platform administrators** get a separate super-admin view across all organizations: suspend
   accounts, view-as-organizer, audit logs, and platform-wide analytics.
 - A public, unauthenticated site (`/discover`, `/organizations`, `/verify/[certificateNumber]`)

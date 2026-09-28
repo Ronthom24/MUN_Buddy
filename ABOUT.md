@@ -12,8 +12,8 @@ schedule, resources, and certificates, instead of scattered forms and emails.
   with its own committees, agenda, and team.
 - **Registration & assignment** — custom registration forms, waitlists, bulk delegate review, and
   conflict-checked committee/country assignment.
-- **Payments** — fee structures, manual payment verification, refunds, and a live financial
-  dashboard.
+- **Payments** *(under development)* — fee structures, manual payment verification, refunds, and
+  a live financial dashboard.
 - **Attendance & certificates** — QR-code-based check-in, on-demand certificate generation, and
   public certificate verification.
 - **Communication** — announcements, resources, FAQs, and email broadcasts in one place.
